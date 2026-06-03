@@ -1090,6 +1090,7 @@ function AdminDashboard() {
   };
 
   const mentorshipBadgeTopics = ['Pregnancy Prevention', 'Peer Pressure'];
+  const normalizedDashboardSearch = dashboardSearch.trim().toLowerCase();
   const recentActivityItems = [
     ...(dashboard?.recentTeam || []).slice(0, 2).map((member) => ({
       id: `team-${member._id}`,
@@ -1158,6 +1159,82 @@ function AdminDashboard() {
       label: `${recentWorkshopSchedules.length} recent workshop record(s) stored in the database`,
     },
   ];
+
+  const filteredSectionCards = SECTION_CARDS.filter((section) => {
+    if (!normalizedDashboardSearch) return true;
+
+    return [section.title, section.description, section.badge]
+      .filter(Boolean)
+      .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
+  });
+
+  const filteredRecentActivityItems = recentActivityItems.filter((item) => {
+    if (!normalizedDashboardSearch) return true;
+
+    return [item.text, formatDateTime(item.when)]
+      .filter(Boolean)
+      .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
+  });
+
+  const filteredPendingTasks = pendingTasks.filter((task) => {
+    if (!normalizedDashboardSearch) return true;
+    return task.label.toLowerCase().includes(normalizedDashboardSearch);
+  });
+
+  const filteredTeamPreview = team.filter((member) => {
+    if (!normalizedDashboardSearch) return true;
+
+    return [
+      member.name,
+      member.role,
+      member.schoolName,
+      member.caseStatus,
+      member.dropoutCause,
+    ]
+      .filter(Boolean)
+      .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
+  });
+
+  const filteredWorkshopActivities = workshopActivities.filter((activity) => {
+    if (!normalizedDashboardSearch) return true;
+
+    return [activity.title, activity.status, formatDateTime(activity.when)]
+      .filter(Boolean)
+      .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
+  });
+
+  const filteredProjects = projects.filter((project) => {
+    if (!normalizedDashboardSearch) return true;
+
+    return [
+      project.title,
+      project.description,
+      ...(project.techStack || []),
+      project.liveUrl,
+      project.repoUrl,
+    ]
+      .filter(Boolean)
+      .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
+  });
+
+  const filteredTeamRecords = team.filter((member) => {
+    if (!normalizedDashboardSearch) return true;
+
+    return [
+      member.name,
+      member.role,
+      member.dropoutCause,
+      member.schoolName,
+      member.educationLevel,
+      member.supportSummary,
+      member.currentChallenges,
+      member.caseStatus,
+      member.guardianContact,
+      member.workshopFocus,
+    ]
+      .filter(Boolean)
+      .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
+  });
 
   return (
     <section className="admin-page miles-admin-shell">
@@ -1293,15 +1370,15 @@ function AdminDashboard() {
           <article className={`miles-panel miles-recent-activity ${activeOverviewPanel === 'activity' ? 'miles-panel-priority' : ''}`}>
             <h2>Recent Activity Feed</h2>
             <ul className="miles-recent-activity-scroll">
-              {recentActivityItems.length > 0 ? (
-                recentActivityItems.map((item) => (
+              {filteredRecentActivityItems.length > 0 ? (
+                filteredRecentActivityItems.map((item) => (
                   <li key={item.id}>
                     <strong>{item.text}</strong>
                     <p>{formatDateTime(item.when)}</p>
                   </li>
                 ))
               ) : (
-                <li>No recent database activity yet.</li>
+                <li>{normalizedDashboardSearch ? 'No activity matches your search.' : 'No recent database activity yet.'}</li>
               )}
             </ul>
           </article>
@@ -1329,18 +1406,22 @@ function AdminDashboard() {
           <article className={`miles-panel miles-panel-compact ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}>
             <h2>Pending Tasks</h2>
             <ul className="miles-task-list">
-              {pendingTasks.map((task) => (
-                <li key={task.id}>
-                  <span>{task.label}</span>
-                </li>
-              ))}
+              {filteredPendingTasks.length > 0 ? (
+                filteredPendingTasks.map((task) => (
+                  <li key={task.id}>
+                    <span>{task.label}</span>
+                  </li>
+                ))
+              ) : (
+                <li>No pending task matches your search.</li>
+              )}
             </ul>
           </article>
 
           <article className={`miles-panel ${activeOverviewPanel === 'team' ? 'miles-panel-priority' : ''}`}>
             <h2>Mothers Under Support</h2>
             <ul className="miles-team-list miles-team-list-fullwidth">
-              {team.slice(0, 5).map((member) => (
+              {filteredTeamPreview.slice(0, 5).map((member) => (
                 <li key={member._id}>
                   <span className="miles-avatar-slot">{(member.name || 'M').charAt(0)}</span>
                   <div>
@@ -1357,8 +1438,8 @@ function AdminDashboard() {
           <article className={`miles-panel ${activeOverviewPanel === 'stories' ? 'miles-panel-priority' : ''}`}>
             <h2>Workshop Activities</h2>
             <ul className="miles-story-list miles-story-list-clean">
-              {workshopActivities.length > 0 ? (
-                workshopActivities.map((activity) => (
+              {filteredWorkshopActivities.length > 0 ? (
+                filteredWorkshopActivities.map((activity) => (
                   <li key={activity.id}>
                     <div className="miles-story-copy">
                       <span>{activity.title}</span>
@@ -1370,7 +1451,7 @@ function AdminDashboard() {
                   </li>
                 ))
               ) : (
-                <li>No workshop activities tracked yet.</li>
+                <li>{normalizedDashboardSearch ? 'No workshop activity matches your search.' : 'No workshop activities tracked yet.'}</li>
               )}
             </ul>
           </article>
@@ -1382,7 +1463,7 @@ function AdminDashboard() {
         </article>
 
         <div className="admin-section-picker">
-        {SECTION_CARDS.map((section) => (
+        {filteredSectionCards.map((section) => (
           <button
             key={section.key}
             type="button"
@@ -1394,6 +1475,12 @@ function AdminDashboard() {
             <span className="admin-section-description">{section.description}</span>
           </button>
         ))}
+        {filteredSectionCards.length === 0 && (
+          <article className="admin-card admin-panel-card">
+            <h2>No Matching Sections</h2>
+            <p className="admin-panel-hint">Try another search term for cases, members, workshops, or settings.</p>
+          </article>
+        )}
       </div>
           </>
         )}
@@ -1685,7 +1772,7 @@ function AdminDashboard() {
           <article className="admin-card admin-panel-card">
             <h2>Manage Projects</h2>
             <ul className="admin-list">
-              {projects.map((project) => (
+              {filteredProjects.length > 0 ? filteredProjects.map((project) => (
                 <li key={project._id}>
                   {editingProjectId === project._id ? (
                     <form onSubmit={handleUpdateProject} className="admin-form admin-inline-form">
@@ -1755,7 +1842,9 @@ function AdminDashboard() {
                     </>
                   )}
                 </li>
-              ))}
+              )) : (
+                <li>No project or case matches your search.</li>
+              )}
             </ul>
           </article>
         )}
@@ -1764,7 +1853,7 @@ function AdminDashboard() {
           <article className="admin-card admin-panel-card">
             <h2>Mothers Under Support</h2>
             <ul className="admin-list">
-              {team.map((member) => (
+              {filteredTeamRecords.length > 0 ? filteredTeamRecords.map((member) => (
                 <li key={member._id}>
                   {editingTeamId === member._id ? (
                     <form onSubmit={handleUpdateTeam} className="admin-form admin-inline-form">
@@ -1967,7 +2056,9 @@ function AdminDashboard() {
                     </>
                   )}
                 </li>
-              ))}
+              )) : (
+                <li>No mother profile matches your search.</li>
+              )}
             </ul>
           </article>
         )}
