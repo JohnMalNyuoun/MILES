@@ -1013,7 +1013,7 @@ h4 {
   max-width: none;
   width: 100%;
   min-height: calc(100vh - 80px);
-  background: #0b131a;
+  background: #0f1f14;
   color: #ffffff;
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -1022,8 +1022,8 @@ h4 {
 }
 
 .miles-admin-sidebar {
-  background: #0a1015;
-  border: 1px solid rgba(138, 155, 168, 0.2);
+  background: #122219;
+  border: 1px solid rgba(127, 212, 139, 0.28);
   border-radius: 12px;
   padding: 20px 14px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
@@ -1035,7 +1035,7 @@ h4 {
   gap: 12px;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(138, 155, 168, 0.25);
+  border-bottom: 1px solid rgba(127, 212, 139, 0.32);
 }
 
 .miles-sidebar-logo {
@@ -1057,7 +1057,7 @@ h4 {
 }
 
 .miles-sidebar-brand p {
-  color: #8a9ba8;
+  color: #b6d0b9;
   font-size: 0.82rem;
 }
 
@@ -1069,7 +1069,7 @@ h4 {
 .miles-nav-item {
   border: none;
   background: transparent;
-  color: #c7d3dc;
+  color: #d7e7d9;
   border-radius: 10px;
   padding: 10px 12px;
   text-align: left;
@@ -1084,7 +1084,7 @@ h4 {
 
 .miles-nav-item:hover,
 .miles-nav-item.active {
-  background: #16252f;
+  background: #1e3526;
   color: #ffffff;
   border-left-color: #7fd48b;
 }
@@ -1099,8 +1099,8 @@ h4 {
 }
 
 .miles-admin-header {
-  background: #16252f;
-  border: 1px solid rgba(138, 155, 168, 0.2);
+  background: #1a3122;
+  border: 1px solid rgba(127, 212, 139, 0.28);
   border-radius: 12px;
   padding: 18px;
   display: flex;
@@ -1116,7 +1116,7 @@ h4 {
 }
 
 .miles-admin-header p {
-  color: #8a9ba8;
+  color: #bdd5c0;
   font-size: 0.95rem;
 }
 
@@ -1128,23 +1128,23 @@ h4 {
 
 .miles-admin-search {
   width: min(360px, 52vw);
-  border: 1px solid rgba(138, 155, 168, 0.35);
+  border: 1px solid rgba(127, 212, 139, 0.35);
   border-radius: 10px;
-  background: #111c24;
+  background: #14261b;
   color: #ffffff;
   padding: 10px 12px;
 }
 
 .miles-admin-search::placeholder {
-  color: #8a9ba8;
+  color: #aac4ae;
 }
 
 .miles-profile-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #111c24;
-  border: 1px solid rgba(138, 155, 168, 0.35);
+  background: #14261b;
+  border: 1px solid rgba(127, 212, 139, 0.35);
   padding: 6px 10px;
   border-radius: 999px;
   color: #ffffff;
@@ -1171,14 +1171,14 @@ h4 {
 }
 
 .miles-stat-card {
-  background: #16252f;
-  border: 1px solid rgba(138, 155, 168, 0.2);
+  background: #1a3122;
+  border: 1px solid rgba(127, 212, 139, 0.25);
   border-radius: 12px;
   padding: 16px;
 }
 
 .miles-stat-card h3 {
-  color: #8a9ba8;
+  color: #b6d0b9;
   font-size: 0.92rem;
   margin-bottom: 10px;
 }
@@ -1191,7 +1191,7 @@ h4 {
 
 .miles-stat-card p span {
   margin-left: 8px;
-  color: #28a745;
+  color: #8be29a;
   font-size: 0.95rem;
 }
 
@@ -1219,8 +1219,8 @@ h4 {
 }
 
 .miles-panel {
-  background: #083b0b;
-  border: 1px solid rgba(7, 107, 15, 0.2);
+  background: #15301f;
+  border: 1px solid rgba(127, 212, 139, 0.24);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 10px 24px rgba(8, 95, 27, 0.22);
@@ -1235,7 +1235,7 @@ h4 {
 .miles-panel p,
 .miles-panel li,
 .miles-panel label {
-  color: #8a9ba8;
+  color: #c6ddc9;
 }
 
 .miles-recent-activity {
@@ -1276,9 +1276,9 @@ h4 {
 .miles-team-list li,
 .miles-story-list li,
 .miles-task-list li {
-  border: 1px solid rgba(138, 155, 168, 0.22);
+  border: 1px solid rgba(127, 212, 139, 0.28);
   border-radius: 10px;
-  background: #111c24;
+  background: #1a2d21;
   padding: 10px;
 }
 
@@ -1319,13 +1319,13 @@ h4 {
 }
 
 .miles-badge-published {
-  background: rgba(40, 167, 69, 0.18);
-  color: #7be197;
+  background: rgba(46, 125, 50, 0.3);
+  color: #d8f5dd;
 }
 
 .miles-badge-pending {
-  background: rgba(217, 155, 65, 0.22);
-  color: #f5c57f;
+  background: rgba(90, 143, 96, 0.35);
+  color: #def3e1;
 }
 
 .miles-task-list label {
@@ -1349,13 +1349,13 @@ h4 {
 }
 
 .miles-admin-main .admin-section-card {
-  background: #16252f;
-  border-color: rgba(138, 155, 168, 0.3);
+  background: #1a3122;
+  border-color: rgba(127, 212, 139, 0.32);
   color: #ffffff;
 }
 
 .miles-admin-main .admin-section-description {
-  color: #8a9ba8;
+  color: #bdd5c0;
 }
 
 .miles-admin-main .admin-section-card.active {
@@ -1366,8 +1366,8 @@ h4 {
 .miles-admin-main .admin-card,
 .miles-admin-main .admin-auth-card,
 .miles-admin-main .admin-stat-card {
-  background: #16252f;
-  border-color: rgba(138, 155, 168, 0.3);
+  background: #1a3122;
+  border-color: rgba(127, 212, 139, 0.3);
 }
 
 .miles-admin-main .admin-card h2,
@@ -1378,14 +1378,14 @@ h4 {
 
 .miles-admin-main .admin-form input,
 .miles-admin-main .admin-form textarea {
-  background: #111c24;
+  background: #14261b;
   color: #ffffff;
-  border-color: rgba(138, 155, 168, 0.35);
+  border-color: rgba(127, 212, 139, 0.35);
 }
 
 .miles-admin-main .admin-panel-hint,
 .miles-admin-main .admin-list li p {
-  color: #8a9ba8;
+  color: #bdd5c0;
 }
 
 .miles-admin-main .admin-form button,
@@ -1402,8 +1402,8 @@ h4 {
 }
 
 .miles-admin-main .admin-list button {
-  background: #d99b41;
-  color: #1a1105;
+  background: #3b6f3f;
+  color: #eaf8ec;
 }
 
 .admin-help-block {
@@ -1411,7 +1411,7 @@ h4 {
   padding: 12px;
   border-radius: 10px;
   border: 1px solid rgba(127, 212, 139, 0.28);
-  background: rgba(17, 28, 36, 0.75);
+  background: rgba(20, 38, 27, 0.8);
 }
 
 .admin-help-block h3 {
@@ -1426,7 +1426,7 @@ h4 {
 }
 
 .admin-help-block li {
-  color: #dbe6dd;
+  color: #e4f1e6;
   line-height: 1.5;
 }
 
@@ -1445,7 +1445,7 @@ h4 {
 .miles-recent-activity li p,
 .miles-story-list li p,
 .miles-team-list li small {
-  color: #8a9ba8;
+  color: #bdd5c0;
   font-size: 0.78rem;
   margin-top: 4px;
 }
