@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import defaultSiteContent from '../content/defaultSiteContent';
 
-function Learn() {
+function Learn({ siteContent = defaultSiteContent }) {
+  const [teamMembers, setTeamMembers] = useState([]);
+  const learnContent = siteContent.learn || defaultSiteContent.learn;
+
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      try {
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+        const response = await fetch(`${apiBaseUrl}/api/team`);
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch team members');
+        }
+
+        const data = await response.json();
+        setTeamMembers(data);
+      } catch (error) {
+        setTeamMembers([]);
+      }
+    };
+
+    fetchTeamMembers();
+  }, []);
+
   return (
     <div className="page">
-      <h1>Empowering Vulnerable Mothers Through Targeted Education and Mentorship</h1>
+      <h1>{learnContent.title}</h1>
       <section className="section">
         <p>
           Welcome to the <strong>Mothers in Learning Empowerment Support (MILES)</strong> Project.
@@ -52,8 +76,17 @@ function Learn() {
           The foundations of MILES rely on collaborative leadership working directly on the ground:
         </p>
         <ul>
-          <li><strong>Founder:</strong> Nyajuok William, whose vision initiated this framework to provide structured empowerment and support to vulnerable mothers in the community.</li>
-          <li><strong>Program Coordination:</strong> John Mal Nyuon, leading operational strategy, organizational documentation, branding, and resource reporting.</li>
+          {teamMembers.length > 0 ? (
+            teamMembers.map((member) => (
+              <li key={member._id || `${member.name}-${member.role}`}>
+                <strong>{member.role}:</strong> {member.name}
+              </li>
+            ))
+          ) : (
+            <li>
+              <strong>Team:</strong> Full team details are available on the Team page.
+            </li>
+          )}
         </ul>
         <p>
           By bridging local talent, humanitarian education services, and community-led mentorship,

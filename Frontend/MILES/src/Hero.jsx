@@ -1,16 +1,18 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import fullpicImg from './assets/fullpic.jpeg'
+import defaultSiteContent from './content/defaultSiteContent'
 
 
-const Hero = () => {
+const Hero = ({ siteContent = defaultSiteContent }) => {
+  const heroContent = siteContent.hero || defaultSiteContent.hero
+
   return (
     <section className="hero" style={{ backgroundImage: `url(${fullpicImg})` }}>
       <div className="hero-overlay">
         <div className="hero-content">
-          <h1>MILES</h1>
-          <h2>Mothers in Learning, Empowerment &amp; Support</h2>
-          <p>Empowering mothers and girls through education, community support, and mentorship.</p>
+          <h1>{heroContent.title}</h1>
+          <h2>{heroContent.subtitle}</h2>
+          <p>{heroContent.description}</p>
          
         </div>
       </div>

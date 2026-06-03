@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import defaultSiteContent from '../content/defaultSiteContent';
 
 const getApiBaseUrl = () => import.meta.env.VITE_API_BASE_URL || '';
 
@@ -33,6 +34,12 @@ const SECTION_CARDS = [
     title: 'Manage Team Members',
     description: 'Edit or remove existing team member profiles.',
     badge: 'MT',
+  },
+  {
+    key: 'manage-content',
+    title: 'Manage Website Content',
+    description: 'Update cards, texts, and buttons across the website.',
+    badge: 'WC',
   },
 ];
 
@@ -92,6 +99,10 @@ function AdminDashboard() {
     bio: '',
     image: '',
   });
+  const [siteContentText, setSiteContentText] = useState(
+    JSON.stringify(defaultSiteContent, null, 2)
+  );
+  const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
 
   const isAdmin = user?.role === 'admin';
 
@@ -143,6 +154,25 @@ function AdminDashboard() {
 
     const data = await response.json();
     setDashboard(data);
+  };
+
+  const fetchAdminSiteContent = async () => {
+    if (!token) return;
+
+    const response = await fetch(`${apiBaseUrl}/api/admin/content`, {
+      headers: authHeaders,
+    });
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        throw new Error('Your session is not authorized for content actions.');
+      }
+      throw new Error('Failed to load website content.');
+    }
+
+    const data = await response.json();
+    setSiteContentText(JSON.stringify(data.content || defaultSiteContent, null, 2));
+    setSiteContentUpdatedAt(data.updatedAt || '');
   };
 
   const handleLogout = () => {
@@ -411,6 +441,41 @@ function AdminDashboard() {
     }
   };
 
+  const handleSaveSiteContent = async (event) => {
+    event.preventDefault();
+    clearStatus();
+
+    let parsedContent;
+    try {
+      parsedContent = JSON.parse(siteContentText);
+    } catch (parseError) {
+      setError('Website content must be valid JSON before saving.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiBaseUrl}/api/admin/content`, {
+        method: 'PUT',
+        headers: authHeaders,
+        body: JSON.stringify(parsedContent),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to save website content.');
+      }
+
+      setSiteContentText(JSON.stringify(data.content || parsedContent, null, 2));
+      setSiteContentUpdatedAt(data.updatedAt || '');
+      setMessage('Website content updated successfully.');
+    } catch (err) {
+      setError(err.message || 'Unable to save website content.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       if (!token || !isAdmin) return;
@@ -418,6 +483,7 @@ function AdminDashboard() {
       try {
         setLoading(true);
         await Promise.all([fetchDashboard(), fetchPublicLists()]);
+        await fetchAdminSiteContent();
       } catch (err) {
         setError(err.message || 'Unable to initialize dashboard.');
       } finally {
@@ -795,6 +861,31 @@ function AdminDashboard() {
                 </li>
               ))}
             </ul>
+          </article>
+        )}
+
+        {activeSection === 'manage-content' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Manage Website Content</h2>
+            <p className="admin-panel-hint">
+              Update homepage cards, button labels, and section texts here. Save to publish changes without coding.
+            </p>
+            {siteContentUpdatedAt && (
+              <p className="admin-panel-hint">
+                Last updated: {new Date(siteContentUpdatedAt).toLocaleString()}
+              </p>
+            )}
+            <form onSubmit={handleSaveSiteContent} className="admin-form">
+              <label>
+                Website Content JSON
+                <textarea
+                  value={siteContentText}
+                  onChange={(event) => setSiteContentText(event.target.value)}
+                  rows={24}
+                />
+              </label>
+              <button type="submit" disabled={loading}>Save Website Content</button>
+            </form>
           </article>
         )}
       </div>

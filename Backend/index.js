@@ -9,6 +9,7 @@ const teamRoutes = require('./routes/teamRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const contentRoutes = require('./routes/contentRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use('/api/team', teamRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/content', contentRoutes);
 
 app.use(express.static(frontendDistPath));
 

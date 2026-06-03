@@ -1,18 +1,20 @@
 import React from 'react';
+import defaultSiteContent from '../content/defaultSiteContent';
 
-function Contact() {
-  const mapUrl = 'https://www.google.com/maps/search/?api=1&query=Kakuma+Refugee+Camp+Scorpion+Center';
+function Contact({ siteContent = defaultSiteContent }) {
+  const contactContent = siteContent.contact || defaultSiteContent.contact;
+  const mapUrl = contactContent.mapUrl;
 
   return (
     <div className="page">
-      <h1>Contact Us</h1>
+      <h1>{contactContent.title}</h1>
       <section className="section">
-        <p>We'd love to hear from you. Reach out to learn more about our programs or to get involved.</p>
+        <p>{contactContent.intro}</p>
         <div className="contact-info">
-          <p><strong>Email:</strong> <a href="mailto:milesproject@gmail.com">milesproject@gmail.com</a></p>
+          <p><strong>Email:</strong> <a href={`mailto:${contactContent.email}`}>{contactContent.email}</a></p>
 
-          <p><strong>Phone:</strong> <a href="tel:+254112419468">+254 112 419 468</a></p>
-          <p><strong>Address:</strong> <a href={mapUrl} target="_blank" rel="noreferrer">Kakuma Refugee Camp, Scorpion Center</a></p>
+          <p><strong>Phone:</strong> <a href={`tel:${contactContent.phone}`}>{contactContent.phone}</a></p>
+          <p><strong>Address:</strong> <a href={mapUrl} target="_blank" rel="noreferrer">{contactContent.address}</a></p>
         </div>
       </section>
     </div>
