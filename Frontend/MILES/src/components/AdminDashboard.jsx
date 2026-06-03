@@ -349,6 +349,7 @@ function AdminDashboard() {
   });
   const [siteContentObject, setSiteContentObject] = useState(defaultSiteContent);
   const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
+  const [workshopUpdatedAt, setWorkshopUpdatedAt] = useState('');
   const [heroForm, setHeroForm] = useState(() => buildHeroFormFromContent(defaultSiteContent));
   const [homeForm, setHomeForm] = useState(() => buildHomeFormFromContent(defaultSiteContent));
   const [navbarForm, setNavbarForm] = useState(() => buildNavbarFormFromContent(defaultSiteContent));
@@ -448,12 +449,6 @@ function AdminDashboard() {
         ...defaultSiteContent.learn,
         ...(data.content?.learn || {}),
       },
-      workshops: {
-        ...defaultSiteContent.workshops,
-        ...(data.content?.workshops || {}),
-        activities:
-          data.content?.workshops?.activities || defaultSiteContent.workshops.activities,
-      },
     };
 
     setSiteContentObject(normalizedContent);
@@ -464,8 +459,19 @@ function AdminDashboard() {
     setContactForm(buildContactFormFromContent(normalizedContent));
     setDonateForm(buildDonateFormFromContent(normalizedContent));
     setLearnForm(buildLearnFormFromContent(normalizedContent));
-    setWorkshopForm(buildWorkshopFormFromContent(normalizedContent));
     setSiteContentUpdatedAt(data.updatedAt || '');
+  };
+
+  const fetchWorkshopSchedule = async () => {
+    const response = await fetch(`${apiBaseUrl}/api/workshops`);
+
+    if (!response.ok) {
+      throw new Error('Failed to load workshop schedule.');
+    }
+
+    const data = await response.json();
+    setWorkshopForm(buildWorkshopFormFromContent({ workshops: data }));
+    setWorkshopUpdatedAt(data.updatedAt || '');
   };
 
   const handleLogout = () => {
@@ -790,7 +796,6 @@ function AdminDashboard() {
       setContactForm(buildContactFormFromContent(normalizedContent));
       setDonateForm(buildDonateFormFromContent(normalizedContent));
       setLearnForm(buildLearnFormFromContent(normalizedContent));
-      setWorkshopForm(buildWorkshopFormFromContent(normalizedContent));
       setSiteContentUpdatedAt(data.updatedAt || '');
       setMessage(successMessage);
       returnToDashboard(successPanel);
@@ -972,43 +977,59 @@ function AdminDashboard() {
     event.preventDefault();
     clearStatus();
 
-    const nextContent = {
-      ...siteContentObject,
-      workshops: {
-        title: workshopForm.title,
-        coordinator: workshopForm.coordinator,
-        nextSessionDate: workshopForm.nextSessionDate,
-        nextSessionTopic: workshopForm.nextSessionTopic,
-        nextSessionLocation: workshopForm.nextSessionLocation,
-        nextSessionFacilitator: workshopForm.nextSessionFacilitator,
-        notes: workshopForm.notes,
-        activities: [
-          {
-            title: workshopForm.activityOneTitle,
-            date: workshopForm.activityOneDate,
-            location: workshopForm.activityOneLocation,
-            status: workshopForm.activityOneStatus,
-            details: workshopForm.activityOneDetails,
-          },
-          {
-            title: workshopForm.activityTwoTitle,
-            date: workshopForm.activityTwoDate,
-            location: workshopForm.activityTwoLocation,
-            status: workshopForm.activityTwoStatus,
-            details: workshopForm.activityTwoDetails,
-          },
-          {
-            title: workshopForm.activityThreeTitle,
-            date: workshopForm.activityThreeDate,
-            location: workshopForm.activityThreeLocation,
-            status: workshopForm.activityThreeStatus,
-            details: workshopForm.activityThreeDetails,
-          },
-        ],
-      },
-    };
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiBaseUrl}/api/workshops`, {
+        method: 'PUT',
+        headers: authHeaders,
+        body: JSON.stringify({
+          title: workshopForm.title,
+          coordinator: workshopForm.coordinator,
+          nextSessionDate: workshopForm.nextSessionDate,
+          nextSessionTopic: workshopForm.nextSessionTopic,
+          nextSessionLocation: workshopForm.nextSessionLocation,
+          nextSessionFacilitator: workshopForm.nextSessionFacilitator,
+          notes: workshopForm.notes,
+          activities: [
+            {
+              title: workshopForm.activityOneTitle,
+              date: workshopForm.activityOneDate,
+              location: workshopForm.activityOneLocation,
+              status: workshopForm.activityOneStatus,
+              details: workshopForm.activityOneDetails,
+            },
+            {
+              title: workshopForm.activityTwoTitle,
+              date: workshopForm.activityTwoDate,
+              location: workshopForm.activityTwoLocation,
+              status: workshopForm.activityTwoStatus,
+              details: workshopForm.activityTwoDetails,
+            },
+            {
+              title: workshopForm.activityThreeTitle,
+              date: workshopForm.activityThreeDate,
+              location: workshopForm.activityThreeLocation,
+              status: workshopForm.activityThreeStatus,
+              details: workshopForm.activityThreeDetails,
+            },
+          ],
+        }),
+      });
 
-    await saveContentSection(nextContent, 'Workshop schedule updated successfully.', 'quick-actions');
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to save workshop schedule.');
+      }
+
+      setWorkshopForm(buildWorkshopFormFromContent({ workshops: data.schedule }));
+      setWorkshopUpdatedAt(data.updatedAt || '');
+      setMessage('Workshop schedule saved to the database successfully.');
+      returnToDashboard('quick-actions');
+    } catch (err) {
+      setError(err.message || 'Unable to save workshop schedule.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -1018,7 +1039,7 @@ function AdminDashboard() {
       try {
         setLoading(true);
         await Promise.all([fetchDashboard(), fetchPublicLists()]);
-        await fetchAdminSiteContent();
+        await Promise.all([fetchAdminSiteContent(), fetchWorkshopSchedule()]);
       } catch (err) {
         setError(err.message || 'Unable to initialize dashboard.');
       } finally {
@@ -1086,7 +1107,23 @@ function AdminDashboard() {
     when: project.updatedAt || project.createdAt,
   }));
 
-  const workshopActivities = (siteContentObject?.workshops?.activities || [])
+  const workshopActivities = [
+    {
+      title: workshopForm.activityOneTitle,
+      date: workshopForm.activityOneDate,
+      status: workshopForm.activityOneStatus,
+    },
+    {
+      title: workshopForm.activityTwoTitle,
+      date: workshopForm.activityTwoDate,
+      status: workshopForm.activityTwoStatus,
+    },
+    {
+      title: workshopForm.activityThreeTitle,
+      date: workshopForm.activityThreeDate,
+      status: workshopForm.activityThreeStatus,
+    },
+  ]
     .filter((activity) => activity?.title || activity?.date || activity?.status)
     .slice(0, 3)
     .map((activity, index) => ({
@@ -1115,7 +1152,7 @@ function AdminDashboard() {
     },
     {
       id: 'pending-workshop-date',
-      label: siteContentObject?.workshops?.nextSessionDate
+      label: workshopForm.nextSessionDate
         ? 'Next workshop schedule is set.'
         : 'Next workshop date has not been set yet.',
     },
@@ -1207,6 +1244,7 @@ function AdminDashboard() {
             <p>
               Program Coordinator | John Mal Nyuon
               {siteContentUpdatedAt ? ` | Last content update: ${formatDateTime(siteContentUpdatedAt)}` : ''}
+              {workshopUpdatedAt ? ` | Last workshop update: ${formatDateTime(workshopUpdatedAt)}` : ''}
             </p>
           </div>
           <div className="miles-header-tools">

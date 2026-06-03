@@ -10,6 +10,7 @@ const projectRoutes = require('./routes/projectRoutes');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const contentRoutes = require('./routes/contentRoutes');
+const workshopRoutes = require('./routes/workshopRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 dotenv.config();
@@ -37,6 +38,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/workshops', workshopRoutes);
 
 app.use(express.static(frontendDistPath));
 
