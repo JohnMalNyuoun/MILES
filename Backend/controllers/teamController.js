@@ -25,8 +25,19 @@ const getTeamById = async (req, res, next) => {
 
 const createTeam = async (req, res, next) => {
 	try {
-		const team = await Team.create(req.body);
-		res.status(201).json(team);
+		if (!req.body?.name || !req.body?.role) {
+			return res.status(400).json({ message: 'Name and role are required' });
+		}
+
+		const team = await Team.create({
+			...req.body,
+			isMotherProfile: req.body.isMotherProfile !== false,
+		});
+
+		res.status(201).json({
+			message: 'Young mother case saved to the database successfully',
+			team,
+		});
 	} catch (error) {
 		next(error);
 	}
@@ -43,7 +54,10 @@ const updateTeam = async (req, res, next) => {
 			return res.status(404).json({ message: 'Team not found' });
 		}
 
-		res.status(200).json(team);
+		res.status(200).json({
+			message: 'Young mother case updated in the database successfully',
+			team,
+		});
 	} catch (error) {
 		next(error);
 	}

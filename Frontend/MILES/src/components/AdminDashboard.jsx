@@ -598,7 +598,7 @@ function AdminDashboard() {
         guardianContact: '',
         workshopFocus: '',
       });
-      setMessage('Mother support profile created successfully.');
+      setMessage(data.message || 'Young mother case saved to the database successfully.');
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
       returnToDashboard('team');
     } catch (err) {
