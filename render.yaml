@@ -4,7 +4,7 @@ services:
     runtime: node
     rootDir: Backend
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node index.js
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
@@ -16,12 +16,11 @@ services:
       - key: ADMIN_REGISTRATION_SECRET
         sync: false
 
-  - type: web
+  - type: static_site
     name: miles-website
-    env: static
-    rootDir: .
-    buildCommand: npm --prefix Frontend/MILES install && npm --prefix Frontend/MILES run build
-    staticPublishPath: Frontend/MILES/dist
+    rootDir: Frontend/MILES
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
