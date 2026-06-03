@@ -18,11 +18,15 @@ import AdminRoute from './components/AdminRoute'
 
 
 const  App = () => {
-    const [theme, setTheme] = useState('light')
+    const [theme, setTheme] = useState(() => {
+        const savedTheme = localStorage.getItem('miles-theme')
+        return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light'
+    })
 
     useEffect(() => {
         document.body.classList.remove('theme-light', 'theme-dark')
         document.body.classList.add(`theme-${theme}`)
+        localStorage.setItem('miles-theme', theme)
     }, [theme])
 
     const toggleTheme = () => {
