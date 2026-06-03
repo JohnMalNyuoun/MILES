@@ -132,6 +132,33 @@ const defaultSiteContent = {
 		dignityText:
 			'MILES does not share stories to induce shame or stigma. We share them to build armor. Every young mother who speaks does so from a position of leadership and purpose. They are utilizing their past struggles to act as guardians for the community\'s children, turning personal adversity into a collective shield.',
 	},
+	workshops: {
+		title: 'Workshop Schedule Tracker',
+		coordinator: 'MILES Program Team',
+		nextSessionDate: '',
+		nextSessionTopic: '',
+		nextSessionLocation: '',
+		nextSessionFacilitator: '',
+		notes: '',
+		activities: [
+			{
+				title: 'Peer mentorship circle',
+				date: '',
+				location: 'Scorpion Center',
+				status: 'Planned',
+				details:
+					'Create a safe sharing space for mothers returning to school.',
+			},
+			{
+				title: 'School re-enrollment follow-up',
+				date: '',
+				location: 'Kakuma schools',
+				status: 'Planned',
+				details:
+					'Coordinate with schools and families to remove attendance barriers.',
+			},
+		],
+	},
 };
 
 const getOrCreateSiteContent = async () => {
@@ -168,6 +195,13 @@ const mergeContentWithDefaults = (storedContent = {}) => ({
 		...(storedContent.learn || {}),
 		focusAreas:
 			storedContent?.learn?.focusAreas || defaultSiteContent.learn.focusAreas,
+	},
+	workshops: {
+		...defaultSiteContent.workshops,
+		...(storedContent.workshops || {}),
+		activities:
+			storedContent?.workshops?.activities ||
+			defaultSiteContent.workshops.activities,
 	},
 });
 

@@ -19,8 +19,8 @@ const SECTION_CARDS = [
   },
   {
     key: 'create-team',
-    title: 'Add Team Member',
-    description: 'Register a new member profile for the team page.',
+    title: 'Add Mother Profile',
+    description: 'Register a full support profile for a mother under MILES care.',
     badge: 'TM',
   },
   {
@@ -31,9 +31,15 @@ const SECTION_CARDS = [
   },
   {
     key: 'manage-team',
-    title: 'Manage Team Members',
-    description: 'Edit or remove existing team member profiles.',
+    title: 'Manage Mother Profiles',
+    description: 'View, edit, and track full support records for all mothers.',
     badge: 'MT',
+  },
+  {
+    key: 'workshop-schedule',
+    title: 'Workshop Schedule Tracker',
+    description: 'Plan upcoming workshops and track all activities in one place.',
+    badge: 'WS',
   },
   {
     key: 'edit-hero',
@@ -230,6 +236,39 @@ const buildLearnFormFromContent = (content) => {
   };
 };
 
+const buildWorkshopFormFromContent = (content) => {
+  const workshops = {
+    ...defaultSiteContent.workshops,
+    ...(content?.workshops || {}),
+  };
+  const activities = workshops.activities || defaultSiteContent.workshops.activities;
+
+  return {
+    title: workshops.title || '',
+    coordinator: workshops.coordinator || '',
+    nextSessionDate: workshops.nextSessionDate || '',
+    nextSessionTopic: workshops.nextSessionTopic || '',
+    nextSessionLocation: workshops.nextSessionLocation || '',
+    nextSessionFacilitator: workshops.nextSessionFacilitator || '',
+    notes: workshops.notes || '',
+    activityOneTitle: activities[0]?.title || '',
+    activityOneDate: activities[0]?.date || '',
+    activityOneLocation: activities[0]?.location || '',
+    activityOneStatus: activities[0]?.status || 'Planned',
+    activityOneDetails: activities[0]?.details || '',
+    activityTwoTitle: activities[1]?.title || '',
+    activityTwoDate: activities[1]?.date || '',
+    activityTwoLocation: activities[1]?.location || '',
+    activityTwoStatus: activities[1]?.status || 'Planned',
+    activityTwoDetails: activities[1]?.details || '',
+    activityThreeTitle: activities[2]?.title || '',
+    activityThreeDate: activities[2]?.date || '',
+    activityThreeLocation: activities[2]?.location || '',
+    activityThreeStatus: activities[2]?.status || 'Planned',
+    activityThreeDetails: activities[2]?.details || '',
+  };
+};
+
 function AdminDashboard() {
   const apiBaseUrl = useMemo(() => getApiBaseUrl(), []);
   const navigate = useNavigate();
@@ -265,6 +304,16 @@ function AdminDashboard() {
     role: '',
     bio: '',
     image: '',
+    videoUrl: '',
+    returnToSchool: false,
+    schoolName: '',
+    educationLevel: '',
+    dropoutCause: '',
+    supportSummary: '',
+    currentChallenges: '',
+    caseStatus: 'Active Support',
+    guardianContact: '',
+    workshopFocus: '',
   });
   const [adminForm, setAdminForm] = useState({
     name: '',
@@ -285,6 +334,16 @@ function AdminDashboard() {
     role: '',
     bio: '',
     image: '',
+    videoUrl: '',
+    returnToSchool: false,
+    schoolName: '',
+    educationLevel: '',
+    dropoutCause: '',
+    supportSummary: '',
+    currentChallenges: '',
+    caseStatus: 'Active Support',
+    guardianContact: '',
+    workshopFocus: '',
   });
   const [siteContentObject, setSiteContentObject] = useState(defaultSiteContent);
   const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
@@ -295,6 +354,7 @@ function AdminDashboard() {
   const [contactForm, setContactForm] = useState(() => buildContactFormFromContent(defaultSiteContent));
   const [donateForm, setDonateForm] = useState(() => buildDonateFormFromContent(defaultSiteContent));
   const [learnForm, setLearnForm] = useState(() => buildLearnFormFromContent(defaultSiteContent));
+  const [workshopForm, setWorkshopForm] = useState(() => buildWorkshopFormFromContent(defaultSiteContent));
   const [dashboardSearch, setDashboardSearch] = useState('');
   const [activeOverviewPanel, setActiveOverviewPanel] = useState('activity');
 
@@ -372,6 +432,12 @@ function AdminDashboard() {
         ...defaultSiteContent.learn,
         ...(data.content?.learn || {}),
       },
+      workshops: {
+        ...defaultSiteContent.workshops,
+        ...(data.content?.workshops || {}),
+        activities:
+          data.content?.workshops?.activities || defaultSiteContent.workshops.activities,
+      },
     };
 
     setSiteContentObject(normalizedContent);
@@ -382,6 +448,7 @@ function AdminDashboard() {
     setContactForm(buildContactFormFromContent(normalizedContent));
     setDonateForm(buildDonateFormFromContent(normalizedContent));
     setLearnForm(buildLearnFormFromContent(normalizedContent));
+    setWorkshopForm(buildWorkshopFormFromContent(normalizedContent));
     setSiteContentUpdatedAt(data.updatedAt || '');
   };
 
@@ -409,6 +476,16 @@ function AdminDashboard() {
       role: member.role || '',
       bio: member.bio || '',
       image: member.image || '',
+      videoUrl: member.videoUrl || '',
+      returnToSchool: Boolean(member.returnToSchool),
+      schoolName: member.schoolName || '',
+      educationLevel: member.educationLevel || '',
+      dropoutCause: member.dropoutCause || '',
+      supportSummary: member.supportSummary || '',
+      currentChallenges: member.currentChallenges || '',
+      caseStatus: member.caseStatus || 'Active Support',
+      guardianContact: member.guardianContact || '',
+      workshopFocus: member.workshopFocus || '',
     });
   };
 
@@ -485,8 +562,18 @@ function AdminDashboard() {
         role: '',
         bio: '',
         image: '',
+        videoUrl: '',
+        returnToSchool: false,
+        schoolName: '',
+        educationLevel: '',
+        dropoutCause: '',
+        supportSummary: '',
+        currentChallenges: '',
+        caseStatus: 'Active Support',
+        guardianContact: '',
+        workshopFocus: '',
       });
-      setMessage('Team member created successfully.');
+      setMessage('Mother support profile created successfully.');
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
     } catch (err) {
       setError(err.message || 'Unable to create team member.');
@@ -682,6 +769,7 @@ function AdminDashboard() {
       setContactForm(buildContactFormFromContent(normalizedContent));
       setDonateForm(buildDonateFormFromContent(normalizedContent));
       setLearnForm(buildLearnFormFromContent(normalizedContent));
+      setWorkshopForm(buildWorkshopFormFromContent(normalizedContent));
       setSiteContentUpdatedAt(data.updatedAt || '');
       setMessage(successMessage);
     } catch (err) {
@@ -858,6 +946,49 @@ function AdminDashboard() {
     await saveContentSection(nextContent, 'Learn section updated successfully.');
   };
 
+  const handleSaveWorkshopSchedule = async (event) => {
+    event.preventDefault();
+    clearStatus();
+
+    const nextContent = {
+      ...siteContentObject,
+      workshops: {
+        title: workshopForm.title,
+        coordinator: workshopForm.coordinator,
+        nextSessionDate: workshopForm.nextSessionDate,
+        nextSessionTopic: workshopForm.nextSessionTopic,
+        nextSessionLocation: workshopForm.nextSessionLocation,
+        nextSessionFacilitator: workshopForm.nextSessionFacilitator,
+        notes: workshopForm.notes,
+        activities: [
+          {
+            title: workshopForm.activityOneTitle,
+            date: workshopForm.activityOneDate,
+            location: workshopForm.activityOneLocation,
+            status: workshopForm.activityOneStatus,
+            details: workshopForm.activityOneDetails,
+          },
+          {
+            title: workshopForm.activityTwoTitle,
+            date: workshopForm.activityTwoDate,
+            location: workshopForm.activityTwoLocation,
+            status: workshopForm.activityTwoStatus,
+            details: workshopForm.activityTwoDetails,
+          },
+          {
+            title: workshopForm.activityThreeTitle,
+            date: workshopForm.activityThreeDate,
+            location: workshopForm.activityThreeLocation,
+            status: workshopForm.activityThreeStatus,
+            details: workshopForm.activityThreeDetails,
+          },
+        ],
+      },
+    };
+
+    await saveContentSection(nextContent, 'Workshop schedule updated successfully.');
+  };
+
   useEffect(() => {
     const init = async () => {
       if (!token || !isAdmin) return;
@@ -930,10 +1061,24 @@ function AdminDashboard() {
     when: project.updatedAt || project.createdAt,
   }));
 
+  const workshopActivities = (siteContentObject?.workshops?.activities || [])
+    .filter((activity) => activity?.title || activity?.date || activity?.status)
+    .slice(0, 3)
+    .map((activity, index) => ({
+      id: `${activity.title || 'activity'}-${index}`,
+      title: activity.title || 'Workshop activity',
+      status: activity.status || 'Planned',
+      when: activity.date || '',
+    }));
+
   const pendingTasks = [
     {
       id: 'pending-profile-images',
-      label: `${team.filter((member) => !member.image).length} team profile(s) missing image filename`,
+      label: `${team.filter((member) => !member.image).length} mother profile(s) missing photo`,
+    },
+    {
+      id: 'pending-profile-videos',
+      label: `${team.filter((member) => !member.videoUrl).length} mother profile(s) missing video link`,
     },
     {
       id: 'pending-live-links',
@@ -942,6 +1087,12 @@ function AdminDashboard() {
     {
       id: 'pending-repo-links',
       label: `${projects.filter((project) => !project.repoUrl).length} project(s) missing repository URL`,
+    },
+    {
+      id: 'pending-workshop-date',
+      label: siteContentObject?.workshops?.nextSessionDate
+        ? 'Next workshop schedule is set.'
+        : 'Next workshop date has not been set yet.',
     },
   ];
 
@@ -976,7 +1127,7 @@ function AdminDashboard() {
           <button
             type="button"
             className={`miles-nav-item ${activeOverviewPanel === 'quick-actions' ? 'active' : ''}`}
-            onClick={() => handleSidebarClick('edit-learn', 'quick-actions')}
+            onClick={() => handleSidebarClick('workshop-schedule', 'quick-actions')}
           >
             <span className="miles-nav-icon">◈</span>
             Workshops
@@ -1090,26 +1241,6 @@ function AdminDashboard() {
           </article>
 
           <div className="miles-overview-side-stack">
-            <article className={`miles-panel ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}>
-              <h2>Quick Actions</h2>
-              <div className="miles-action-stack">
-                <button type="button" onClick={() => openWorkspaceSection('create-team', 'quick-actions')}>Add New Mother Profile</button>
-                <button type="button" onClick={() => openWorkspaceSection('manage-projects', 'quick-actions')}>Log New Case Intervention</button>
-                <button type="button" onClick={() => openWorkspaceSection('edit-learn', 'quick-actions')}>Schedule Workshop</button>
-              </div>
-            </article>
-
-            <article className={`miles-panel ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}>
-              <h2>Pending Tasks</h2>
-              <ul className="miles-task-list">
-                {pendingTasks.map((task) => (
-                  <li key={task.id}>
-                    <span>{task.label}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-
             <article className={`miles-panel miles-donor-panel ${activeOverviewPanel === 'donor' ? 'miles-panel-priority' : ''}`}>
               <h2>Donor Report Generator</h2>
               <p>Compile the latest impact metrics and stories into a shareable donor report.</p>
@@ -1118,16 +1249,38 @@ function AdminDashboard() {
           </div>
         </div>
 
-        <div className="miles-insights-row">
+        <div className="miles-overview-support-grid">
+          <article className={`miles-panel ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}>
+            <h2>Quick Actions</h2>
+            <div className="miles-action-stack">
+              <button type="button" onClick={() => openWorkspaceSection('create-team', 'quick-actions')}>Add New Mother Profile</button>
+              <button type="button" onClick={() => openWorkspaceSection('manage-team', 'quick-actions')}>View Mothers Under Support</button>
+              <button type="button" onClick={() => openWorkspaceSection('manage-projects', 'quick-actions')}>Log New Case Intervention</button>
+              <button type="button" onClick={() => openWorkspaceSection('workshop-schedule', 'quick-actions')}>Schedule Workshop</button>
+            </div>
+          </article>
+
+          <article className={`miles-panel ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}>
+            <h2>Pending Tasks</h2>
+            <ul className="miles-task-list">
+              {pendingTasks.map((task) => (
+                <li key={task.id}>
+                  <span>{task.label}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+
           <article className={`miles-panel ${activeOverviewPanel === 'team' ? 'miles-panel-priority' : ''}`}>
-            <h2>Team Overview</h2>
+            <h2>Mothers Under Support</h2>
             <ul className="miles-team-list miles-team-list-fullwidth">
               {team.slice(0, 5).map((member) => (
                 <li key={member._id}>
                   <span className="miles-avatar-slot">{(member.name || 'M').charAt(0)}</span>
                   <div>
                     <strong>{member.name}</strong>
-                    <p>{member.role}</p>
+                    <p>{member.returnToSchool ? 'Returned to school' : 'Re-enrollment in progress'}</p>
+                    <small>{member.schoolName ? `School: ${member.schoolName}` : 'School not yet recorded'}</small>
                     <small>Updated: {formatDateTime(member.updatedAt || member.createdAt)}</small>
                   </div>
                 </li>
@@ -1136,22 +1289,22 @@ function AdminDashboard() {
           </article>
 
           <article className={`miles-panel ${activeOverviewPanel === 'stories' ? 'miles-panel-priority' : ''}`}>
-            <h2>Advocacy Stories</h2>
+            <h2>Workshop Activities</h2>
             <ul className="miles-story-list miles-story-list-clean">
-              {advocacyStories.length > 0 ? (
-                advocacyStories.map((story) => (
-                  <li key={story.id}>
+              {workshopActivities.length > 0 ? (
+                workshopActivities.map((activity) => (
+                  <li key={activity.id}>
                     <div className="miles-story-copy">
-                      <span>{story.title}</span>
-                      <p>{formatDateTime(story.when)}</p>
+                      <span>{activity.title}</span>
+                      <p>{activity.when ? formatDateTime(activity.when) : 'Date pending'}</p>
                     </div>
-                    <em className={story.status === 'Published' ? 'miles-badge-published' : 'miles-badge-pending'}>
-                      {story.status}
+                    <em className={activity.status === 'Completed' ? 'miles-badge-published' : 'miles-badge-pending'}>
+                      {activity.status}
                     </em>
                   </li>
                 ))
               ) : (
-                <li>No stories tracked yet.</li>
+                <li>No workshop activities tracked yet.</li>
               )}
             </ul>
           </article>
@@ -1290,7 +1443,7 @@ function AdminDashboard() {
 
         {activeSection === 'create-team' && (
           <article className="admin-card admin-panel-card">
-            <h2>Add Team Member</h2>
+            <h2>Add Mother Under Support</h2>
             <form onSubmit={handleCreateTeamMember} className="admin-form">
               <label>
                 Name
@@ -1303,11 +1456,53 @@ function AdminDashboard() {
               </label>
 
               <label>
-                Role
+                Support Role
                 <input
                   value={teamForm.role}
                   onChange={(event) =>
                     setTeamForm((current) => ({ ...current, role: event.target.value }))
+                  }
+                  placeholder="Young Mother / Peer Mentor"
+                />
+              </label>
+
+              <label>
+                Cause of School Dropout
+                <textarea
+                  value={teamForm.dropoutCause}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, dropoutCause: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Has Returned to School
+                <input
+                  type="checkbox"
+                  checked={teamForm.returnToSchool}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, returnToSchool: event.target.checked }))
+                  }
+                />
+              </label>
+
+              <label>
+                Current School Name
+                <input
+                  value={teamForm.schoolName}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, schoolName: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Education Level / Class
+                <input
+                  value={teamForm.educationLevel}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, educationLevel: event.target.value }))
                   }
                 />
               </label>
@@ -1323,7 +1518,7 @@ function AdminDashboard() {
               </label>
 
               <label>
-                Image Filename
+                Mother Photo URL or Filename
                 <input
                   value={teamForm.image}
                   onChange={(event) =>
@@ -1333,7 +1528,68 @@ function AdminDashboard() {
                 />
               </label>
 
-              <button type="submit" disabled={loading}>Create Team Member</button>
+              <label>
+                Mother Video URL
+                <input
+                  value={teamForm.videoUrl}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, videoUrl: event.target.value }))
+                  }
+                  placeholder="https://..."
+                />
+              </label>
+
+              <label>
+                Support Summary
+                <textarea
+                  value={teamForm.supportSummary}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, supportSummary: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Current Challenges
+                <textarea
+                  value={teamForm.currentChallenges}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, currentChallenges: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Case Status
+                <input
+                  value={teamForm.caseStatus}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, caseStatus: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Guardian or Emergency Contact
+                <input
+                  value={teamForm.guardianContact}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, guardianContact: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Workshop Focus for this Mother
+                <textarea
+                  value={teamForm.workshopFocus}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, workshopFocus: event.target.value }))
+                  }
+                />
+              </label>
+
+              <button type="submit" disabled={loading}>Create Mother Profile</button>
             </form>
           </article>
         )}
@@ -1419,7 +1675,7 @@ function AdminDashboard() {
 
         {activeSection === 'manage-team' && (
           <article className="admin-card admin-panel-card">
-            <h2>Manage Team Members</h2>
+            <h2>Mothers Under Support</h2>
             <ul className="admin-list">
               {team.map((member) => (
                 <li key={member._id}>
@@ -1435,11 +1691,48 @@ function AdminDashboard() {
                         />
                       </label>
                       <label>
-                        Role
+                        Support Role
                         <input
                           value={editingTeamForm.role}
                           onChange={(event) =>
                             setEditingTeamForm((current) => ({ ...current, role: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Cause of School Dropout
+                        <textarea
+                          value={editingTeamForm.dropoutCause}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, dropoutCause: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Has Returned to School
+                        <input
+                          type="checkbox"
+                          checked={editingTeamForm.returnToSchool}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, returnToSchool: event.target.checked }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Current School Name
+                        <input
+                          value={editingTeamForm.schoolName}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, schoolName: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Education Level / Class
+                        <input
+                          value={editingTeamForm.educationLevel}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, educationLevel: event.target.value }))
                           }
                         />
                       </label>
@@ -1449,6 +1742,69 @@ function AdminDashboard() {
                           value={editingTeamForm.bio}
                           onChange={(event) =>
                             setEditingTeamForm((current) => ({ ...current, bio: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Mother Photo URL or Filename
+                        <input
+                          value={editingTeamForm.image}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, image: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Mother Video URL
+                        <input
+                          value={editingTeamForm.videoUrl}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, videoUrl: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Support Summary
+                        <textarea
+                          value={editingTeamForm.supportSummary}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, supportSummary: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Current Challenges
+                        <textarea
+                          value={editingTeamForm.currentChallenges}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, currentChallenges: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Case Status
+                        <input
+                          value={editingTeamForm.caseStatus}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, caseStatus: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Guardian or Emergency Contact
+                        <input
+                          value={editingTeamForm.guardianContact}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, guardianContact: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Workshop Focus
+                        <textarea
+                          value={editingTeamForm.workshopFocus}
+                          onChange={(event) =>
+                            setEditingTeamForm((current) => ({ ...current, workshopFocus: event.target.value }))
                           }
                         />
                       </label>
@@ -1469,6 +1825,39 @@ function AdminDashboard() {
                       <div>
                         <strong>{member.name}</strong>
                         <p>{member.role}</p>
+                        {member.dropoutCause && <p><strong>Dropout Cause:</strong> {member.dropoutCause}</p>}
+                        <p><strong>School Return:</strong> {member.returnToSchool ? 'Returned to school' : 'In progress'}</p>
+                        {member.schoolName && <p><strong>School:</strong> {member.schoolName}</p>}
+                        {member.educationLevel && <p><strong>Class:</strong> {member.educationLevel}</p>}
+                        {member.supportSummary && <p><strong>Support:</strong> {member.supportSummary}</p>}
+                        {member.currentChallenges && <p><strong>Challenges:</strong> {member.currentChallenges}</p>}
+                        {member.workshopFocus && <p><strong>Workshop Focus:</strong> {member.workshopFocus}</p>}
+                        <p><strong>Case Status:</strong> {member.caseStatus || 'Active Support'}</p>
+                        {member.guardianContact && <p><strong>Contact:</strong> {member.guardianContact}</p>}
+                        {(member.image || member.videoUrl) && (
+                          <div className="admin-media-links">
+                            {member.image && (
+                              <a
+                                className="admin-secondary-btn admin-link-pill"
+                                href={member.image}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                View Photo
+                              </a>
+                            )}
+                            {member.videoUrl && (
+                              <a
+                                className="admin-secondary-btn admin-link-pill"
+                                href={member.videoUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                View Video
+                              </a>
+                            )}
+                          </div>
+                        )}
                         <p>Updated: {formatDateTime(member.updatedAt || member.createdAt)}</p>
                       </div>
                       <div className="admin-row-actions">
@@ -1493,6 +1882,227 @@ function AdminDashboard() {
                 </li>
               ))}
             </ul>
+          </article>
+        )}
+
+        {activeSection === 'workshop-schedule' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Workshop Schedule Tracker</h2>
+            <p className="admin-panel-hint">
+              Use this tracker to keep workshop plans, responsibilities, and follow-ups on track.
+            </p>
+            <form onSubmit={handleSaveWorkshopSchedule} className="admin-form">
+              <label>
+                Tracker Title
+                <input
+                  value={workshopForm.title}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, title: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Coordinator
+                <input
+                  value={workshopForm.coordinator}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, coordinator: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Next Session Date
+                <input
+                  type="date"
+                  value={workshopForm.nextSessionDate}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, nextSessionDate: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Next Session Topic
+                <input
+                  value={workshopForm.nextSessionTopic}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, nextSessionTopic: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Next Session Location
+                <input
+                  value={workshopForm.nextSessionLocation}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, nextSessionLocation: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Facilitator
+                <input
+                  value={workshopForm.nextSessionFacilitator}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, nextSessionFacilitator: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                General Notes
+                <textarea
+                  value={workshopForm.notes}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, notes: event.target.value }))
+                  }
+                />
+              </label>
+
+              <h3>Activity 1</h3>
+              <label>
+                Title
+                <input
+                  value={workshopForm.activityOneTitle}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityOneTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Date
+                <input
+                  type="date"
+                  value={workshopForm.activityOneDate}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityOneDate: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Location
+                <input
+                  value={workshopForm.activityOneLocation}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityOneLocation: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Status
+                <input
+                  value={workshopForm.activityOneStatus}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityOneStatus: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Details
+                <textarea
+                  value={workshopForm.activityOneDetails}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityOneDetails: event.target.value }))
+                  }
+                />
+              </label>
+
+              <h3>Activity 2</h3>
+              <label>
+                Title
+                <input
+                  value={workshopForm.activityTwoTitle}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityTwoTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Date
+                <input
+                  type="date"
+                  value={workshopForm.activityTwoDate}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityTwoDate: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Location
+                <input
+                  value={workshopForm.activityTwoLocation}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityTwoLocation: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Status
+                <input
+                  value={workshopForm.activityTwoStatus}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityTwoStatus: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Details
+                <textarea
+                  value={workshopForm.activityTwoDetails}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityTwoDetails: event.target.value }))
+                  }
+                />
+              </label>
+
+              <h3>Activity 3</h3>
+              <label>
+                Title
+                <input
+                  value={workshopForm.activityThreeTitle}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityThreeTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Date
+                <input
+                  type="date"
+                  value={workshopForm.activityThreeDate}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityThreeDate: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Location
+                <input
+                  value={workshopForm.activityThreeLocation}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityThreeLocation: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Status
+                <input
+                  value={workshopForm.activityThreeStatus}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityThreeStatus: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Details
+                <textarea
+                  value={workshopForm.activityThreeDetails}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, activityThreeDetails: event.target.value }))
+                  }
+                />
+              </label>
+
+              <button type="submit" disabled={loading}>Save Workshop Schedule</button>
+            </form>
           </article>
         )}
 

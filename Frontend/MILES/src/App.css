@@ -1061,6 +1061,22 @@ h4 {
   flex-wrap: wrap;
 }
 
+.admin-media-links {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.45rem;
+}
+
+.admin-link-pill {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
+}
+
 .admin-alert {
   margin-top: 0.8rem;
   border-radius: 8px;
@@ -1104,6 +1120,8 @@ h4 {
 .miles-admin-shell {
   max-width: none;
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   min-height: calc(100vh - 80px);
   background: #0f1f14;
   color: #ffffff;
@@ -1188,6 +1206,8 @@ h4 {
 
 .miles-admin-main {
   min-width: 0;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .miles-admin-header {
@@ -1316,6 +1336,7 @@ h4 {
   grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
   gap: 20px;
   align-items: start;
+  max-width: 100%;
 }
 
 .miles-overview-side-stack {
@@ -1333,12 +1354,21 @@ h4 {
   align-items: start;
 }
 
+.miles-overview-support-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 100%;
+}
+
 .miles-panel {
   background: #15301f;
-  border: 1px solid rgba(127, 212, 139, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  padding: 16px;
+  padding: 20px;
   box-shadow: 0 10px 24px rgba(8, 95, 27, 0.22);
+  min-width: 0;
 }
 
 .miles-panel h2 {
@@ -1418,8 +1448,9 @@ h4 {
 }
 
 .miles-team-list li {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: start;
   gap: 10px;
 }
 
@@ -1449,9 +1480,10 @@ h4 {
 }
 
 .miles-story-list li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
 }
 
 .miles-story-list-clean li {
@@ -1518,7 +1550,12 @@ h4 {
 
 .miles-admin-main .admin-panel-wrap {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 16px;
+}
+
+.miles-admin-main .admin-panel-wrap > * {
+  min-width: 0;
 }
 
 .miles-admin-main .admin-section-card {
@@ -1640,7 +1677,8 @@ h4 {
   }
 
   .miles-overview-row,
-  .miles-insights-row {
+  .miles-insights-row,
+  .miles-overview-support-grid {
     grid-template-columns: 1fr;
   }
 }
