@@ -290,12 +290,7 @@ function AdminDashboard() {
   const [donateForm, setDonateForm] = useState(() => buildDonateFormFromContent(defaultSiteContent));
   const [learnForm, setLearnForm] = useState(() => buildLearnFormFromContent(defaultSiteContent));
   const [dashboardSearch, setDashboardSearch] = useState('');
-  const [pendingTasks, setPendingTasks] = useState([
-    { id: 'task-1', label: 'Confirm mentorship follow-up list', done: false },
-    { id: 'task-2', label: 'Review early pregnancy awareness notes', done: false },
-    { id: 'task-3', label: 'Prepare weekly donor impact summary', done: false },
-    { id: 'task-4', label: 'Validate workshop attendance records', done: true },
-  ]);
+  const [activeOverviewPanel, setActiveOverviewPanel] = useState('activity');
 
   const isAdmin = user?.role === 'admin';
 
@@ -885,13 +880,64 @@ function AdminDashboard() {
     setSearchParams({ section: sectionKey });
   };
 
-  const togglePendingTask = (taskId) => {
-    setPendingTasks((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === taskId ? { ...task, done: !task.done } : task
-      )
-    );
+  const formatDateTime = (dateValue) => {
+    if (!dateValue) return 'N/A';
+    const parsedDate = new Date(dateValue);
+    if (Number.isNaN(parsedDate.getTime())) return 'N/A';
+    return parsedDate.toLocaleString();
   };
+
+  const openWorkspaceSection = (sectionKey, panelKey) => {
+    if (sectionKey) {
+      setSearchParams({ section: sectionKey });
+    }
+    setActiveOverviewPanel(panelKey);
+  };
+
+  const handleSidebarClick = (sectionKey, panelKey) => {
+    if (!sectionKey) {
+      setSearchParams({}, { replace: true });
+    } else {
+      setSearchParams({ section: sectionKey });
+    }
+    setActiveOverviewPanel(panelKey);
+  };
+
+  const mentorshipBadgeTopics = ['Pregnancy Prevention', 'Peer Pressure'];
+  const recentActivityItems = [
+    ...(dashboard?.recentTeam || []).slice(0, 2).map((member) => ({
+      id: `team-${member._id}`,
+      text: `${member.name} joined the team as ${member.role}.`,
+      when: member.updatedAt || member.createdAt,
+    })),
+    ...(dashboard?.recentProjects || []).slice(0, 2).map((project) => ({
+      id: `project-${project._id}`,
+      text: `Project \"${project.title}\" was updated in the dashboard.`,
+      when: project.updatedAt || project.createdAt,
+    })),
+  ].slice(0, 4);
+
+  const advocacyStories = projects.slice(0, 3).map((project) => ({
+    id: project._id,
+    title: project.title,
+    status: project.liveUrl ? 'Published' : 'Pending Review',
+    when: project.updatedAt || project.createdAt,
+  }));
+
+  const pendingTasks = [
+    {
+      id: 'pending-profile-images',
+      label: `${team.filter((member) => !member.image).length} team profile(s) missing image filename`,
+    },
+    {
+      id: 'pending-live-links',
+      label: `${projects.filter((project) => !project.liveUrl).length} project(s) missing live URL`,
+    },
+    {
+      id: 'pending-repo-links',
+      label: `${projects.filter((project) => !project.repoUrl).length} project(s) missing repository URL`,
+    },
+  ];
 
   return (
     <section className="admin-page miles-admin-shell">
@@ -907,37 +953,65 @@ function AdminDashboard() {
         <nav className="miles-sidebar-nav" aria-label="Primary">
           <button
             type="button"
-            className={`miles-nav-item ${!activeSection ? 'active' : ''}`}
-            onClick={() => setSearchParams({}, { replace: true })}
+            className={`miles-nav-item ${activeOverviewPanel === 'activity' ? 'active' : ''}`}
+            onClick={() => handleSidebarClick('', 'activity')}
           >
             <span className="miles-nav-icon">▣</span>
             Dashboard
           </button>
-          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('create-team')}>
+          <button
+            type="button"
+            className={`miles-nav-item ${activeOverviewPanel === 'team' ? 'active' : ''}`}
+            onClick={() => handleSidebarClick('create-team', 'team')}
+          >
             <span className="miles-nav-icon">◉</span>
             Mothers
           </button>
-          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('edit-learn')}>
+          <button
+            type="button"
+            className={`miles-nav-item ${activeOverviewPanel === 'quick-actions' ? 'active' : ''}`}
+            onClick={() => handleSidebarClick('edit-learn', 'quick-actions')}
+          >
             <span className="miles-nav-icon">◈</span>
             Workshops
           </button>
-          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('manage-projects')}>
+          <button
+            type="button"
+            className={`miles-nav-item ${activeOverviewPanel === 'activity' ? 'active' : ''}`}
+            onClick={() => handleSidebarClick('manage-projects', 'activity')}
+          >
             <span className="miles-nav-icon">◌</span>
             Cases
           </button>
-          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('edit-donate')}>
+          <button
+            type="button"
+            className={`miles-nav-item ${activeOverviewPanel === 'donor' ? 'active' : ''}`}
+            onClick={() => handleSidebarClick('edit-donate', 'donor')}
+          >
             <span className="miles-nav-icon">▤</span>
             Reports
           </button>
-          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('manage-team')}>
+          <button
+            type="button"
+            className={`miles-nav-item ${activeOverviewPanel === 'team' ? 'active' : ''}`}
+            onClick={() => handleSidebarClick('manage-team', 'team')}
+          >
             <span className="miles-nav-icon">▥</span>
             Team
           </button>
-          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('edit-navbar')}>
+          <button
+            type="button"
+            className={`miles-nav-item ${activeOverviewPanel === 'tasks' ? 'active' : ''}`}
+            onClick={() => handleSidebarClick('edit-navbar', 'tasks')}
+          >
             <span className="miles-nav-icon">⚙</span>
             Settings
           </button>
-          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('create-admin')}>
+          <button
+            type="button"
+            className={`miles-nav-item ${activeOverviewPanel === 'stories' ? 'active' : ''}`}
+            onClick={() => handleSidebarClick('create-admin', 'stories')}
+          >
             <span className="miles-nav-icon">?</span>
             Help
           </button>
@@ -948,7 +1022,10 @@ function AdminDashboard() {
         <header className="miles-admin-header">
           <div>
             <h1>MILES | Empowerment Support</h1>
-            <p>Program Coordinator | John Mal Nyuon</p>
+            <p>
+              Program Coordinator | John Mal Nyuon
+              {siteContentUpdatedAt ? ` | Last content update: ${formatDateTime(siteContentUpdatedAt)}` : ''}
+            </p>
           </div>
           <div className="miles-header-tools">
             <input
@@ -972,81 +1049,101 @@ function AdminDashboard() {
         <div className="miles-stat-row">
           <article className="miles-stat-card">
             <h3>Mothers Supported</h3>
-            <p>453 <span>+21%</span></p>
+            <p>{dashboard?.stats?.teamCount ?? team.length} <span>From database</span></p>
           </article>
           <article className="miles-stat-card">
             <h3>Recent Mentorship</h3>
-            <p>45 Youth Hosted</p>
+            <p>{projects.length} Active Records</p>
             <div className="miles-badges">
-              <span>Pregnancy Prevention</span>
-              <span>Peer Pressure</span>
+              {mentorshipBadgeTopics.map((topic) => (
+                <span key={topic}>{topic}</span>
+              ))}
             </div>
           </article>
           <article className="miles-stat-card">
-            <h3>Workshops</h3>
-            <p>18 Held</p>
+            <h3>Admin Users</h3>
+            <p>{dashboard?.stats?.userCount ?? 0} <span>Authorized</span></p>
           </article>
         </div>
 
         <div className="miles-dashboard-grid">
-          <article className="miles-panel miles-recent-activity">
+          <article className={`miles-panel miles-recent-activity ${activeOverviewPanel === 'activity' ? 'miles-panel-priority' : ''}`}>
             <h2>Recent Activity Feed</h2>
             <ul>
-              <li>Nyaluit Mabil added a new Case study.</li>
-              <li>Mentorship session with 45 youth completed in Kakuma.</li>
-              <li>Case J-012 re-enrollment confirmed.</li>
+              {recentActivityItems.length > 0 ? (
+                recentActivityItems.map((item) => (
+                  <li key={item.id}>
+                    <strong>{item.text}</strong>
+                    <p>{formatDateTime(item.when)}</p>
+                  </li>
+                ))
+              ) : (
+                <li>No recent database activity yet.</li>
+              )}
             </ul>
           </article>
 
-          <article className="miles-panel">
+          <article className={`miles-panel ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}>
             <h2>Quick Actions</h2>
             <div className="miles-action-stack">
-              <button type="button" onClick={() => handleSectionChange('create-team')}>Add New Mother Profile</button>
-              <button type="button" onClick={() => handleSectionChange('manage-projects')}>Log New Case Intervention</button>
-              <button type="button" onClick={() => handleSectionChange('edit-learn')}>Schedule Workshop</button>
+              <button type="button" onClick={() => openWorkspaceSection('create-team', 'quick-actions')}>Add New Mother Profile</button>
+              <button type="button" onClick={() => openWorkspaceSection('manage-projects', 'quick-actions')}>Log New Case Intervention</button>
+              <button type="button" onClick={() => openWorkspaceSection('edit-learn', 'quick-actions')}>Schedule Workshop</button>
             </div>
           </article>
 
-          <article className="miles-panel">
+          <article className={`miles-panel ${activeOverviewPanel === 'team' ? 'miles-panel-priority' : ''}`}>
             <h2>Team Overview</h2>
             <ul className="miles-team-list">
-              <li><span className="miles-avatar-slot">N</span><div><strong>Nyajuok William</strong><p>Founder</p></div></li>
-              <li><span className="miles-avatar-slot">J</span><div><strong>John Mal Nyuon</strong><p>Program Coordinator</p></div></li>
-              <li><span className="miles-avatar-slot">N</span><div><strong>Nyaluit Mabil</strong><p>Young Mothers Rep</p></div></li>
-            </ul>
-          </article>
-
-          <article className="miles-panel">
-            <h2>Advocacy Stories</h2>
-            <ul className="miles-story-list">
-              <li><span>Story A-14</span><em className="miles-badge-published">Published</em></li>
-              <li><span>Story P-07</span><em className="miles-badge-pending">Pending Review</em></li>
-              <li><span>Story C-22</span><em className="miles-badge-published">Published</em></li>
-            </ul>
-          </article>
-
-          <article className="miles-panel">
-            <h2>Pending Tasks</h2>
-            <ul className="miles-task-list">
-              {pendingTasks.map((task) => (
-                <li key={task.id}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={task.done}
-                      onChange={() => togglePendingTask(task.id)}
-                    />
-                    <span>{task.label}</span>
-                  </label>
+              {team.slice(0, 5).map((member) => (
+                <li key={member._id}>
+                  <span className="miles-avatar-slot">{(member.name || 'M').charAt(0)}</span>
+                  <div>
+                    <strong>{member.name}</strong>
+                    <p>{member.role}</p>
+                    <small>Updated: {formatDateTime(member.updatedAt || member.createdAt)}</small>
+                  </div>
                 </li>
               ))}
             </ul>
           </article>
 
-          <article className="miles-panel miles-donor-panel">
+          <article className={`miles-panel ${activeOverviewPanel === 'stories' ? 'miles-panel-priority' : ''}`}>
+            <h2>Advocacy Stories</h2>
+            <ul className="miles-story-list">
+              {advocacyStories.length > 0 ? (
+                advocacyStories.map((story) => (
+                  <li key={story.id}>
+                    <div>
+                      <span>{story.title}</span>
+                      <p>{formatDateTime(story.when)}</p>
+                    </div>
+                    <em className={story.status === 'Published' ? 'miles-badge-published' : 'miles-badge-pending'}>
+                      {story.status}
+                    </em>
+                  </li>
+                ))
+              ) : (
+                <li>No stories tracked yet.</li>
+              )}
+            </ul>
+          </article>
+
+          <article className={`miles-panel ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}>
+            <h2>Pending Tasks</h2>
+            <ul className="miles-task-list">
+              {pendingTasks.map((task) => (
+                <li key={task.id}>
+                  <span>{task.label}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+
+          <article className={`miles-panel miles-donor-panel ${activeOverviewPanel === 'donor' ? 'miles-panel-priority' : ''}`}>
             <h2>Donor Report Generator</h2>
             <p>Compile the latest impact metrics and stories into a shareable donor report.</p>
-            <button type="button" onClick={() => handleSectionChange('edit-donate')}>Generate Report</button>
+            <button type="button" onClick={() => openWorkspaceSection('edit-donate', 'donor')}>Generate Report</button>
           </article>
         </div>
 
@@ -1283,6 +1380,7 @@ function AdminDashboard() {
                       <div>
                         <strong>{project.title}</strong>
                         <p>{project.description}</p>
+                        <p>Updated: {formatDateTime(project.updatedAt || project.createdAt)}</p>
                       </div>
                       <div className="admin-row-actions">
                         <button
@@ -1361,6 +1459,7 @@ function AdminDashboard() {
                       <div>
                         <strong>{member.name}</strong>
                         <p>{member.role}</p>
+                        <p>Updated: {formatDateTime(member.updatedAt || member.createdAt)}</p>
                       </div>
                       <div className="admin-row-actions">
                         <button
