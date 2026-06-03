@@ -289,6 +289,13 @@ function AdminDashboard() {
   const [contactForm, setContactForm] = useState(() => buildContactFormFromContent(defaultSiteContent));
   const [donateForm, setDonateForm] = useState(() => buildDonateFormFromContent(defaultSiteContent));
   const [learnForm, setLearnForm] = useState(() => buildLearnFormFromContent(defaultSiteContent));
+  const [dashboardSearch, setDashboardSearch] = useState('');
+  const [pendingTasks, setPendingTasks] = useState([
+    { id: 'task-1', label: 'Confirm mentorship follow-up list', done: false },
+    { id: 'task-2', label: 'Review early pregnancy awareness notes', done: false },
+    { id: 'task-3', label: 'Prepare weekly donor impact summary', done: false },
+    { id: 'task-4', label: 'Validate workshop attendance records', done: true },
+  ]);
 
   const isAdmin = user?.role === 'admin';
 
@@ -878,35 +885,177 @@ function AdminDashboard() {
     setSearchParams({ section: sectionKey });
   };
 
+  const togglePendingTask = (taskId) => {
+    setPendingTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === taskId ? { ...task, done: !task.done } : task
+      )
+    );
+  };
+
   return (
-    <section className="admin-page">
-      <header className="admin-header">
-        <div>
-          <h1>Admin Dashboard</h1>
-          <p>Welcome, {user?.name}. Backend is handling all writes to the database.</p>
+    <section className="admin-page miles-admin-shell">
+      <aside className="miles-admin-sidebar">
+        <div className="miles-sidebar-brand">
+          <span className="miles-sidebar-logo">M</span>
+          <div>
+            <h2>MILES Admin</h2>
+            <p>Empowerment Control Center</p>
+          </div>
         </div>
-      </header>
 
-      {loading && <p className="admin-loading">Syncing with backend...</p>}
-      {error && <p className="admin-alert admin-alert-error">{error}</p>}
-      {message && <p className="admin-alert admin-alert-success">{message}</p>}
+        <nav className="miles-sidebar-nav" aria-label="Primary">
+          <button
+            type="button"
+            className={`miles-nav-item ${!activeSection ? 'active' : ''}`}
+            onClick={() => setSearchParams({}, { replace: true })}
+          >
+            <span className="miles-nav-icon">▣</span>
+            Dashboard
+          </button>
+          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('create-team')}>
+            <span className="miles-nav-icon">◉</span>
+            Mothers
+          </button>
+          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('edit-learn')}>
+            <span className="miles-nav-icon">◈</span>
+            Workshops
+          </button>
+          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('manage-projects')}>
+            <span className="miles-nav-icon">◌</span>
+            Cases
+          </button>
+          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('edit-donate')}>
+            <span className="miles-nav-icon">▤</span>
+            Reports
+          </button>
+          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('manage-team')}>
+            <span className="miles-nav-icon">▥</span>
+            Team
+          </button>
+          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('edit-navbar')}>
+            <span className="miles-nav-icon">⚙</span>
+            Settings
+          </button>
+          <button type="button" className="miles-nav-item" onClick={() => handleSectionChange('create-admin')}>
+            <span className="miles-nav-icon">?</span>
+            Help
+          </button>
+        </nav>
+      </aside>
 
-      <div className="admin-stats-grid">
-        <article className="admin-stat-card">
-          <h3>Projects</h3>
-          <p>{dashboard?.stats?.projectCount ?? 0}</p>
-        </article>
-        <article className="admin-stat-card">
-          <h3>Team Members</h3>
-          <p>{dashboard?.stats?.teamCount ?? 0}</p>
-        </article>
-        <article className="admin-stat-card">
-          <h3>Users</h3>
-          <p>{dashboard?.stats?.userCount ?? 0}</p>
-        </article>
-      </div>
+      <div className="miles-admin-main">
+        <header className="miles-admin-header">
+          <div>
+            <h1>MILES | Empowerment Support</h1>
+            <p>Program Coordinator | John Mal Nyuon</p>
+          </div>
+          <div className="miles-header-tools">
+            <input
+              type="search"
+              className="miles-admin-search"
+              value={dashboardSearch}
+              onChange={(event) => setDashboardSearch(event.target.value)}
+              placeholder="Search activities, cases, or members"
+            />
+            <div className="miles-profile-chip">
+              <span className="miles-profile-avatar">A</span>
+              <span>{user?.name || 'Admin'}</span>
+            </div>
+          </div>
+        </header>
 
-      <div className="admin-section-picker">
+        {loading && <p className="admin-loading">Syncing with backend...</p>}
+        {error && <p className="admin-alert admin-alert-error">{error}</p>}
+        {message && <p className="admin-alert admin-alert-success">{message}</p>}
+
+        <div className="miles-stat-row">
+          <article className="miles-stat-card">
+            <h3>Mothers Supported</h3>
+            <p>453 <span>+21%</span></p>
+          </article>
+          <article className="miles-stat-card">
+            <h3>Recent Mentorship</h3>
+            <p>45 Youth Hosted</p>
+            <div className="miles-badges">
+              <span>Pregnancy Prevention</span>
+              <span>Peer Pressure</span>
+            </div>
+          </article>
+          <article className="miles-stat-card">
+            <h3>Workshops</h3>
+            <p>18 Held</p>
+          </article>
+        </div>
+
+        <div className="miles-dashboard-grid">
+          <article className="miles-panel miles-recent-activity">
+            <h2>Recent Activity Feed</h2>
+            <ul>
+              <li>Nyaluit Mabil added a new Case study.</li>
+              <li>Mentorship session with 45 youth completed in Kakuma.</li>
+              <li>Case J-012 re-enrollment confirmed.</li>
+            </ul>
+          </article>
+
+          <article className="miles-panel">
+            <h2>Quick Actions</h2>
+            <div className="miles-action-stack">
+              <button type="button" onClick={() => handleSectionChange('create-team')}>Add New Mother Profile</button>
+              <button type="button" onClick={() => handleSectionChange('manage-projects')}>Log New Case Intervention</button>
+              <button type="button" onClick={() => handleSectionChange('edit-learn')}>Schedule Workshop</button>
+            </div>
+          </article>
+
+          <article className="miles-panel">
+            <h2>Team Overview</h2>
+            <ul className="miles-team-list">
+              <li><span className="miles-avatar-slot">N</span><div><strong>Nyajuok William</strong><p>Founder</p></div></li>
+              <li><span className="miles-avatar-slot">J</span><div><strong>John Mal Nyuon</strong><p>Program Coordinator</p></div></li>
+              <li><span className="miles-avatar-slot">N</span><div><strong>Nyaluit Mabil</strong><p>Young Mothers Rep</p></div></li>
+            </ul>
+          </article>
+
+          <article className="miles-panel">
+            <h2>Advocacy Stories</h2>
+            <ul className="miles-story-list">
+              <li><span>Story A-14</span><em className="miles-badge-published">Published</em></li>
+              <li><span>Story P-07</span><em className="miles-badge-pending">Pending Review</em></li>
+              <li><span>Story C-22</span><em className="miles-badge-published">Published</em></li>
+            </ul>
+          </article>
+
+          <article className="miles-panel">
+            <h2>Pending Tasks</h2>
+            <ul className="miles-task-list">
+              {pendingTasks.map((task) => (
+                <li key={task.id}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={task.done}
+                      onChange={() => togglePendingTask(task.id)}
+                    />
+                    <span>{task.label}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </article>
+
+          <article className="miles-panel miles-donor-panel">
+            <h2>Donor Report Generator</h2>
+            <p>Compile the latest impact metrics and stories into a shareable donor report.</p>
+            <button type="button" onClick={() => handleSectionChange('edit-donate')}>Generate Report</button>
+          </article>
+        </div>
+
+        <article className="miles-panel miles-workspace-panel">
+          <h2>Management Workspace</h2>
+          <p>Choose a section below to edit content, manage records, or perform admin actions.</p>
+        </article>
+
+        <div className="admin-section-picker">
         {SECTION_CARDS.map((section) => (
           <button
             key={section.key}
@@ -1955,6 +2104,7 @@ function AdminDashboard() {
         <button type="button" className="admin-logout" onClick={handleLogout}>
           Logout
         </button>
+      </div>
       </div>
     </section>
   );
