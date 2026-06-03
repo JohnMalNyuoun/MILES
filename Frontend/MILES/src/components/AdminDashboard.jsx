@@ -77,6 +77,12 @@ const SECTION_CARDS = [
     description: 'Update Learn More narratives in a dedicated form.',
     badge: 'LM',
   },
+  {
+    key: 'help-guide',
+    title: 'Help & Guidance',
+    description: 'How to use the dashboard and publish updates safely.',
+    badge: 'HP',
+  },
 ];
 
 const buildHeroFormFromContent = (content) => {
@@ -1010,7 +1016,7 @@ function AdminDashboard() {
           <button
             type="button"
             className={`miles-nav-item ${activeOverviewPanel === 'stories' ? 'active' : ''}`}
-            onClick={() => handleSidebarClick('create-admin', 'stories')}
+            onClick={() => handleSidebarClick('help-guide', 'stories')}
           >
             <span className="miles-nav-icon">?</span>
             Help
@@ -2194,6 +2200,52 @@ function AdminDashboard() {
 
               <button type="submit" disabled={loading}>Save Learn Section</button>
             </form>
+          </article>
+        )}
+
+        {activeSection === 'help-guide' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Help & Guidance</h2>
+            <p className="admin-panel-hint">
+              Use this guide to navigate the dashboard and publish updates to the live website.
+            </p>
+
+            <section className="admin-help-block">
+              <h3>1. Dashboard Overview</h3>
+              <ul>
+                <li>Use the left sidebar to jump between major areas like Team, Reports, and Settings.</li>
+                <li>The top cards show live counts from your backend database.</li>
+                <li>Panels in the middle show recent activity, stories, and pending data checks.</li>
+              </ul>
+            </section>
+
+            <section className="admin-help-block">
+              <h3>2. Editing Website Content</h3>
+              <ul>
+                <li>Open section cards like Edit Hero, Edit Home, Edit Donate, or Edit Learn.</li>
+                <li>Update the fields, then click the Save button at the bottom of that section.</li>
+                <li>Your changes are sent directly to backend APIs and stored in the database.</li>
+                <li>After saving, the dashboard shows a success alert and updated timestamps.</li>
+              </ul>
+            </section>
+
+            <section className="admin-help-block">
+              <h3>3. Managing Team and Projects</h3>
+              <ul>
+                <li>Create records from Add Team Member or Add Project.</li>
+                <li>Use Manage Team Members and Manage Projects to edit or delete existing records.</li>
+                <li>Each record row displays when it was last updated.</li>
+              </ul>
+            </section>
+
+            <section className="admin-help-block">
+              <h3>4. Safety Checklist Before Publishing</h3>
+              <ul>
+                <li>Verify names, links, and spellings before clicking save.</li>
+                <li>Check Pending Tasks panel for missing image files or project links.</li>
+                <li>Confirm timestamps changed after save to ensure update reached the database.</li>
+              </ul>
+            </section>
           </article>
         )}
 

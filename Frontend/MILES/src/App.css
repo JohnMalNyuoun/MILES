@@ -1406,6 +1406,30 @@ h4 {
   color: #1a1105;
 }
 
+.admin-help-block {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(127, 212, 139, 0.28);
+  background: rgba(17, 28, 36, 0.75);
+}
+
+.admin-help-block h3 {
+  color: #b9f0bf;
+  margin-bottom: 8px;
+}
+
+.admin-help-block ul {
+  margin-left: 16px;
+  display: grid;
+  gap: 6px;
+}
+
+.admin-help-block li {
+  color: #dbe6dd;
+  line-height: 1.5;
+}
+
 .miles-panel-priority {
   order: -1;
   border-color: #7fd48b;
