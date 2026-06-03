@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: miles-backend
+    runtime: node
+    rootDir: Backend
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ADMIN_REGISTRATION_SECRET
+        sync: false
+
+  - type: web
+    name: miles-frontend
+    runtime: static
+    rootDir: Frontend/MILES
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: VITE_API_BASE_URL
+        value: https://miles-backend.onrender.com
