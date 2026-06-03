@@ -2,9 +2,9 @@ services:
   - type: web
     name: miles-backend
     runtime: node
-    rootDir: Backend
-    buildCommand: npm install
-    startCommand: npm start
+    rootDir: .
+    buildCommand: npm --prefix Backend install
+    startCommand: npm --prefix Backend start
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
@@ -18,10 +18,10 @@ services:
 
   - type: web
     name: miles-website
-    runtime: static
-    rootDir: Frontend/MILES
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    env: static
+    rootDir: .
+    buildCommand: npm --prefix Frontend/MILES install && npm --prefix Frontend/MILES run build
+    staticPublishPath: Frontend/MILES/dist
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
