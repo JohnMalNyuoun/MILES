@@ -1060,39 +1060,6 @@ function AdminDashboard() {
     }
   }, [activeSectionParam, allowedSections, setSearchParams]);
 
-  useEffect(() => {
-    if (!normalizedDashboardSearch) {
-      if (searchDrivenSection && activeSection === searchDrivenSection) {
-        setSearchDrivenSection('');
-        setSearchParams({}, { replace: true });
-      }
-      return;
-    }
-
-    if (!inferredSearchTarget) {
-      return;
-    }
-
-    const shouldDriveSearch = !activeSection || activeSection === searchDrivenSection;
-
-    if (!shouldDriveSearch) {
-      return;
-    }
-
-    if (activeSection !== inferredSearchTarget.section || activeOverviewPanel !== inferredSearchTarget.panel) {
-      setSearchDrivenSection(inferredSearchTarget.section);
-      setSearchParams({ section: inferredSearchTarget.section }, { replace: true });
-      setActiveOverviewPanel(inferredSearchTarget.panel);
-    }
-  }, [
-    activeOverviewPanel,
-    activeSection,
-    inferredSearchTarget,
-    normalizedDashboardSearch,
-    searchDrivenSection,
-    setSearchParams,
-  ]);
-
   const handleSectionChange = (sectionKey) => {
     setSearchParams({ section: sectionKey });
     scrollToTop();
@@ -1329,6 +1296,39 @@ function AdminDashboard() {
     filteredTeamRecords.length,
     filteredWorkshopActivities.length,
     normalizedDashboardSearch,
+  ]);
+
+  useEffect(() => {
+    if (!normalizedDashboardSearch) {
+      if (searchDrivenSection && activeSection === searchDrivenSection) {
+        setSearchDrivenSection('');
+        setSearchParams({}, { replace: true });
+      }
+      return;
+    }
+
+    if (!inferredSearchTarget) {
+      return;
+    }
+
+    const shouldDriveSearch = !activeSection || activeSection === searchDrivenSection;
+
+    if (!shouldDriveSearch) {
+      return;
+    }
+
+    if (activeSection !== inferredSearchTarget.section || activeOverviewPanel !== inferredSearchTarget.panel) {
+      setSearchDrivenSection(inferredSearchTarget.section);
+      setSearchParams({ section: inferredSearchTarget.section }, { replace: true });
+      setActiveOverviewPanel(inferredSearchTarget.panel);
+    }
+  }, [
+    activeOverviewPanel,
+    activeSection,
+    inferredSearchTarget,
+    normalizedDashboardSearch,
+    searchDrivenSection,
+    setSearchParams,
   ]);
 
   return (
