@@ -3,7 +3,10 @@ import defaultSiteContent from '../content/defaultSiteContent';
 
 function Learn({ siteContent = defaultSiteContent }) {
   const [teamMembers, setTeamMembers] = useState([]);
-  const learnContent = siteContent.learn || defaultSiteContent.learn;
+  const learnContent = {
+    ...defaultSiteContent.learn,
+    ...(siteContent.learn || {}),
+  };
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -41,6 +44,24 @@ function Learn({ siteContent = defaultSiteContent }) {
           mothers to gain independence, reclaim their education, and secure sustainable futures for
           themselves and their children.
         </p>
+      </section>
+
+      <section className="section">
+        <h2>{learnContent.amplifyingTitle}</h2>
+        <p>{learnContent.amplifyingIntro}</p>
+        <p>{learnContent.amplifyingBridge}</p>
+
+        {(learnContent.focusAreas || []).map((area, index) => (
+          <div key={`${area.title}-${index}`}>
+            <h3>{area.title}</h3>
+            {(area.body || '').split('\n\n').map((paragraph, paragraphIndex) => (
+              <p key={`${area.title}-${paragraphIndex}`}>{paragraph}</p>
+            ))}
+          </div>
+        ))}
+
+        <h3>{learnContent.dignityTitle}</h3>
+        <p>{learnContent.dignityText}</p>
       </section>
 
       <section className="section">

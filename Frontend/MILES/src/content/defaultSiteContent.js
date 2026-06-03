@@ -109,6 +109,24 @@ const defaultSiteContent = {
   },
   learn: {
     title: 'Empowering Vulnerable Mothers Through Targeted Education and Mentorship',
+    amplifyingTitle: 'Amplifying Voices: Truth, Awareness, and Collective Protection',
+    amplifyingIntro:
+      'At the MILES Project, we believe that the most powerful tool for community transformation is the truth. To protect the next generation of girls and boys, we hold brave spaces where young mothers step forward to share their lived experiences. These are not just stories - they are active blueprints for survival, resilience, and community awakening.',
+    amplifyingBridge:
+      'By bringing these narratives out of the shadows, our advocacy work targets two critical vulnerabilities facing our youth today:',
+    focusAreas: [
+      {
+        title: '1. Confronting the Reality of Early Pregnancy',
+        body: 'Early pregnancy is not an isolated personal event; it is a structural crisis that abruptly halts a girl\'s academic journey, places immense strain on her physical health, and introduces immediate economic vulnerability. Through first-hand testimonies, young mothers shed light on the heavy realities of balancing sudden maternal responsibilities with the fight to return to the classroom.\n\nWe use these raw, honest accounts to demystify the illusions of early relationships and to visually show young girls the profound, life-altering weight of early parenthood.',
+      },
+      {
+        title: '2. Exposing the Traps of Negative Peer Pressure',
+        body: 'Negative peer pressure silently steers young people toward decisions that compromise their futures. Whether it is the pressure to drop out of school, engage in risky behavior, or conform to unsafe social environments, youth often succumb because the dangers feel distant.\n\nWhen our young mothers speak, they pull back the curtain on how easily negative peer influence can derail an individual\'s potential. Their stories serve as an urgent warning system, teaching young boys and girls how to recognize manipulative social dynamics, stand firm in their values, and choose positive alliances instead.',
+      },
+    ],
+    dignityTitle: 'A Note on Dignity and Agency',
+    dignityText:
+      'MILES does not share stories to induce shame or stigma. We share them to build armor. Every young mother who speaks does so from a position of leadership and purpose. They are utilizing their past struggles to act as guardians for the community\'s children, turning personal adversity into a collective shield.',
   },
 };
 

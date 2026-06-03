@@ -36,12 +36,39 @@ const SECTION_CARDS = [
     badge: 'MT',
   },
   {
+    key: 'edit-learn',
+    title: 'Edit Learn Section',
+    description: 'Update Learn More narratives in a dedicated form.',
+    badge: 'LM',
+  },
+  {
     key: 'manage-content',
     title: 'Manage Website Content',
     description: 'Update cards, texts, and buttons across the website.',
     badge: 'WC',
   },
 ];
+
+const buildLearnFormFromContent = (content) => {
+  const learn = {
+    ...defaultSiteContent.learn,
+    ...(content?.learn || {}),
+  };
+  const focusAreas = learn.focusAreas || defaultSiteContent.learn.focusAreas;
+
+  return {
+    title: learn.title || '',
+    amplifyingTitle: learn.amplifyingTitle || '',
+    amplifyingIntro: learn.amplifyingIntro || '',
+    amplifyingBridge: learn.amplifyingBridge || '',
+    focusAreaOneTitle: focusAreas[0]?.title || '',
+    focusAreaOneBody: focusAreas[0]?.body || '',
+    focusAreaTwoTitle: focusAreas[1]?.title || '',
+    focusAreaTwoBody: focusAreas[1]?.body || '',
+    dignityTitle: learn.dignityTitle || '',
+    dignityText: learn.dignityText || '',
+  };
+};
 
 function AdminDashboard() {
   const apiBaseUrl = useMemo(() => getApiBaseUrl(), []);
@@ -102,7 +129,9 @@ function AdminDashboard() {
   const [siteContentText, setSiteContentText] = useState(
     JSON.stringify(defaultSiteContent, null, 2)
   );
+  const [siteContentObject, setSiteContentObject] = useState(defaultSiteContent);
   const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
+  const [learnForm, setLearnForm] = useState(() => buildLearnFormFromContent(defaultSiteContent));
 
   const isAdmin = user?.role === 'admin';
 
@@ -171,7 +200,18 @@ function AdminDashboard() {
     }
 
     const data = await response.json();
-    setSiteContentText(JSON.stringify(data.content || defaultSiteContent, null, 2));
+    const normalizedContent = {
+      ...defaultSiteContent,
+      ...(data.content || {}),
+      learn: {
+        ...defaultSiteContent.learn,
+        ...(data.content?.learn || {}),
+      },
+    };
+
+    setSiteContentObject(normalizedContent);
+    setSiteContentText(JSON.stringify(normalizedContent, null, 2));
+    setLearnForm(buildLearnFormFromContent(normalizedContent));
     setSiteContentUpdatedAt(data.updatedAt || '');
   };
 
@@ -466,11 +506,82 @@ function AdminDashboard() {
         throw new Error(data.message || 'Unable to save website content.');
       }
 
-      setSiteContentText(JSON.stringify(data.content || parsedContent, null, 2));
+      const normalizedContent = {
+        ...defaultSiteContent,
+        ...(data.content || parsedContent),
+        learn: {
+          ...defaultSiteContent.learn,
+          ...((data.content || parsedContent).learn || {}),
+        },
+      };
+
+      setSiteContentObject(normalizedContent);
+      setSiteContentText(JSON.stringify(normalizedContent, null, 2));
+      setLearnForm(buildLearnFormFromContent(normalizedContent));
       setSiteContentUpdatedAt(data.updatedAt || '');
       setMessage('Website content updated successfully.');
     } catch (err) {
       setError(err.message || 'Unable to save website content.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveLearnSection = async (event) => {
+    event.preventDefault();
+    clearStatus();
+
+    const nextContent = {
+      ...siteContentObject,
+      learn: {
+        title: learnForm.title,
+        amplifyingTitle: learnForm.amplifyingTitle,
+        amplifyingIntro: learnForm.amplifyingIntro,
+        amplifyingBridge: learnForm.amplifyingBridge,
+        focusAreas: [
+          {
+            title: learnForm.focusAreaOneTitle,
+            body: learnForm.focusAreaOneBody,
+          },
+          {
+            title: learnForm.focusAreaTwoTitle,
+            body: learnForm.focusAreaTwoBody,
+          },
+        ],
+        dignityTitle: learnForm.dignityTitle,
+        dignityText: learnForm.dignityText,
+      },
+    };
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiBaseUrl}/api/admin/content`, {
+        method: 'PUT',
+        headers: authHeaders,
+        body: JSON.stringify(nextContent),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to save Learn section.');
+      }
+
+      const normalizedContent = {
+        ...defaultSiteContent,
+        ...(data.content || nextContent),
+        learn: {
+          ...defaultSiteContent.learn,
+          ...((data.content || nextContent).learn || {}),
+        },
+      };
+
+      setSiteContentObject(normalizedContent);
+      setSiteContentText(JSON.stringify(normalizedContent, null, 2));
+      setLearnForm(buildLearnFormFromContent(normalizedContent));
+      setSiteContentUpdatedAt(data.updatedAt || '');
+      setMessage('Learn section updated successfully.');
+    } catch (err) {
+      setError(err.message || 'Unable to save Learn section.');
     } finally {
       setLoading(false);
     }
@@ -861,6 +972,121 @@ function AdminDashboard() {
                 </li>
               ))}
             </ul>
+          </article>
+        )}
+
+        {activeSection === 'edit-learn' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Edit Learn Section</h2>
+            <p className="admin-panel-hint">
+              This dedicated form controls the Learn More narrative and awareness blocks.
+            </p>
+            <form onSubmit={handleSaveLearnSection} className="admin-form">
+              <label>
+                Main Title
+                <input
+                  value={learnForm.title}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, title: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Amplifying Voices Title
+                <input
+                  value={learnForm.amplifyingTitle}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, amplifyingTitle: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Amplifying Voices Introduction
+                <textarea
+                  value={learnForm.amplifyingIntro}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, amplifyingIntro: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Bridge Paragraph
+                <textarea
+                  value={learnForm.amplifyingBridge}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, amplifyingBridge: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Focus Area 1 Title
+                <input
+                  value={learnForm.focusAreaOneTitle}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, focusAreaOneTitle: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Focus Area 1 Body
+                <textarea
+                  value={learnForm.focusAreaOneBody}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, focusAreaOneBody: event.target.value }))
+                  }
+                  rows={6}
+                />
+              </label>
+
+              <label>
+                Focus Area 2 Title
+                <input
+                  value={learnForm.focusAreaTwoTitle}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, focusAreaTwoTitle: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Focus Area 2 Body
+                <textarea
+                  value={learnForm.focusAreaTwoBody}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, focusAreaTwoBody: event.target.value }))
+                  }
+                  rows={6}
+                />
+              </label>
+
+              <label>
+                Dignity Note Title
+                <input
+                  value={learnForm.dignityTitle}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, dignityTitle: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Dignity Note Text
+                <textarea
+                  value={learnForm.dignityText}
+                  onChange={(event) =>
+                    setLearnForm((current) => ({ ...current, dignityText: event.target.value }))
+                  }
+                  rows={5}
+                />
+              </label>
+
+              <button type="submit" disabled={loading}>Save Learn Section</button>
+            </form>
           </article>
         )}
 
