@@ -21,7 +21,7 @@ const Team = () => {
     useEffect(() => {
         const fetchTeam = async () => {
             try {
-                const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000'
+                const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''
                 const response = await fetch(`${apiBaseUrl}/api/team`)
 
                 if (!response.ok) {

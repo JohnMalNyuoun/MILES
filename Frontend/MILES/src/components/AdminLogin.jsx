@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const getApiBaseUrl = () => import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:3000';
+const getApiBaseUrl = () => import.meta.env.VITE_API_BASE_URL || '';
 
 function AdminLogin() {
   const apiBaseUrl = useMemo(() => getApiBaseUrl(), []);

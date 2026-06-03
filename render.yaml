@@ -2,9 +2,9 @@ services:
   - type: web
     name: miles-backend
     runtime: node
-    rootDir: Backend
-    buildCommand: npm install
-    startCommand: node index.js
+    rootDir: .
+    buildCommand: npm --prefix Backend install && npm --prefix Frontend/MILES install && npm --prefix Frontend/MILES run build
+    startCommand: npm --prefix Backend start
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
@@ -15,15 +15,3 @@ services:
         sync: false
       - key: ADMIN_REGISTRATION_SECRET
         sync: false
-
-  - type: static_site
-    name: miles-website
-    rootDir: Frontend/MILES
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    autoDeploy: true
-    envVars:
-      - key: NODE_VERSION
-        value: 20
-      - key: VITE_API_BASE_URL
-        value: https://miles-backend.onrender.com
