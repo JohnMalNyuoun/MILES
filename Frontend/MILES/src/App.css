@@ -1371,6 +1371,15 @@ h4 {
   min-width: 0;
 }
 
+.miles-panel-compact {
+  padding: 14px 16px;
+}
+
+.miles-panel-compact h2 {
+  margin-bottom: 8px;
+  font-size: 0.98rem;
+}
+
 .miles-panel h2 {
   color: #ffffff;
   font-size: 1.05rem;
@@ -1412,6 +1421,10 @@ h4 {
   gap: 10px;
 }
 
+.miles-quick-actions-panel .miles-action-stack {
+  gap: 8px;
+}
+
 .miles-action-stack button,
 .miles-donor-panel button {
   border: none;
@@ -1422,6 +1435,12 @@ h4 {
   color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.miles-panel-compact .miles-action-stack button,
+.miles-panel-compact.miles-donor-panel button {
+  padding: 8px 10px;
+  font-size: 0.9rem;
 }
 
 .miles-action-stack button:hover,
@@ -1528,12 +1547,72 @@ h4 {
   gap: 8px;
 }
 
+.miles-panel-compact .miles-task-list {
+  gap: 8px;
+}
+
+.miles-panel-compact .miles-task-list li {
+  padding: 8px 10px;
+}
+
 .miles-donor-panel {
   min-width: 0;
 }
 
+.miles-donor-panel p {
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
 .miles-workspace-panel {
   margin-top: 20px;
+}
+
+.miles-workspace-page {
+  margin-top: 18px;
+}
+
+.miles-workspace-page-header {
+  background: #15301f;
+  border: 1px solid rgba(127, 212, 139, 0.3);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.miles-workspace-page-header h2 {
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.miles-workspace-page-header p {
+  color: #bdd5c0;
+}
+
+.miles-workspace-kicker {
+  color: #8be29a;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.miles-workspace-back {
+  border: 1px solid rgba(127, 212, 139, 0.35);
+  background: #1e3526;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.miles-admin-main .admin-panel-wrap.miles-workspace-only {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .miles-admin-main .admin-section-picker,
@@ -1680,6 +1759,11 @@ h4 {
   .miles-insights-row,
   .miles-overview-support-grid {
     grid-template-columns: 1fr;
+  }
+
+  .miles-workspace-page-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

@@ -281,6 +281,8 @@ function AdminDashboard() {
   const activeSection = allowedSections.includes(activeSectionParam)
     ? activeSectionParam
     : '';
+  const activeSectionMeta = SECTION_CARDS.find((section) => section.key === activeSection) || null;
+  const isWorkspaceView = Boolean(activeSectionMeta);
   const [token] = useState(localStorage.getItem('adminToken') || '');
   const [user] = useState(() => {
     const persistedUser = localStorage.getItem('adminUser');
@@ -371,6 +373,20 @@ function AdminDashboard() {
   const clearStatus = () => {
     setMessage('');
     setError('');
+  };
+
+  const scrollToTop = () => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const returnToDashboard = (panelKey = 'activity') => {
+    setEditingProjectId('');
+    setEditingTeamId('');
+    setSearchParams({}, { replace: true });
+    setActiveOverviewPanel(panelKey);
+    scrollToTop();
   };
 
   const fetchPublicLists = async () => {
@@ -528,6 +544,7 @@ function AdminDashboard() {
       });
       setMessage('Project created successfully.');
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
+      returnToDashboard('activity');
     } catch (err) {
       setError(err.message || 'Unable to create project.');
     } finally {
@@ -575,6 +592,7 @@ function AdminDashboard() {
       });
       setMessage('Mother support profile created successfully.');
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
+      returnToDashboard('team');
     } catch (err) {
       setError(err.message || 'Unable to create team member.');
     } finally {
@@ -611,6 +629,7 @@ function AdminDashboard() {
       });
       setMessage('Admin account created successfully.');
       await fetchDashboard();
+      returnToDashboard('activity');
     } catch (err) {
       setError(err.message || 'Unable to create admin account.');
     } finally {
@@ -675,6 +694,7 @@ function AdminDashboard() {
       setEditingProjectId('');
       setMessage('Project updated successfully.');
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
+      returnToDashboard('activity');
     } catch (err) {
       setError(err.message || 'Unable to update project.');
     } finally {
@@ -731,6 +751,7 @@ function AdminDashboard() {
       setEditingTeamId('');
       setMessage('Team member updated successfully.');
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
+      returnToDashboard('team');
     } catch (err) {
       setError(err.message || 'Unable to update team member.');
     } finally {
@@ -738,7 +759,7 @@ function AdminDashboard() {
     }
   };
 
-  const saveContentSection = async (nextContent, successMessage) => {
+  const saveContentSection = async (nextContent, successMessage, successPanel = 'activity') => {
     try {
       setLoading(true);
       const response = await fetch(`${apiBaseUrl}/api/admin/content`, {
@@ -772,6 +793,7 @@ function AdminDashboard() {
       setWorkshopForm(buildWorkshopFormFromContent(normalizedContent));
       setSiteContentUpdatedAt(data.updatedAt || '');
       setMessage(successMessage);
+      returnToDashboard(successPanel);
     } catch (err) {
       setError(err.message || 'Unable to save section.');
     } finally {
@@ -790,7 +812,7 @@ function AdminDashboard() {
         description: heroForm.description,
       },
     };
-    await saveContentSection(nextContent, 'Hero section updated successfully.');
+    await saveContentSection(nextContent, 'Hero section updated successfully.', 'activity');
   };
 
   const handleSaveHomeSection = async (event) => {
@@ -826,7 +848,7 @@ function AdminDashboard() {
         ],
       },
     };
-    await saveContentSection(nextContent, 'Home section updated successfully.');
+    await saveContentSection(nextContent, 'Home section updated successfully.', 'activity');
   };
 
   const handleSaveNavbarSection = async (event) => {
@@ -844,7 +866,7 @@ function AdminDashboard() {
         adminLabel: navbarForm.adminLabel,
       },
     };
-    await saveContentSection(nextContent, 'Navigation updated successfully.');
+    await saveContentSection(nextContent, 'Navigation updated successfully.', 'tasks');
   };
 
   const handleSaveAboutSection = async (event) => {
@@ -865,7 +887,7 @@ function AdminDashboard() {
         ],
       },
     };
-    await saveContentSection(nextContent, 'About section updated successfully.');
+    await saveContentSection(nextContent, 'About section updated successfully.', 'stories');
   };
 
   const handleSaveContactSection = async (event) => {
@@ -882,7 +904,7 @@ function AdminDashboard() {
         mapUrl: contactForm.mapUrl,
       },
     };
-    await saveContentSection(nextContent, 'Contact section updated successfully.');
+    await saveContentSection(nextContent, 'Contact section updated successfully.', 'activity');
   };
 
   const handleSaveDonateSection = async (event) => {
@@ -914,7 +936,7 @@ function AdminDashboard() {
         ],
       },
     };
-    await saveContentSection(nextContent, 'Donate section updated successfully.');
+    await saveContentSection(nextContent, 'Donate section updated successfully.', 'donor');
   };
 
   const handleSaveLearnSection = async (event) => {
@@ -943,7 +965,7 @@ function AdminDashboard() {
       },
     };
 
-    await saveContentSection(nextContent, 'Learn section updated successfully.');
+    await saveContentSection(nextContent, 'Learn section updated successfully.', 'stories');
   };
 
   const handleSaveWorkshopSchedule = async (event) => {
@@ -986,7 +1008,7 @@ function AdminDashboard() {
       },
     };
 
-    await saveContentSection(nextContent, 'Workshop schedule updated successfully.');
+    await saveContentSection(nextContent, 'Workshop schedule updated successfully.', 'quick-actions');
   };
 
   useEffect(() => {
@@ -1015,6 +1037,7 @@ function AdminDashboard() {
 
   const handleSectionChange = (sectionKey) => {
     setSearchParams({ section: sectionKey });
+    scrollToTop();
   };
 
   const formatDateTime = (dateValue) => {
@@ -1029,6 +1052,7 @@ function AdminDashboard() {
       setSearchParams({ section: sectionKey });
     }
     setActiveOverviewPanel(panelKey);
+    scrollToTop();
   };
 
   const handleSidebarClick = (sectionKey, panelKey) => {
@@ -1038,6 +1062,7 @@ function AdminDashboard() {
       setSearchParams({ section: sectionKey });
     }
     setActiveOverviewPanel(panelKey);
+    scrollToTop();
   };
 
   const mentorshipBadgeTopics = ['Pregnancy Prevention', 'Peer Pressure'];
@@ -1203,6 +1228,8 @@ function AdminDashboard() {
         {error && <p className="admin-alert admin-alert-error">{error}</p>}
         {message && <p className="admin-alert admin-alert-success">{message}</p>}
 
+        {!isWorkspaceView && (
+          <>
         <div className="miles-stat-row">
           <article className="miles-stat-card">
             <h3>Mothers Supported</h3>
@@ -1241,7 +1268,7 @@ function AdminDashboard() {
           </article>
 
           <div className="miles-overview-side-stack">
-            <article className={`miles-panel miles-donor-panel ${activeOverviewPanel === 'donor' ? 'miles-panel-priority' : ''}`}>
+            <article className={`miles-panel miles-panel-compact miles-donor-panel ${activeOverviewPanel === 'donor' ? 'miles-panel-priority' : ''}`}>
               <h2>Donor Report Generator</h2>
               <p>Compile the latest impact metrics and stories into a shareable donor report.</p>
               <button type="button" onClick={() => openWorkspaceSection('edit-donate', 'donor')}>Generate Report</button>
@@ -1250,7 +1277,7 @@ function AdminDashboard() {
         </div>
 
         <div className="miles-overview-support-grid">
-          <article className={`miles-panel ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}>
+          <article className={`miles-panel miles-panel-compact miles-quick-actions-panel ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}>
             <h2>Quick Actions</h2>
             <div className="miles-action-stack">
               <button type="button" onClick={() => openWorkspaceSection('create-team', 'quick-actions')}>Add New Mother Profile</button>
@@ -1260,7 +1287,7 @@ function AdminDashboard() {
             </div>
           </article>
 
-          <article className={`miles-panel ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}>
+          <article className={`miles-panel miles-panel-compact ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}>
             <h2>Pending Tasks</h2>
             <ul className="miles-task-list">
               {pendingTasks.map((task) => (
@@ -1329,8 +1356,29 @@ function AdminDashboard() {
           </button>
         ))}
       </div>
+          </>
+        )}
 
-      <div className="admin-panel-wrap">
+        {isWorkspaceView && (
+          <section className="miles-workspace-page">
+            <div className="miles-workspace-page-header">
+              <div>
+                <p className="miles-workspace-kicker">Focused Workspace</p>
+                <h2>{activeSectionMeta?.title}</h2>
+                <p>{activeSectionMeta?.description}</p>
+              </div>
+              <button
+                type="button"
+                className="miles-workspace-back"
+                onClick={() => returnToDashboard(activeOverviewPanel)}
+              >
+                Back to Dashboard
+              </button>
+            </div>
+          </section>
+        )}
+
+      <div className={`admin-panel-wrap ${isWorkspaceView ? 'miles-workspace-only' : ''}`}>
         {!activeSection && (
           <article className="admin-card admin-panel-card">
             <h2>Select A Section</h2>
