@@ -1,0 +1,11 @@
+{
+  "name": "miles-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Monorepo root for MILES frontend and backend",
+  "scripts": {
+    "install:all": "npm --prefix Backend install && npm --prefix Frontend/MILES install",
+    "build": "npm --prefix Frontend/MILES run build",
+    "start": "npm --prefix Backend start"
+  }
+}
