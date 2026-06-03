@@ -361,6 +361,7 @@ function AdminDashboard() {
   const [workshopForm, setWorkshopForm] = useState(() => buildWorkshopFormFromContent(defaultSiteContent));
   const [dashboardSearch, setDashboardSearch] = useState('');
   const [activeOverviewPanel, setActiveOverviewPanel] = useState('activity');
+  const [searchDrivenSection, setSearchDrivenSection] = useState('');
 
   const isAdmin = user?.role === 'admin';
 
@@ -1059,6 +1060,39 @@ function AdminDashboard() {
     }
   }, [activeSectionParam, allowedSections, setSearchParams]);
 
+  useEffect(() => {
+    if (!normalizedDashboardSearch) {
+      if (searchDrivenSection && activeSection === searchDrivenSection) {
+        setSearchDrivenSection('');
+        setSearchParams({}, { replace: true });
+      }
+      return;
+    }
+
+    if (!inferredSearchTarget) {
+      return;
+    }
+
+    const shouldDriveSearch = !activeSection || activeSection === searchDrivenSection;
+
+    if (!shouldDriveSearch) {
+      return;
+    }
+
+    if (activeSection !== inferredSearchTarget.section || activeOverviewPanel !== inferredSearchTarget.panel) {
+      setSearchDrivenSection(inferredSearchTarget.section);
+      setSearchParams({ section: inferredSearchTarget.section }, { replace: true });
+      setActiveOverviewPanel(inferredSearchTarget.panel);
+    }
+  }, [
+    activeOverviewPanel,
+    activeSection,
+    inferredSearchTarget,
+    normalizedDashboardSearch,
+    searchDrivenSection,
+    setSearchParams,
+  ]);
+
   const handleSectionChange = (sectionKey) => {
     setSearchParams({ section: sectionKey });
     scrollToTop();
@@ -1235,6 +1269,67 @@ function AdminDashboard() {
       .filter(Boolean)
       .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
   });
+
+  const sectionPanelMap = {
+    'create-admin': 'activity',
+    'create-project': 'activity',
+    'create-team': 'team',
+    'manage-projects': 'activity',
+    'manage-team': 'team',
+    'workshop-schedule': 'quick-actions',
+    'edit-hero': 'activity',
+    'edit-home': 'activity',
+    'edit-navbar': 'tasks',
+    'edit-about': 'stories',
+    'edit-contact': 'activity',
+    'edit-donate': 'donor',
+    'edit-learn': 'stories',
+    'help-guide': 'stories',
+  };
+
+  const inferredSearchTarget = useMemo(() => {
+    if (!normalizedDashboardSearch) {
+      return null;
+    }
+
+    const directSectionMatch = SECTION_CARDS.find((section) =>
+      [section.title, section.description, section.badge]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(normalizedDashboardSearch))
+    );
+
+    if (directSectionMatch) {
+      return {
+        section: directSectionMatch.key,
+        panel: sectionPanelMap[directSectionMatch.key] || 'activity',
+      };
+    }
+
+    if (filteredTeamRecords.length > 0 || filteredTeamPreview.length > 0) {
+      return { section: 'manage-team', panel: 'team' };
+    }
+
+    if (filteredProjects.length > 0) {
+      return { section: 'manage-projects', panel: 'activity' };
+    }
+
+    if (filteredWorkshopActivities.length > 0) {
+      return { section: 'workshop-schedule', panel: 'quick-actions' };
+    }
+
+    if (filteredPendingTasks.length > 0) {
+      return { section: 'edit-navbar', panel: 'tasks' };
+    }
+
+    return null;
+  }, [
+    filteredPendingTasks.length,
+    filteredProjects.length,
+    filteredTeamPreview.length,
+    filteredTeamRecords.length,
+    filteredWorkshopActivities.length,
+    normalizedDashboardSearch,
+  ]);
 
   return (
     <section className="admin-page miles-admin-shell">
