@@ -310,6 +310,73 @@ h4 {
   font-size: 0.95rem;
 }
 
+/* ===== Public Dashboard ===== */
+.public-dashboard-section {
+  margin-top: 1rem;
+}
+
+.public-dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.2rem;
+}
+
+.public-dashboard-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.public-dashboard-card h3 {
+  font-size: 1rem;
+  color: var(--accent-color);
+  margin-bottom: 0.45rem;
+}
+
+.public-dashboard-card p {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.public-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.public-dashboard-panel {
+  background: var(--soft-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.public-dashboard-panel h3 {
+  margin-bottom: 0.55rem;
+  color: var(--accent-dark);
+  font-size: 1.05rem;
+}
+
+.public-dashboard-panel ul {
+  margin-left: 1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.public-dashboard-panel li {
+  color: var(--text-color);
+}
+
+.public-dashboard-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 /* ===== Contact ===== */
 .contact-info {
   background: var(--card-bg);
