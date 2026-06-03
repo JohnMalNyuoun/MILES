@@ -17,7 +17,7 @@ services:
         sync: false
 
   - type: web
-    name: miles-frontend
+    name: miles-website
     runtime: static
     rootDir: Frontend/MILES
     buildCommand: npm install && npm run build
