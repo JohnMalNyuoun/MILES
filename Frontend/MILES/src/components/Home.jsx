@@ -114,29 +114,27 @@ function Home({ siteContent = defaultSiteContent }) {
 
         <div className="public-dashboard-grid">
           <article className="public-dashboard-panel">
-            <h3>Quick Actions</h3>
-            <div className="public-dashboard-links">
-              <Link to="/learn" className="hero-btn">Learn More</Link>
-              <Link to="/team" className="hero-btn">Meet Team</Link>
-              <Link to="/projects" className="hero-btn">Explore Projects</Link>
+            <h3>Our Core Focus</h3>
+            <div className="public-focus-tags">
+              <span>Early Pregnancy Prevention</span>
+              <span>Combating Negative Peer Pressure</span>
             </div>
           </article>
 
           <article className="public-dashboard-panel">
             <h3>Team Overview</h3>
             <ul>
-              {teamMembers.slice(0, 3).map((member) => (
-                <li key={member._id || `${member.name}-${member.role}`}>
-                  <strong>{member.name}</strong> - {member.role}
-                </li>
-              ))}
+              <li><strong>Nyajuok William</strong> - Founder</li>
+              <li><strong>John Mal Nyuon</strong> - Program Coordinator</li>
+              <li><strong>Nyaluit Mabil</strong> - Young Mothers Representative</li>
             </ul>
           </article>
 
           <article className="public-dashboard-panel">
-            <h3>Settings</h3>
-            <p>
-              Users can switch between light and dark mode using the theme button in the top navigation bar.
+            <h3>Latest Community Milestone</h3>
+            <p className="public-milestone-text">
+              Successfully hosted a dynamic mentorship workshop bringing together 45 young mothers,
+              girls, and boys altogether to address youth advocacy and brotherly allyship.
             </p>
           </article>
         </div>

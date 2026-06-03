@@ -377,6 +377,30 @@ h4 {
   gap: 0.5rem;
 }
 
+.public-focus-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.public-focus-tags span {
+  background: #edf7e7;
+  border: 1px solid #c8e6c9;
+  color: #1b5e20;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.public-milestone-text {
+  background: #edf7e7;
+  border-left: 4px solid #2e7d32;
+  border-radius: 8px;
+  padding: 0.8rem;
+  color: #2f4b33;
+}
+
 /* ===== Contact ===== */
 .contact-info {
   background: var(--card-bg);
