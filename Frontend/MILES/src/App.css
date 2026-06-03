@@ -949,7 +949,8 @@ h4 {
 }
 
 .admin-panel-card {
-  max-width: 900px;
+  max-width: none;
+  width: 100%;
 }
 
 .admin-panel-hint {
@@ -1309,6 +1310,29 @@ h4 {
   grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 
+.miles-overview-row {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.miles-overview-side-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.miles-insights-row {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
 .miles-panel {
   background: #15301f;
   border: 1px solid rgba(127, 212, 139, 0.24);
@@ -1330,7 +1354,27 @@ h4 {
 }
 
 .miles-recent-activity {
-  grid-column: span 6;
+  min-width: 0;
+  max-height: 450px;
+  display: flex;
+  flex-direction: column;
+}
+
+.miles-recent-activity-scroll {
+  overflow-y: auto;
+  max-height: 370px;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(127, 212, 139, 0.45) transparent;
+}
+
+.miles-recent-activity-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.miles-recent-activity-scroll::-webkit-scrollbar-thumb {
+  background: rgba(127, 212, 139, 0.45);
+  border-radius: 999px;
 }
 
 .miles-action-stack {
@@ -1379,6 +1423,15 @@ h4 {
   gap: 10px;
 }
 
+.miles-team-list-fullwidth li {
+  width: 100%;
+  align-items: flex-start;
+}
+
+.miles-team-list-fullwidth li div {
+  min-width: 0;
+}
+
 .miles-avatar-slot {
   width: 32px;
   height: 32px;
@@ -1399,6 +1452,24 @@ h4 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.miles-story-list-clean li {
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.miles-story-copy {
+  min-width: 0;
+}
+
+.miles-story-copy span {
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
 }
 
 .miles-badge-published,
@@ -1426,7 +1497,7 @@ h4 {
 }
 
 .miles-donor-panel {
-  grid-column: span 6;
+  min-width: 0;
 }
 
 .miles-workspace-panel {
@@ -1437,6 +1508,17 @@ h4 {
 .miles-admin-main .admin-panel-wrap,
 .miles-admin-main .admin-footer-actions {
   margin-top: 18px;
+}
+
+.miles-admin-main .admin-section-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.miles-admin-main .admin-panel-wrap {
+  display: grid;
+  gap: 16px;
 }
 
 .miles-admin-main .admin-section-card {
@@ -1522,7 +1604,6 @@ h4 {
 }
 
 .miles-panel-priority {
-  order: -1;
   border-color: #7fd48b;
   box-shadow: 0 0 0 1px rgba(127, 212, 139, 0.35), 0 10px 24px rgba(0, 0, 0, 0.24);
 }
@@ -1558,13 +1639,9 @@ h4 {
     grid-template-columns: 1fr;
   }
 
-  .miles-dashboard-grid {
+  .miles-overview-row,
+  .miles-insights-row {
     grid-template-columns: 1fr;
-  }
-
-  .miles-recent-activity,
-  .miles-donor-panel {
-    grid-column: span 1;
   }
 }
 

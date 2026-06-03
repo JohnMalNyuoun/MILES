@@ -1072,10 +1072,10 @@ function AdminDashboard() {
           </article>
         </div>
 
-        <div className="miles-dashboard-grid">
+        <div className="miles-overview-row">
           <article className={`miles-panel miles-recent-activity ${activeOverviewPanel === 'activity' ? 'miles-panel-priority' : ''}`}>
             <h2>Recent Activity Feed</h2>
-            <ul>
+            <ul className="miles-recent-activity-scroll">
               {recentActivityItems.length > 0 ? (
                 recentActivityItems.map((item) => (
                   <li key={item.id}>
@@ -1089,18 +1089,39 @@ function AdminDashboard() {
             </ul>
           </article>
 
-          <article className={`miles-panel ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}>
-            <h2>Quick Actions</h2>
-            <div className="miles-action-stack">
-              <button type="button" onClick={() => openWorkspaceSection('create-team', 'quick-actions')}>Add New Mother Profile</button>
-              <button type="button" onClick={() => openWorkspaceSection('manage-projects', 'quick-actions')}>Log New Case Intervention</button>
-              <button type="button" onClick={() => openWorkspaceSection('edit-learn', 'quick-actions')}>Schedule Workshop</button>
-            </div>
-          </article>
+          <div className="miles-overview-side-stack">
+            <article className={`miles-panel ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}>
+              <h2>Quick Actions</h2>
+              <div className="miles-action-stack">
+                <button type="button" onClick={() => openWorkspaceSection('create-team', 'quick-actions')}>Add New Mother Profile</button>
+                <button type="button" onClick={() => openWorkspaceSection('manage-projects', 'quick-actions')}>Log New Case Intervention</button>
+                <button type="button" onClick={() => openWorkspaceSection('edit-learn', 'quick-actions')}>Schedule Workshop</button>
+              </div>
+            </article>
 
+            <article className={`miles-panel ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}>
+              <h2>Pending Tasks</h2>
+              <ul className="miles-task-list">
+                {pendingTasks.map((task) => (
+                  <li key={task.id}>
+                    <span>{task.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article className={`miles-panel miles-donor-panel ${activeOverviewPanel === 'donor' ? 'miles-panel-priority' : ''}`}>
+              <h2>Donor Report Generator</h2>
+              <p>Compile the latest impact metrics and stories into a shareable donor report.</p>
+              <button type="button" onClick={() => openWorkspaceSection('edit-donate', 'donor')}>Generate Report</button>
+            </article>
+          </div>
+        </div>
+
+        <div className="miles-insights-row">
           <article className={`miles-panel ${activeOverviewPanel === 'team' ? 'miles-panel-priority' : ''}`}>
             <h2>Team Overview</h2>
-            <ul className="miles-team-list">
+            <ul className="miles-team-list miles-team-list-fullwidth">
               {team.slice(0, 5).map((member) => (
                 <li key={member._id}>
                   <span className="miles-avatar-slot">{(member.name || 'M').charAt(0)}</span>
@@ -1116,11 +1137,11 @@ function AdminDashboard() {
 
           <article className={`miles-panel ${activeOverviewPanel === 'stories' ? 'miles-panel-priority' : ''}`}>
             <h2>Advocacy Stories</h2>
-            <ul className="miles-story-list">
+            <ul className="miles-story-list miles-story-list-clean">
               {advocacyStories.length > 0 ? (
                 advocacyStories.map((story) => (
                   <li key={story.id}>
-                    <div>
+                    <div className="miles-story-copy">
                       <span>{story.title}</span>
                       <p>{formatDateTime(story.when)}</p>
                     </div>
@@ -1133,23 +1154,6 @@ function AdminDashboard() {
                 <li>No stories tracked yet.</li>
               )}
             </ul>
-          </article>
-
-          <article className={`miles-panel ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}>
-            <h2>Pending Tasks</h2>
-            <ul className="miles-task-list">
-              {pendingTasks.map((task) => (
-                <li key={task.id}>
-                  <span>{task.label}</span>
-                </li>
-              ))}
-            </ul>
-          </article>
-
-          <article className={`miles-panel miles-donor-panel ${activeOverviewPanel === 'donor' ? 'miles-panel-priority' : ''}`}>
-            <h2>Donor Report Generator</h2>
-            <p>Compile the latest impact metrics and stories into a shareable donor report.</p>
-            <button type="button" onClick={() => openWorkspaceSection('edit-donate', 'donor')}>Generate Report</button>
           </article>
         </div>
 
