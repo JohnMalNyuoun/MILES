@@ -32,12 +32,6 @@ const workshopActivitySchema = new mongoose.Schema(
 
 const workshopScheduleSchema = new mongoose.Schema(
 	{
-		key: {
-			type: String,
-			required: true,
-			unique: true,
-			default: 'main',
-		},
 		title: {
 			type: String,
 			default: 'Workshop Schedule Tracker',

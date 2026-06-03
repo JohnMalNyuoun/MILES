@@ -34,24 +34,26 @@ const mergeWorkshopSchedule = (schedule = {}) => ({
 		: defaultWorkshopSchedule.activities,
 });
 
-const getOrCreateWorkshopSchedule = async () => {
-	let record = await WorkshopSchedule.findOne({ key: 'main' });
-
-	if (!record) {
-		record = await WorkshopSchedule.create({
-			key: 'main',
-			...defaultWorkshopSchedule,
-		});
-	}
-
-	return record;
-};
-
 const getWorkshopSchedule = async (req, res, next) => {
 	try {
-		const record = await getOrCreateWorkshopSchedule();
+		let record = await WorkshopSchedule.findOne().sort({ updatedAt: -1 });
+		if (!record) {
+			record = await WorkshopSchedule.create(defaultWorkshopSchedule);
+		}
+
+		const recentSchedules = await WorkshopSchedule.find()
+			.sort({ updatedAt: -1 })
+			.limit(6);
+
 		res.status(200).json({
-			...mergeWorkshopSchedule(record.toObject()),
+			currentSchedule: {
+				...mergeWorkshopSchedule(record.toObject()),
+				updatedAt: record.updatedAt,
+			},
+			recentSchedules: recentSchedules.map((schedule) => ({
+				...mergeWorkshopSchedule(schedule.toObject()),
+				updatedAt: schedule.updatedAt,
+			})),
 			updatedAt: record.updatedAt,
 		});
 	} catch (error) {
@@ -68,15 +70,21 @@ const updateWorkshopSchedule = async (req, res, next) => {
 		}
 
 		const nextSchedule = mergeWorkshopSchedule(payload);
-		const record = await WorkshopSchedule.findOneAndUpdate(
-			{ key: 'main' },
-			{ key: 'main', ...nextSchedule },
-			{ new: true, upsert: true, setDefaultsOnInsert: true, runValidators: true }
-		);
+		const record = await WorkshopSchedule.create(nextSchedule);
+		const recentSchedules = await WorkshopSchedule.find()
+			.sort({ updatedAt: -1 })
+			.limit(6);
 
 		res.status(200).json({
-			message: 'Workshop schedule updated successfully',
-			schedule: mergeWorkshopSchedule(record.toObject()),
+			message: 'Workshop schedule recorded successfully',
+			schedule: {
+				...mergeWorkshopSchedule(record.toObject()),
+				updatedAt: record.updatedAt,
+			},
+			recentSchedules: recentSchedules.map((schedule) => ({
+				...mergeWorkshopSchedule(schedule.toObject()),
+				updatedAt: schedule.updatedAt,
+			})),
 			updatedAt: record.updatedAt,
 		});
 	} catch (error) {

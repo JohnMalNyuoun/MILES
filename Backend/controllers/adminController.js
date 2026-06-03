@@ -2,16 +2,18 @@ const bcrypt = require('bcryptjs');
 const Project = require('../models/Project');
 const Team = require('../models/Team');
 const User = require('../models/User');
+const WorkshopSchedule = require('../models/WorkshopSchedule');
 
 const getAdminDashboard = async (req, res, next) => {
 	try {
-		const [projectCount, teamCount, userCount, recentProjects, recentTeam] =
+		const [projectCount, teamCount, userCount, recentProjects, recentTeam, recentWorkshops] =
 			await Promise.all([
 				Project.countDocuments(),
 				Team.countDocuments(),
 				User.countDocuments(),
 				Project.find().sort({ createdAt: -1 }).limit(5),
 				Team.find().sort({ createdAt: -1 }).limit(5),
+				WorkshopSchedule.find().sort({ createdAt: -1 }).limit(5),
 			]);
 
 		res.status(200).json({
@@ -22,6 +24,7 @@ const getAdminDashboard = async (req, res, next) => {
 			},
 			recentProjects,
 			recentTeam,
+			recentWorkshops,
 		});
 	} catch (error) {
 		next(error);

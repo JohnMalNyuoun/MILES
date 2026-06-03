@@ -6,30 +6,35 @@ function Home({ siteContent = defaultSiteContent }) {
   const homeContent = siteContent.home || defaultSiteContent.home;
   const [teamMembers, setTeamMembers] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [recentWorkshops, setRecentWorkshops] = useState([]);
 
   useEffect(() => {
     const loadPublicDashboardData = async () => {
       try {
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
-        const [teamResponse, projectsResponse] = await Promise.all([
+        const [teamResponse, projectsResponse, workshopsResponse] = await Promise.all([
           fetch(`${apiBaseUrl}/api/team`),
           fetch(`${apiBaseUrl}/api/projects`),
+          fetch(`${apiBaseUrl}/api/workshops`),
         ]);
 
-        if (!teamResponse.ok || !projectsResponse.ok) {
+        if (!teamResponse.ok || !projectsResponse.ok || !workshopsResponse.ok) {
           return;
         }
 
-        const [teamData, projectsData] = await Promise.all([
+        const [teamData, projectsData, workshopData] = await Promise.all([
           teamResponse.json(),
           projectsResponse.json(),
+          workshopsResponse.json(),
         ]);
 
         setTeamMembers(Array.isArray(teamData) ? teamData : []);
         setProjects(Array.isArray(projectsData) ? projectsData : []);
+        setRecentWorkshops(Array.isArray(workshopData.recentSchedules) ? workshopData.recentSchedules : []);
       } catch (error) {
         setTeamMembers([]);
         setProjects([]);
+        setRecentWorkshops([]);
       }
     };
 
@@ -37,12 +42,13 @@ function Home({ siteContent = defaultSiteContent }) {
   }, []);
 
   const workshopCount = useMemo(() => {
-    const keywordMatches = projects.filter((project) =>
-      `${project.title || ''} ${project.description || ''}`.toLowerCase().match(/workshop|mentorship/)
-    );
+    return recentWorkshops.length;
+  }, [recentWorkshops]);
 
-    return keywordMatches.length > 0 ? keywordMatches.length : projects.length;
-  }, [projects]);
+  const latestWorkshop = recentWorkshops[0] || null;
+  const latestMilestoneText = latestWorkshop
+    ? `Latest recorded workshop: ${latestWorkshop.nextSessionTopic || latestWorkshop.title} at ${latestWorkshop.nextSessionLocation || 'MILES venue'}${latestWorkshop.nextSessionDate ? ` on ${latestWorkshop.nextSessionDate}` : ''}.`
+    : 'No workshop has been recorded yet. Record the next community workshop from the admin dashboard.';
 
   const renderLink = (item, className, children) => {
     if (!item?.path) {
@@ -65,7 +71,7 @@ function Home({ siteContent = defaultSiteContent }) {
   };
 
   return (
-    <div className="page">
+    <div className="page home-page">
       <section className="section">
         <h2>{homeContent.welcomeTitle}</h2>
         <p>{homeContent.welcomeText}</p>
@@ -108,7 +114,7 @@ function Home({ siteContent = defaultSiteContent }) {
           </article>
           <article className="public-dashboard-card">
             <h3>Workshops</h3>
-            <p>{workshopCount} Hosted</p>
+            <p>{workshopCount} Recorded</p>
           </article>
         </div>
 
@@ -133,8 +139,7 @@ function Home({ siteContent = defaultSiteContent }) {
           <article className="public-dashboard-panel">
             <h3>Latest Community Milestone</h3>
             <p className="public-milestone-text">
-              Successfully hosted a dynamic mentorship workshop bringing together 45 young mothers,
-              girls, and boys altogether to address youth advocacy and brotherly allyship.
+              {latestMilestoneText}
             </p>
           </article>
         </div>

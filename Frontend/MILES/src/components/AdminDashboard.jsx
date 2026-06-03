@@ -350,6 +350,7 @@ function AdminDashboard() {
   const [siteContentObject, setSiteContentObject] = useState(defaultSiteContent);
   const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
   const [workshopUpdatedAt, setWorkshopUpdatedAt] = useState('');
+  const [recentWorkshopSchedules, setRecentWorkshopSchedules] = useState([]);
   const [heroForm, setHeroForm] = useState(() => buildHeroFormFromContent(defaultSiteContent));
   const [homeForm, setHomeForm] = useState(() => buildHomeFormFromContent(defaultSiteContent));
   const [navbarForm, setNavbarForm] = useState(() => buildNavbarFormFromContent(defaultSiteContent));
@@ -470,7 +471,8 @@ function AdminDashboard() {
     }
 
     const data = await response.json();
-    setWorkshopForm(buildWorkshopFormFromContent({ workshops: data }));
+    setWorkshopForm(buildWorkshopFormFromContent({ workshops: data.currentSchedule || data }));
+    setRecentWorkshopSchedules(Array.isArray(data.recentSchedules) ? data.recentSchedules : []);
     setWorkshopUpdatedAt(data.updatedAt || '');
   };
 
@@ -1022,8 +1024,9 @@ function AdminDashboard() {
       }
 
       setWorkshopForm(buildWorkshopFormFromContent({ workshops: data.schedule }));
+      setRecentWorkshopSchedules(Array.isArray(data.recentSchedules) ? data.recentSchedules : []);
       setWorkshopUpdatedAt(data.updatedAt || '');
-      setMessage('Workshop schedule saved to the database successfully.');
+      setMessage('Workshop schedule recorded in the database successfully.');
       returnToDashboard('quick-actions');
     } catch (err) {
       setError(err.message || 'Unable to save workshop schedule.');
@@ -1098,7 +1101,12 @@ function AdminDashboard() {
       text: `Project \"${project.title}\" was updated in the dashboard.`,
       when: project.updatedAt || project.createdAt,
     })),
-  ].slice(0, 4);
+    ...(dashboard?.recentWorkshops || []).slice(0, 2).map((workshop) => ({
+      id: `workshop-${workshop._id}`,
+      text: `Workshop "${workshop.nextSessionTopic || workshop.title}" was recorded.`,
+      when: workshop.updatedAt || workshop.createdAt,
+    })),
+  ].slice(0, 6);
 
   const advocacyStories = projects.slice(0, 3).map((project) => ({
     id: project._id,
@@ -1107,30 +1115,19 @@ function AdminDashboard() {
     when: project.updatedAt || project.createdAt,
   }));
 
-  const workshopActivities = [
-    {
-      title: workshopForm.activityOneTitle,
-      date: workshopForm.activityOneDate,
-      status: workshopForm.activityOneStatus,
-    },
-    {
-      title: workshopForm.activityTwoTitle,
-      date: workshopForm.activityTwoDate,
-      status: workshopForm.activityTwoStatus,
-    },
-    {
-      title: workshopForm.activityThreeTitle,
-      date: workshopForm.activityThreeDate,
-      status: workshopForm.activityThreeStatus,
-    },
-  ]
-    .filter((activity) => activity?.title || activity?.date || activity?.status)
+  const workshopActivities = recentWorkshopSchedules
+    .map((schedule, index) => ({
+      id: schedule._id || `schedule-${index}`,
+      title: schedule.nextSessionTopic || schedule.title || 'Workshop activity',
+      status: schedule.activities?.[0]?.status || 'Recorded',
+      when: schedule.nextSessionDate || schedule.updatedAt || '',
+    }))
+    .filter((activity) => activity?.title || activity?.when || activity?.status)
     .slice(0, 3)
     .map((activity, index) => ({
-      id: `${activity.title || 'activity'}-${index}`,
-      title: activity.title || 'Workshop activity',
-      status: activity.status || 'Planned',
-      when: activity.date || '',
+      ...activity,
+      id: activity.id || `${activity.title || 'activity'}-${index}`,
+      status: activity.status || 'Recorded',
     }));
 
   const pendingTasks = [
@@ -1155,6 +1152,10 @@ function AdminDashboard() {
       label: workshopForm.nextSessionDate
         ? 'Next workshop schedule is set.'
         : 'Next workshop date has not been set yet.',
+    },
+    {
+      id: 'recorded-workshops',
+      label: `${recentWorkshopSchedules.length} recent workshop record(s) stored in the database`,
     },
   ];
 

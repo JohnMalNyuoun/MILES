@@ -401,6 +401,59 @@ h4 {
   color: #2f4b33;
 }
 
+.home-page .section h2,
+.home-page .section h3,
+.home-page .section p,
+.home-page .section li,
+.home-page .feature-card h3,
+.home-page .feature-card p,
+.home-page .public-dashboard-card h3,
+.home-page .public-dashboard-card p,
+.home-page .public-dashboard-panel h3,
+.home-page .public-dashboard-panel li,
+.home-page .public-dashboard-panel p {
+  color: #ffffff;
+}
+
+.home-page .feature-card,
+.home-page .public-dashboard-card,
+.home-page .public-dashboard-panel {
+  background: linear-gradient(180deg, rgba(23, 48, 31, 0.96), rgba(16, 33, 22, 0.96));
+  border-color: rgba(127, 212, 139, 0.28);
+}
+
+.home-page .public-focus-tags span {
+  background: rgba(127, 212, 139, 0.12);
+  border-color: rgba(127, 212, 139, 0.38);
+  color: #ffffff;
+}
+
+.home-page .public-milestone-text {
+  background: linear-gradient(135deg, rgba(127, 212, 139, 0.16), rgba(15, 31, 20, 0.92));
+  border: 1px solid rgba(127, 212, 139, 0.34);
+  border-left: 4px solid #7fd48b;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+body.theme-dark .home-page .section h2,
+body.theme-dark .home-page .section h3,
+body.theme-dark .home-page .section p,
+body.theme-dark .home-page .section li,
+body.theme-dark .home-page .public-dashboard-card p,
+body.theme-dark .home-page .public-dashboard-card h3,
+body.theme-dark .home-page .public-dashboard-panel h3,
+body.theme-dark .home-page .public-dashboard-panel li,
+body.theme-dark .home-page .public-dashboard-panel p {
+  color: #ffffff;
+}
+
+body.theme-dark .home-page .public-milestone-text {
+  background: linear-gradient(135deg, rgba(127, 212, 139, 0.22), rgba(9, 18, 12, 0.98));
+  border-color: rgba(167, 223, 176, 0.45);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+}
+
 /* ===== Contact ===== */
 .contact-info {
   background: var(--card-bg);
