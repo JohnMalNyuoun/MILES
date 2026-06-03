@@ -36,18 +36,172 @@ const SECTION_CARDS = [
     badge: 'MT',
   },
   {
+    key: 'edit-hero',
+    title: 'Edit Hero Section',
+    description: 'Update hero title, subtitle, and description.',
+    badge: 'HR',
+  },
+  {
+    key: 'edit-home',
+    title: 'Edit Home Section',
+    description: 'Update welcome text, cards, and quick buttons.',
+    badge: 'HM',
+  },
+  {
+    key: 'edit-navbar',
+    title: 'Edit Navigation',
+    description: 'Update navbar labels and brand text.',
+    badge: 'NB',
+  },
+  {
+    key: 'edit-about',
+    title: 'Edit About Section',
+    description: 'Update About page text and mission points.',
+    badge: 'AB',
+  },
+  {
+    key: 'edit-contact',
+    title: 'Edit Contact Section',
+    description: 'Update contact details and map link.',
+    badge: 'CT',
+  },
+  {
+    key: 'edit-donate',
+    title: 'Edit Donate Section',
+    description: 'Update donation cards and action buttons.',
+    badge: 'DN',
+  },
+  {
     key: 'edit-learn',
     title: 'Edit Learn Section',
     description: 'Update Learn More narratives in a dedicated form.',
     badge: 'LM',
   },
-  {
-    key: 'manage-content',
-    title: 'Manage Website Content',
-    description: 'Update cards, texts, and buttons across the website.',
-    badge: 'WC',
-  },
 ];
+
+const buildHeroFormFromContent = (content) => {
+  const hero = {
+    ...defaultSiteContent.hero,
+    ...(content?.hero || {}),
+  };
+
+  return {
+    title: hero.title || '',
+    subtitle: hero.subtitle || '',
+    description: hero.description || '',
+  };
+};
+
+const buildNavbarFormFromContent = (content) => {
+  const navbar = {
+    ...defaultSiteContent.navbar,
+    ...(content?.navbar || {}),
+  };
+
+  return {
+    brandText: navbar.brandText || '',
+    homeLabel: navbar.homeLabel || '',
+    aboutLabel: navbar.aboutLabel || '',
+    projectsLabel: navbar.projectsLabel || '',
+    donateLabel: navbar.donateLabel || '',
+    contactLabel: navbar.contactLabel || '',
+    adminLabel: navbar.adminLabel || '',
+  };
+};
+
+const buildHomeFormFromContent = (content) => {
+  const home = {
+    ...defaultSiteContent.home,
+    ...(content?.home || {}),
+  };
+  const featureCards = home.featureCards || defaultSiteContent.home.featureCards;
+  const quickButtons = home.quickButtons || defaultSiteContent.home.quickButtons;
+
+  return {
+    welcomeTitle: home.welcomeTitle || '',
+    welcomeText: home.welcomeText || '',
+    featureOneTitle: featureCards[0]?.title || '',
+    featureOneDescription: featureCards[0]?.description || '',
+    featureOnePath: featureCards[0]?.path || '',
+    featureTwoTitle: featureCards[1]?.title || '',
+    featureTwoDescription: featureCards[1]?.description || '',
+    featureTwoPath: featureCards[1]?.path || '',
+    featureThreeTitle: featureCards[2]?.title || '',
+    featureThreeDescription: featureCards[2]?.description || '',
+    featureThreePath: featureCards[2]?.path || '',
+    buttonOneLabel: quickButtons[0]?.label || '',
+    buttonOnePath: quickButtons[0]?.path || '',
+    buttonTwoLabel: quickButtons[1]?.label || '',
+    buttonTwoPath: quickButtons[1]?.path || '',
+    buttonThreeLabel: quickButtons[2]?.label || '',
+    buttonThreePath: quickButtons[2]?.path || '',
+    buttonFourLabel: quickButtons[3]?.label || '',
+    buttonFourPath: quickButtons[3]?.path || '',
+  };
+};
+
+const buildAboutFormFromContent = (content) => {
+  const about = {
+    ...defaultSiteContent.about,
+    ...(content?.about || {}),
+  };
+  const missionPoints = about.missionPoints || defaultSiteContent.about.missionPoints;
+
+  return {
+    title: about.title || '',
+    introOne: about.introOne || '',
+    introTwo: about.introTwo || '',
+    missionTitle: about.missionTitle || '',
+    missionText: about.missionText || '',
+    missionPointOne: missionPoints[0] || '',
+    missionPointTwo: missionPoints[1] || '',
+    missionPointThree: missionPoints[2] || '',
+  };
+};
+
+const buildContactFormFromContent = (content) => {
+  const contact = {
+    ...defaultSiteContent.contact,
+    ...(content?.contact || {}),
+  };
+
+  return {
+    title: contact.title || '',
+    intro: contact.intro || '',
+    email: contact.email || '',
+    phone: contact.phone || '',
+    address: contact.address || '',
+    mapUrl: contact.mapUrl || '',
+  };
+};
+
+const buildDonateFormFromContent = (content) => {
+  const donate = {
+    ...defaultSiteContent.donate,
+    ...(content?.donate || {}),
+  };
+  const cards = donate.cards || defaultSiteContent.donate.cards;
+  const actions = donate.actions || defaultSiteContent.donate.actions;
+
+  return {
+    title: donate.title || '',
+    intro: donate.intro || '',
+    cardOneTitle: cards[0]?.title || '',
+    cardOneDescription: cards[0]?.description || '',
+    cardTwoTitle: cards[1]?.title || '',
+    cardTwoDescription: cards[1]?.description || '',
+    cardThreeTitle: cards[2]?.title || '',
+    cardThreeDescription: cards[2]?.description || '',
+    highlight: donate.highlight || '',
+    closing: donate.closing || '',
+    actionOneLabel: actions[0]?.label || '',
+    actionOneUrl: actions[0]?.url || '',
+    actionOneExternal: actions[0]?.external !== false,
+    actionTwoLabel: actions[1]?.label || '',
+    actionTwoUrl: actions[1]?.url || '',
+    actionTwoExternal: actions[1]?.external !== false,
+  };
+};
 
 const buildLearnFormFromContent = (content) => {
   const learn = {
@@ -126,11 +280,14 @@ function AdminDashboard() {
     bio: '',
     image: '',
   });
-  const [siteContentText, setSiteContentText] = useState(
-    JSON.stringify(defaultSiteContent, null, 2)
-  );
   const [siteContentObject, setSiteContentObject] = useState(defaultSiteContent);
   const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
+  const [heroForm, setHeroForm] = useState(() => buildHeroFormFromContent(defaultSiteContent));
+  const [homeForm, setHomeForm] = useState(() => buildHomeFormFromContent(defaultSiteContent));
+  const [navbarForm, setNavbarForm] = useState(() => buildNavbarFormFromContent(defaultSiteContent));
+  const [aboutForm, setAboutForm] = useState(() => buildAboutFormFromContent(defaultSiteContent));
+  const [contactForm, setContactForm] = useState(() => buildContactFormFromContent(defaultSiteContent));
+  const [donateForm, setDonateForm] = useState(() => buildDonateFormFromContent(defaultSiteContent));
   const [learnForm, setLearnForm] = useState(() => buildLearnFormFromContent(defaultSiteContent));
 
   const isAdmin = user?.role === 'admin';
@@ -210,7 +367,12 @@ function AdminDashboard() {
     };
 
     setSiteContentObject(normalizedContent);
-    setSiteContentText(JSON.stringify(normalizedContent, null, 2));
+    setHeroForm(buildHeroFormFromContent(normalizedContent));
+    setHomeForm(buildHomeFormFromContent(normalizedContent));
+    setNavbarForm(buildNavbarFormFromContent(normalizedContent));
+    setAboutForm(buildAboutFormFromContent(normalizedContent));
+    setContactForm(buildContactFormFromContent(normalizedContent));
+    setDonateForm(buildDonateFormFromContent(normalizedContent));
     setLearnForm(buildLearnFormFromContent(normalizedContent));
     setSiteContentUpdatedAt(data.updatedAt || '');
   };
@@ -481,50 +643,182 @@ function AdminDashboard() {
     }
   };
 
-  const handleSaveSiteContent = async (event) => {
-    event.preventDefault();
-    clearStatus();
-
-    let parsedContent;
-    try {
-      parsedContent = JSON.parse(siteContentText);
-    } catch (parseError) {
-      setError('Website content must be valid JSON before saving.');
-      return;
-    }
-
+  const saveContentSection = async (nextContent, successMessage) => {
     try {
       setLoading(true);
       const response = await fetch(`${apiBaseUrl}/api/admin/content`, {
         method: 'PUT',
         headers: authHeaders,
-        body: JSON.stringify(parsedContent),
+        body: JSON.stringify(nextContent),
       });
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || 'Unable to save website content.');
+        throw new Error(data.message || 'Unable to save section.');
       }
 
       const normalizedContent = {
         ...defaultSiteContent,
-        ...(data.content || parsedContent),
+        ...(data.content || nextContent),
         learn: {
           ...defaultSiteContent.learn,
-          ...((data.content || parsedContent).learn || {}),
+          ...((data.content || nextContent).learn || {}),
         },
       };
 
       setSiteContentObject(normalizedContent);
-      setSiteContentText(JSON.stringify(normalizedContent, null, 2));
+      setHeroForm(buildHeroFormFromContent(normalizedContent));
+      setHomeForm(buildHomeFormFromContent(normalizedContent));
+      setNavbarForm(buildNavbarFormFromContent(normalizedContent));
+      setAboutForm(buildAboutFormFromContent(normalizedContent));
+      setContactForm(buildContactFormFromContent(normalizedContent));
+      setDonateForm(buildDonateFormFromContent(normalizedContent));
       setLearnForm(buildLearnFormFromContent(normalizedContent));
       setSiteContentUpdatedAt(data.updatedAt || '');
-      setMessage('Website content updated successfully.');
+      setMessage(successMessage);
     } catch (err) {
-      setError(err.message || 'Unable to save website content.');
+      setError(err.message || 'Unable to save section.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSaveHeroSection = async (event) => {
+    event.preventDefault();
+    clearStatus();
+    const nextContent = {
+      ...siteContentObject,
+      hero: {
+        title: heroForm.title,
+        subtitle: heroForm.subtitle,
+        description: heroForm.description,
+      },
+    };
+    await saveContentSection(nextContent, 'Hero section updated successfully.');
+  };
+
+  const handleSaveHomeSection = async (event) => {
+    event.preventDefault();
+    clearStatus();
+    const nextContent = {
+      ...siteContentObject,
+      home: {
+        welcomeTitle: homeForm.welcomeTitle,
+        welcomeText: homeForm.welcomeText,
+        featureCards: [
+          {
+            title: homeForm.featureOneTitle,
+            description: homeForm.featureOneDescription,
+            path: homeForm.featureOnePath,
+          },
+          {
+            title: homeForm.featureTwoTitle,
+            description: homeForm.featureTwoDescription,
+            path: homeForm.featureTwoPath,
+          },
+          {
+            title: homeForm.featureThreeTitle,
+            description: homeForm.featureThreeDescription,
+            path: homeForm.featureThreePath,
+          },
+        ],
+        quickButtons: [
+          { label: homeForm.buttonOneLabel, path: homeForm.buttonOnePath },
+          { label: homeForm.buttonTwoLabel, path: homeForm.buttonTwoPath },
+          { label: homeForm.buttonThreeLabel, path: homeForm.buttonThreePath },
+          { label: homeForm.buttonFourLabel, path: homeForm.buttonFourPath },
+        ],
+      },
+    };
+    await saveContentSection(nextContent, 'Home section updated successfully.');
+  };
+
+  const handleSaveNavbarSection = async (event) => {
+    event.preventDefault();
+    clearStatus();
+    const nextContent = {
+      ...siteContentObject,
+      navbar: {
+        brandText: navbarForm.brandText,
+        homeLabel: navbarForm.homeLabel,
+        aboutLabel: navbarForm.aboutLabel,
+        projectsLabel: navbarForm.projectsLabel,
+        donateLabel: navbarForm.donateLabel,
+        contactLabel: navbarForm.contactLabel,
+        adminLabel: navbarForm.adminLabel,
+      },
+    };
+    await saveContentSection(nextContent, 'Navigation updated successfully.');
+  };
+
+  const handleSaveAboutSection = async (event) => {
+    event.preventDefault();
+    clearStatus();
+    const nextContent = {
+      ...siteContentObject,
+      about: {
+        title: aboutForm.title,
+        introOne: aboutForm.introOne,
+        introTwo: aboutForm.introTwo,
+        missionTitle: aboutForm.missionTitle,
+        missionText: aboutForm.missionText,
+        missionPoints: [
+          aboutForm.missionPointOne,
+          aboutForm.missionPointTwo,
+          aboutForm.missionPointThree,
+        ],
+      },
+    };
+    await saveContentSection(nextContent, 'About section updated successfully.');
+  };
+
+  const handleSaveContactSection = async (event) => {
+    event.preventDefault();
+    clearStatus();
+    const nextContent = {
+      ...siteContentObject,
+      contact: {
+        title: contactForm.title,
+        intro: contactForm.intro,
+        email: contactForm.email,
+        phone: contactForm.phone,
+        address: contactForm.address,
+        mapUrl: contactForm.mapUrl,
+      },
+    };
+    await saveContentSection(nextContent, 'Contact section updated successfully.');
+  };
+
+  const handleSaveDonateSection = async (event) => {
+    event.preventDefault();
+    clearStatus();
+    const nextContent = {
+      ...siteContentObject,
+      donate: {
+        title: donateForm.title,
+        intro: donateForm.intro,
+        cards: [
+          { title: donateForm.cardOneTitle, description: donateForm.cardOneDescription },
+          { title: donateForm.cardTwoTitle, description: donateForm.cardTwoDescription },
+          { title: donateForm.cardThreeTitle, description: donateForm.cardThreeDescription },
+        ],
+        highlight: donateForm.highlight,
+        closing: donateForm.closing,
+        actions: [
+          {
+            label: donateForm.actionOneLabel,
+            url: donateForm.actionOneUrl,
+            external: donateForm.actionOneExternal,
+          },
+          {
+            label: donateForm.actionTwoLabel,
+            url: donateForm.actionTwoUrl,
+            external: donateForm.actionTwoExternal,
+          },
+        ],
+      },
+    };
+    await saveContentSection(nextContent, 'Donate section updated successfully.');
   };
 
   const handleSaveLearnSection = async (event) => {
@@ -553,38 +847,7 @@ function AdminDashboard() {
       },
     };
 
-    try {
-      setLoading(true);
-      const response = await fetch(`${apiBaseUrl}/api/admin/content`, {
-        method: 'PUT',
-        headers: authHeaders,
-        body: JSON.stringify(nextContent),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Unable to save Learn section.');
-      }
-
-      const normalizedContent = {
-        ...defaultSiteContent,
-        ...(data.content || nextContent),
-        learn: {
-          ...defaultSiteContent.learn,
-          ...((data.content || nextContent).learn || {}),
-        },
-      };
-
-      setSiteContentObject(normalizedContent);
-      setSiteContentText(JSON.stringify(normalizedContent, null, 2));
-      setLearnForm(buildLearnFormFromContent(normalizedContent));
-      setSiteContentUpdatedAt(data.updatedAt || '');
-      setMessage('Learn section updated successfully.');
-    } catch (err) {
-      setError(err.message || 'Unable to save Learn section.');
-    } finally {
-      setLoading(false);
-    }
+    await saveContentSection(nextContent, 'Learn section updated successfully.');
   };
 
   useEffect(() => {
@@ -975,6 +1238,602 @@ function AdminDashboard() {
           </article>
         )}
 
+        {activeSection === 'edit-hero' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Edit Hero Section</h2>
+            <form onSubmit={handleSaveHeroSection} className="admin-form">
+              <label>
+                Hero Title
+                <input
+                  value={heroForm.title}
+                  onChange={(event) =>
+                    setHeroForm((current) => ({ ...current, title: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Hero Subtitle
+                <input
+                  value={heroForm.subtitle}
+                  onChange={(event) =>
+                    setHeroForm((current) => ({ ...current, subtitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Hero Description
+                <textarea
+                  value={heroForm.description}
+                  onChange={(event) =>
+                    setHeroForm((current) => ({ ...current, description: event.target.value }))
+                  }
+                />
+              </label>
+              <button type="submit" disabled={loading}>Save Hero Section</button>
+            </form>
+          </article>
+        )}
+
+        {activeSection === 'edit-home' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Edit Home Section</h2>
+            <form onSubmit={handleSaveHomeSection} className="admin-form">
+              <label>
+                Welcome Title
+                <input
+                  value={homeForm.welcomeTitle}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, welcomeTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Welcome Text
+                <textarea
+                  value={homeForm.welcomeText}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, welcomeText: event.target.value }))
+                  }
+                />
+              </label>
+              <h3>Feature Card 1</h3>
+              <label>
+                Title
+                <input
+                  value={homeForm.featureOneTitle}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, featureOneTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Description
+                <textarea
+                  value={homeForm.featureOneDescription}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, featureOneDescription: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Link Path or URL
+                <input
+                  value={homeForm.featureOnePath}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, featureOnePath: event.target.value }))
+                  }
+                />
+              </label>
+              <h3>Feature Card 2</h3>
+              <label>
+                Title
+                <input
+                  value={homeForm.featureTwoTitle}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, featureTwoTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Description
+                <textarea
+                  value={homeForm.featureTwoDescription}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, featureTwoDescription: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Link Path or URL
+                <input
+                  value={homeForm.featureTwoPath}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, featureTwoPath: event.target.value }))
+                  }
+                />
+              </label>
+              <h3>Feature Card 3</h3>
+              <label>
+                Title
+                <input
+                  value={homeForm.featureThreeTitle}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, featureThreeTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Description
+                <textarea
+                  value={homeForm.featureThreeDescription}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, featureThreeDescription: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Link Path or URL
+                <input
+                  value={homeForm.featureThreePath}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, featureThreePath: event.target.value }))
+                  }
+                />
+              </label>
+              <h3>Quick Buttons</h3>
+              <label>
+                Button 1 Label
+                <input
+                  value={homeForm.buttonOneLabel}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, buttonOneLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Button 1 Link Path or URL
+                <input
+                  value={homeForm.buttonOnePath}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, buttonOnePath: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Button 2 Label
+                <input
+                  value={homeForm.buttonTwoLabel}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, buttonTwoLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Button 2 Link Path or URL
+                <input
+                  value={homeForm.buttonTwoPath}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, buttonTwoPath: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Button 3 Label
+                <input
+                  value={homeForm.buttonThreeLabel}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, buttonThreeLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Button 3 Link Path or URL
+                <input
+                  value={homeForm.buttonThreePath}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, buttonThreePath: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Button 4 Label
+                <input
+                  value={homeForm.buttonFourLabel}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, buttonFourLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Button 4 Link Path or URL
+                <input
+                  value={homeForm.buttonFourPath}
+                  onChange={(event) =>
+                    setHomeForm((current) => ({ ...current, buttonFourPath: event.target.value }))
+                  }
+                />
+              </label>
+              <button type="submit" disabled={loading}>Save Home Section</button>
+            </form>
+          </article>
+        )}
+
+        {activeSection === 'edit-navbar' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Edit Navigation</h2>
+            <form onSubmit={handleSaveNavbarSection} className="admin-form">
+              <label>
+                Brand Text
+                <input
+                  value={navbarForm.brandText}
+                  onChange={(event) =>
+                    setNavbarForm((current) => ({ ...current, brandText: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Home Label
+                <input
+                  value={navbarForm.homeLabel}
+                  onChange={(event) =>
+                    setNavbarForm((current) => ({ ...current, homeLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                About Label
+                <input
+                  value={navbarForm.aboutLabel}
+                  onChange={(event) =>
+                    setNavbarForm((current) => ({ ...current, aboutLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Projects Label
+                <input
+                  value={navbarForm.projectsLabel}
+                  onChange={(event) =>
+                    setNavbarForm((current) => ({ ...current, projectsLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Donate Label
+                <input
+                  value={navbarForm.donateLabel}
+                  onChange={(event) =>
+                    setNavbarForm((current) => ({ ...current, donateLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Contact Label
+                <input
+                  value={navbarForm.contactLabel}
+                  onChange={(event) =>
+                    setNavbarForm((current) => ({ ...current, contactLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Admin Label
+                <input
+                  value={navbarForm.adminLabel}
+                  onChange={(event) =>
+                    setNavbarForm((current) => ({ ...current, adminLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <button type="submit" disabled={loading}>Save Navigation</button>
+            </form>
+          </article>
+        )}
+
+        {activeSection === 'edit-about' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Edit About Section</h2>
+            <form onSubmit={handleSaveAboutSection} className="admin-form">
+              <label>
+                Page Title
+                <input
+                  value={aboutForm.title}
+                  onChange={(event) =>
+                    setAboutForm((current) => ({ ...current, title: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Introduction Paragraph 1
+                <textarea
+                  value={aboutForm.introOne}
+                  onChange={(event) =>
+                    setAboutForm((current) => ({ ...current, introOne: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Introduction Paragraph 2
+                <textarea
+                  value={aboutForm.introTwo}
+                  onChange={(event) =>
+                    setAboutForm((current) => ({ ...current, introTwo: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Mission Title
+                <input
+                  value={aboutForm.missionTitle}
+                  onChange={(event) =>
+                    setAboutForm((current) => ({ ...current, missionTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Mission Text
+                <textarea
+                  value={aboutForm.missionText}
+                  onChange={(event) =>
+                    setAboutForm((current) => ({ ...current, missionText: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Mission Point 1
+                <textarea
+                  value={aboutForm.missionPointOne}
+                  onChange={(event) =>
+                    setAboutForm((current) => ({ ...current, missionPointOne: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Mission Point 2
+                <textarea
+                  value={aboutForm.missionPointTwo}
+                  onChange={(event) =>
+                    setAboutForm((current) => ({ ...current, missionPointTwo: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Mission Point 3
+                <textarea
+                  value={aboutForm.missionPointThree}
+                  onChange={(event) =>
+                    setAboutForm((current) => ({ ...current, missionPointThree: event.target.value }))
+                  }
+                />
+              </label>
+              <button type="submit" disabled={loading}>Save About Section</button>
+            </form>
+          </article>
+        )}
+
+        {activeSection === 'edit-contact' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Edit Contact Section</h2>
+            <form onSubmit={handleSaveContactSection} className="admin-form">
+              <label>
+                Page Title
+                <input
+                  value={contactForm.title}
+                  onChange={(event) =>
+                    setContactForm((current) => ({ ...current, title: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Introduction Text
+                <textarea
+                  value={contactForm.intro}
+                  onChange={(event) =>
+                    setContactForm((current) => ({ ...current, intro: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Email
+                <input
+                  value={contactForm.email}
+                  onChange={(event) =>
+                    setContactForm((current) => ({ ...current, email: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Phone
+                <input
+                  value={contactForm.phone}
+                  onChange={(event) =>
+                    setContactForm((current) => ({ ...current, phone: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Address Label
+                <input
+                  value={contactForm.address}
+                  onChange={(event) =>
+                    setContactForm((current) => ({ ...current, address: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Map URL
+                <input
+                  value={contactForm.mapUrl}
+                  onChange={(event) =>
+                    setContactForm((current) => ({ ...current, mapUrl: event.target.value }))
+                  }
+                />
+              </label>
+              <button type="submit" disabled={loading}>Save Contact Section</button>
+            </form>
+          </article>
+        )}
+
+        {activeSection === 'edit-donate' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Edit Donate Section</h2>
+            <form onSubmit={handleSaveDonateSection} className="admin-form">
+              <label>
+                Page Title
+                <input
+                  value={donateForm.title}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, title: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Intro Text
+                <textarea
+                  value={donateForm.intro}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, intro: event.target.value }))
+                  }
+                />
+              </label>
+              <h3>Donate Card 1</h3>
+              <label>
+                Title
+                <input
+                  value={donateForm.cardOneTitle}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, cardOneTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Description
+                <textarea
+                  value={donateForm.cardOneDescription}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, cardOneDescription: event.target.value }))
+                  }
+                />
+              </label>
+              <h3>Donate Card 2</h3>
+              <label>
+                Title
+                <input
+                  value={donateForm.cardTwoTitle}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, cardTwoTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Description
+                <textarea
+                  value={donateForm.cardTwoDescription}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, cardTwoDescription: event.target.value }))
+                  }
+                />
+              </label>
+              <h3>Donate Card 3</h3>
+              <label>
+                Title
+                <input
+                  value={donateForm.cardThreeTitle}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, cardThreeTitle: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Description
+                <textarea
+                  value={donateForm.cardThreeDescription}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, cardThreeDescription: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Highlight Text
+                <textarea
+                  value={donateForm.highlight}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, highlight: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Closing Text
+                <textarea
+                  value={donateForm.closing}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, closing: event.target.value }))
+                  }
+                />
+              </label>
+              <h3>Action Button 1</h3>
+              <label>
+                Label
+                <input
+                  value={donateForm.actionOneLabel}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, actionOneLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                URL
+                <input
+                  value={donateForm.actionOneUrl}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, actionOneUrl: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={donateForm.actionOneExternal}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, actionOneExternal: event.target.checked }))
+                  }
+                />
+                Open button 1 in a new tab
+              </label>
+              <h3>Action Button 2</h3>
+              <label>
+                Label
+                <input
+                  value={donateForm.actionTwoLabel}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, actionTwoLabel: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                URL
+                <input
+                  value={donateForm.actionTwoUrl}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, actionTwoUrl: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={donateForm.actionTwoExternal}
+                  onChange={(event) =>
+                    setDonateForm((current) => ({ ...current, actionTwoExternal: event.target.checked }))
+                  }
+                />
+                Open button 2 in a new tab
+              </label>
+              <button type="submit" disabled={loading}>Save Donate Section</button>
+            </form>
+          </article>
+        )}
+
         {activeSection === 'edit-learn' && (
           <article className="admin-card admin-panel-card">
             <h2>Edit Learn Section</h2>
@@ -1090,30 +1949,6 @@ function AdminDashboard() {
           </article>
         )}
 
-        {activeSection === 'manage-content' && (
-          <article className="admin-card admin-panel-card">
-            <h2>Manage Website Content</h2>
-            <p className="admin-panel-hint">
-              Update homepage cards, button labels, and section texts here. Save to publish changes without coding.
-            </p>
-            {siteContentUpdatedAt && (
-              <p className="admin-panel-hint">
-                Last updated: {new Date(siteContentUpdatedAt).toLocaleString()}
-              </p>
-            )}
-            <form onSubmit={handleSaveSiteContent} className="admin-form">
-              <label>
-                Website Content JSON
-                <textarea
-                  value={siteContentText}
-                  onChange={(event) => setSiteContentText(event.target.value)}
-                  rows={24}
-                />
-              </label>
-              <button type="submit" disabled={loading}>Save Website Content</button>
-            </form>
-          </article>
-        )}
       </div>
 
       <div className="admin-footer-actions">
