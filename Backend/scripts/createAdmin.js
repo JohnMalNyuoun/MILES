@@ -6,15 +6,18 @@ const User = require('../models/User');
 
 dotenv.config();
 
-const [, , nameArg, emailArg, passwordArg] = process.argv;
+const [, , nameArg, usernameArg, emailArg, passwordArg] = process.argv;
 
 const createAdmin = async () => {
 	const name = nameArg?.trim();
+	const username = usernameArg?.trim();
 	const email = emailArg?.trim().toLowerCase();
 	const password = passwordArg;
 
-	if (!name || !email || !password) {
-		console.error('Usage: node scripts/createAdmin.js "Name" "email@example.com" "password"');
+	if (!name || !username || !email || !password) {
+		console.error(
+			'Usage: node scripts/createAdmin.js "Name" "username" "email@example.com" "password"'
+		);
 		process.exitCode = 1;
 		return;
 	}
@@ -22,9 +25,9 @@ const createAdmin = async () => {
 	try {
 		await connectDB();
 
-		const existingUser = await User.findOne({ email });
+		const existingUser = await User.findOne({ username });
 		if (existingUser) {
-			console.error('An account with this email already exists.');
+			console.error('An account with this username already exists.');
 			process.exitCode = 1;
 			return;
 		}
@@ -32,9 +35,9 @@ const createAdmin = async () => {
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const adminUser = await User.create({
 			name,
+			username,
 			email,
 			password: hashedPassword,
-			role: 'admin',
 		});
 
 		console.log(`Admin created: ${adminUser.email}`);

@@ -1,4 +1,7 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const Admin = require('../models/Admin');
+const PendingAction = require('../models/PendingAction');
 const Project = require('../models/Project');
 const Team = require('../models/Team');
 const User = require('../models/User');
@@ -35,25 +38,25 @@ const getAdminDashboard = async (req, res, next) => {
 
 const createAdminUser = async (req, res, next) => {
 	try {
-		const { name, email, password } = req.body;
+		const { name, username, email, password } = req.body;
 
-		if (!name || !email || !password) {
+		if (!name || !username || !email || !password) {
 			return res
 				.status(400)
-				.json({ message: 'Name, email and password are required' });
+				.json({ message: 'Name, username, email and password are required' });
 		}
 
-		const existingUser = await User.findOne({ email });
+		const existingUser = await User.findOne({ username: username.trim() });
 		if (existingUser) {
-			return res.status(400).json({ message: 'User already exists' });
+			return res.status(400).json({ message: 'Username is already in use' });
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const adminUser = await User.create({
 			name,
+			username: username.trim(),
 			email,
 			password: hashedPassword,
-			role: 'admin',
 		});
 
 		res.status(201).json({
@@ -61,9 +64,166 @@ const createAdminUser = async (req, res, next) => {
 			user: {
 				id: adminUser._id,
 				name: adminUser.name,
+				username: adminUser.username,
 				email: adminUser.email,
-				role: adminUser.role,
+				role: 'admin',
 			},
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+const registerAdmin = async (req, res, next) => {
+	try {
+		const adminCount = await Admin.countDocuments();
+		if (adminCount >= 2) {
+			return res.status(403).json({
+				error: 'Registration Locked: The system has reached its maximum authorized limit of 2 administrator profiles.',
+			});
+		}
+
+		const {
+			name,
+			username,
+			email,
+			password,
+			organizationSecretKey,
+		} = req.body || {};
+
+		if (organizationSecretKey !== process.env.MILES_REGISTRATION_SECRET) {
+			return res.status(403).json({
+				error: 'Access Denied: Invalid Organization Authorization Key.',
+			});
+		}
+
+		const requestEmail = (email || '').toLowerCase();
+		const officialEmail = (process.env.OFFICIAL_MILES_EMAIL || '').toLowerCase();
+		if (requestEmail !== officialEmail) {
+			return res.status(403).json({
+				error: 'Registration Rejected: This system only accepts the official MILES organizational email handle.',
+			});
+		}
+
+		const normalizedUsername = (username || '').trim();
+		const existingAdmin = await Admin.findOne({ username: normalizedUsername });
+		if (existingAdmin) {
+			return res.status(400).json({ error: 'Username already exists.' });
+		}
+
+		if (!name || !normalizedUsername || !email || !password) {
+			return res.status(400).json({
+				error: 'Name, username, email, and password are required.',
+			});
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+		const admin = await Admin.create({
+			name: name.trim(),
+			username: normalizedUsername,
+			email: email.trim(),
+			password: hashedPassword,
+			isVerified: true,
+		});
+
+		return res.status(201).json({
+			message: 'Admin profile registered successfully.',
+			admin: {
+				id: admin._id,
+				name: admin.name,
+				username: admin.username,
+				email: admin.email,
+				isVerified: admin.isVerified,
+			},
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+const getPendingActions = async (req, res, next) => {
+	try {
+		const actions = await PendingAction.find({ status: 'pending' }).sort({ createdAt: -1 });
+		return res.status(200).json(actions);
+	} catch (error) {
+		next(error);
+	}
+};
+
+const rejectAction = async (req, res, next) => {
+	try {
+		const { actionId, currentAdminUsername } = req.body || {};
+
+		if (!actionId || !currentAdminUsername) {
+			return res.status(400).json({ error: 'actionId and currentAdminUsername are required.' });
+		}
+
+		const pendingAction = await PendingAction.findById(actionId);
+		if (!pendingAction) {
+			return res.status(404).json({ error: 'Pending action not found.' });
+		}
+
+		if (pendingAction.createdBy === currentAdminUsername) {
+			return res.status(403).json({
+				error: 'You cannot reject your own submission.',
+			});
+		}
+
+		pendingAction.status = 'rejected';
+		await pendingAction.save();
+
+		return res.status(200).json({
+			message: 'Action rejected successfully.',
+			actionId: pendingAction._id,
+			status: pendingAction.status,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+const processApproval = async (req, res, next) => {
+	try {
+		const { actionId, currentAdminUsername } = req.body || {};
+
+		if (!actionId || !currentAdminUsername) {
+			return res.status(400).json({
+				error: 'actionId and currentAdminUsername are required.',
+			});
+		}
+
+		const pendingAction = await PendingAction.findById(actionId);
+		if (!pendingAction) {
+			return res.status(404).json({ error: 'Pending action not found.' });
+		}
+
+		if (pendingAction.createdBy === currentAdminUsername) {
+			return res.status(403).json({
+				error: 'You cannot approve your own submission. The other administrator must verify this action.',
+			});
+		}
+
+		pendingAction.status = 'approved';
+		await pendingAction.save();
+
+		const { actionType, targetCollection, proposedData } = pendingAction;
+		if (actionType === 'CREATE_POST') {
+			let TargetModel;
+			try {
+				TargetModel = mongoose.model(targetCollection);
+			} catch (modelError) {
+				return res.status(400).json({
+					error: `Invalid target collection: ${targetCollection}`,
+				});
+			}
+
+			await TargetModel.create(proposedData);
+		}
+
+		return res.status(200).json({
+			message: 'Approval processed and deployment completed successfully.',
+			actionId: pendingAction._id,
+			status: pendingAction.status,
 		});
 	} catch (error) {
 		next(error);
@@ -73,4 +233,8 @@ const createAdminUser = async (req, res, next) => {
 module.exports = {
 	getAdminDashboard,
 	createAdminUser,
+	registerAdmin,
+	getPendingActions,
+	rejectAction,
+	processApproval,
 };

@@ -6,7 +6,7 @@ const getTeams = async (req, res, next) => {
 		const filters = {};
 
 		if (profile === 'mothers') {
-			filters.isMotherProfile = true;
+			filters.isTeamMemberProfile = true;
 		}
 
 		const teams = await Team.find(filters).sort({ createdAt: -1 });
@@ -38,7 +38,7 @@ const createTeam = async (req, res, next) => {
 
 		const team = await Team.create({
 			...req.body,
-			isMotherProfile: req.body.isMotherProfile === true,
+			isTeamMemberProfile: req.body.isTeamMemberProfile === true,
 		});
 
 		res.status(201).json({

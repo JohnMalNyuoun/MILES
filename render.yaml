@@ -13,5 +13,9 @@ services:
         sync: false
       - key: JWT_SECRET
         sync: false
+      - key: OFFICIAL_MILES_EMAIL
+        sync: false
+      - key: MILES_REGISTRATION_SECRET
+        sync: false
       - key: ADMIN_REGISTRATION_SECRET
         sync: false

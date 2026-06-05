@@ -19,7 +19,18 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) =>  {
     const themeIcon = theme === 'light' ? '☀' : '🌙'
     const themeLabel = theme === 'light' ? 'Day Mode' : 'Night Mode'
     const workshopLabel = navContent.workshopsLabel || defaultSiteContent.navbar.workshopsLabel
+    const teamLabel = navContent.teamLabel || defaultSiteContent.navbar.teamLabel || 'Team'
     const menuTitle = 'Menu'
+    const navigationLinks = [
+        { to: '/', label: navContent.homeLabel, end: true, icon: 'H' },
+        { to: '/about', label: navContent.aboutLabel, icon: 'A' },
+        { to: '/team', label: teamLabel, icon: 'T' },
+        { to: '/workshops', label: workshopLabel, icon: 'W' },
+        { to: '/projects', label: navContent.projectsLabel, icon: 'P' },
+        { to: '/donate', label: navContent.donateLabel, icon: 'D' },
+        { to: '/contact', label: navContent.contactLabel, icon: 'C' },
+        { to: '/admin', label: navContent.adminLabel, icon: 'AD' },
+    ]
 
     useEffect(() => {
         if (!isMenuOpen) return
@@ -69,13 +80,19 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) =>  {
             </div>
 
             <ul className={`navbar-links ${isMenuOpen ? 'open' : ''}`}>
-                <li><NavLink to="/" end onClick={handleLinkClick} className={({ isActive }) => isActive ? 'active' : ''}>{navContent.homeLabel}</NavLink></li>
-                <li><NavLink to="/about" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'active' : ''}>{navContent.aboutLabel}</NavLink></li>
-                <li><NavLink to="/workshops" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'active' : ''}>{workshopLabel}</NavLink></li>
-                <li><NavLink to="/projects" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'active' : ''}>{navContent.projectsLabel}</NavLink></li>
-                <li><NavLink to="/donate" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'active' : ''}>{navContent.donateLabel}</NavLink></li>
-                <li><NavLink to="/contact" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'active' : ''}>{navContent.contactLabel}</NavLink></li>
-                <li><NavLink to="/admin" onClick={handleLinkClick} className={({ isActive }) => isActive ? 'active' : ''}>{navContent.adminLabel}</NavLink></li>
+                {navigationLinks.map((item) => (
+                    <li key={item.to}>
+                        <NavLink
+                            to={item.to}
+                            end={Boolean(item.end)}
+                            onClick={handleLinkClick}
+                            className={({ isActive }) => (isActive ? 'active' : '')}
+                        >
+                            <span className="navbar-link-icon" aria-hidden="true">{item.icon}</span>
+                            <span>{item.label}</span>
+                        </NavLink>
+                    </li>
+                ))}
             </ul>
         </nav>
     )

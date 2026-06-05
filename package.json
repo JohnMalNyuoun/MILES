@@ -6,6 +6,7 @@
   "scripts": {
     "install:all": "npm --prefix Backend install && npm --prefix Frontend/MILES install",
     "build": "npm --prefix Frontend/MILES install && npm --prefix Frontend/MILES run build",
-    "start": "cd Backend && npm install && node index.js"
+    "start": "npm run build && npm --prefix Backend start",
+    "start:one-port": "npm run install:all && npm run build && npm --prefix Backend start"
   }
 }

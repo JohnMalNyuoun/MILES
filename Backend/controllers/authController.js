@@ -5,15 +5,18 @@ const User = require('../models/User');
 
 const register = async (req, res, next) => {
 	try {
-		const { name, email, password, role, adminSecret } = req.body;
+		const { name, username, email, password, role, adminSecret } = req.body;
 
-		if (!name || !email || !password) {
-			return res.status(400).json({ message: 'Name, email and password are required' });
+		if (!name || !username || !email || !password) {
+			return res
+				.status(400)
+				.json({ message: 'Name, username, email and password are required' });
 		}
 
 		let userRole = 'user';
 		if (role === 'admin') {
-			const expectedAdminSecret = process.env.ADMIN_REGISTRATION_SECRET;
+			const expectedAdminSecret =
+				process.env.MILES_REGISTRATION_SECRET || process.env.ADMIN_REGISTRATION_SECRET;
 			if (!expectedAdminSecret || adminSecret !== expectedAdminSecret) {
 				return res.status(403).json({
 					message: 'Invalid admin registration secret',
@@ -22,17 +25,17 @@ const register = async (req, res, next) => {
 			userRole = 'admin';
 		}
 
-		const existingUser = await User.findOne({ email });
+		const existingUser = await User.findOne({ username: username.trim() });
 		if (existingUser) {
-			return res.status(400).json({ message: 'User already exists' });
+			return res.status(400).json({ message: 'Username is already in use' });
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const user = await User.create({
 			name,
+			username: username.trim(),
 			email,
 			password: hashedPassword,
-			role: userRole,
 		});
 
 		res.status(201).json({
@@ -40,8 +43,9 @@ const register = async (req, res, next) => {
 			user: {
 				id: user._id,
 				name: user.name,
+				username: user.username,
 				email: user.email,
-				role: user.role,
+				role: userRole,
 			},
 		});
 	} catch (error) {
@@ -51,13 +55,13 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
 	try {
-		const { email, password } = req.body;
+		const { username, password } = req.body;
 
-		if (!email || !password) {
-			return res.status(400).json({ message: 'Email and password are required' });
+		if (!username || !password) {
+			return res.status(400).json({ message: 'Username and password are required' });
 		}
 
-		const user = await User.findOne({ email });
+		const user = await User.findOne({ username: username.trim() });
 		if (!user) {
 			return res.status(401).json({ message: 'Invalid credentials' });
 		}
@@ -68,7 +72,7 @@ const login = async (req, res, next) => {
 		}
 
 		const token = jwt.sign(
-			{ id: user._id, email: user.email, role: user.role },
+			{ id: user._id, username: user.username, email: user.email, role: 'admin' },
 			process.env.JWT_SECRET || 'development-secret',
 			{ expiresIn: '1d' }
 		);
@@ -79,8 +83,9 @@ const login = async (req, res, next) => {
 			user: {
 				id: user._id,
 				name: user.name,
+				username: user.username,
 				email: user.email,
-				role: user.role,
+				role: 'admin',
 			},
 		});
 	} catch (error) {

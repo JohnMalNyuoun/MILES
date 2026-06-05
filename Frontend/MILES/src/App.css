@@ -8,11 +8,18 @@
 }
 
 :root {
+  --miles-bg-main: #0B0F19;
+  --miles-bg-card: #161B22;
+  --miles-bg-sidebar: #090D14;
+  --miles-green-primary: #10B981;
+  --miles-green-hover: #059669;
+  --miles-text-main: #FFFFFF;
+  --miles-text-muted: #8B9BB4;
   --main-bg: #f3f6fb;
   --card-bg: #ffffff;
-  --sidebar-bg: #090d14;
-  --primary-green: #10b981;
-  --primary-green-hover: #047857;
+  --sidebar-bg: var(--miles-bg-sidebar);
+  --primary-green: var(--miles-green-primary);
+  --primary-green-hover: var(--miles-green-hover);
   --green-glow: rgba(16, 185, 129, 0.1);
   --text-primary: #0f172a;
   --text-secondary: #64748b;
@@ -39,14 +46,14 @@
 }
 
 body.theme-dark {
-  --main-bg: #0b0f19;
-  --card-bg: #1a202c;
-  --sidebar-bg: #090d14;
-  --primary-green: #10b981;
-  --primary-green-hover: #047857;
+  --main-bg: var(--miles-bg-main);
+  --card-bg: var(--miles-bg-card);
+  --sidebar-bg: var(--miles-bg-sidebar);
+  --primary-green: var(--miles-green-primary);
+  --primary-green-hover: var(--miles-green-hover);
   --green-glow: rgba(16, 185, 129, 0.1);
-  --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
+  --text-primary: var(--miles-text-main);
+  --text-secondary: var(--miles-text-muted);
   --border-subtle: rgba(255, 255, 255, 0.06);
   --surface-elevated: #111723;
   --on-dark-text: #ffffff;
@@ -150,12 +157,19 @@ body.theme-light .navbar {
   list-style: none;
   display: none;
   gap: 1rem;
-  width: 100%;
+  width: min(320px, 84vw);
+  max-width: 100%;
   flex-direction: column;
-  background: var(--soft-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 1rem;
+  background: var(--miles-bg-sidebar);
+  border-right: 1px solid var(--card-border);
+  border-radius: 0;
+  padding: 1rem 0.75rem;
+  position: fixed;
+  left: 0;
+  top: 72px;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 130;
 }
 
 .navbar-links.open {
@@ -163,24 +177,36 @@ body.theme-light .navbar {
 }
 
 .navbar-links li a {
-  color: var(--text-secondary);
+  color: var(--miles-text-muted);
   text-decoration: none;
   font-size: 1rem;
   font-weight: 600;
   padding: 0.75rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
   border-left: 3px solid transparent;
-  border-radius: 12px;
+  border-radius: 8px;
   transition: border-color 0.3s, color 0.3s, background-color 0.3s;
 }
 
+.navbar-link-icon {
+  width: 1.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: inherit;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
 .navbar-links li a:hover {
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--miles-text-main);
 }
 
 .navbar-links li a.active {
-  color: var(--accent-color);
-  border-left-color: var(--accent-color);
+  color: var(--miles-green-primary);
+  border-left-color: var(--miles-green-primary);
   background: var(--green-glow);
 }
 
@@ -232,17 +258,22 @@ body.theme-light .menu-toggle {
 }
 
 body.theme-light .navbar-links {
-  background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.1);
+  background: var(--miles-bg-sidebar);
+  border-color: var(--card-border);
 }
 
 body.theme-light .navbar-links li a {
-  color: #475569;
+  color: var(--miles-text-muted);
 }
 
 body.theme-light .navbar-links li a:hover {
-  color: #0f172a;
-  background: rgba(15, 23, 42, 0.04);
+  color: var(--miles-text-main);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+body.theme-light .navbar-links li a.active {
+  color: var(--miles-green-primary);
+  border-left-color: var(--miles-green-primary);
 }
 
 /* ===== Hero ===== */
@@ -395,199 +426,128 @@ body.theme-light .navbar-links li a:hover {
 /* ===== Public Dashboard ===== */
 .public-dashboard-section {
   margin-top: 1rem;
+  padding: 0.35rem 0;
 }
 
-.public-dashboard-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  margin: 1rem 0 1.2rem;
+.public-dashboard-section h2 {
+  color: var(--miles-green-primary);
+  font-weight: 800;
 }
 
-.public-dashboard-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 24px;
+.public-dashboard-section > p {
+  color: #1f2937;
+  margin-bottom: 1.1rem;
 }
 
-.public-dashboard-card h3 {
-  font-size: 1rem;
-  color: var(--accent-color);
-  margin-bottom: 0.45rem;
-}
-
-.public-dashboard-card p {
-  margin: 0;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--text-primary);
+body.theme-dark .public-dashboard-section > p {
+  color: var(--miles-text-main);
+  opacity: 0.9;
 }
 
 .public-dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
+}
+
+@media (min-width: 700px) {
+  .public-dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .public-dashboard-panel {
-  background: var(--soft-bg);
-  border: 1px solid var(--card-border);
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.1);
   border-radius: 12px;
   padding: 24px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
 }
 
 .public-dashboard-panel h3 {
-  margin-bottom: 0.55rem;
-  color: var(--accent-color);
-  font-size: 1.05rem;
+  margin-bottom: 0.65rem;
+  color: var(--miles-green-primary);
+  font-size: 1.08rem;
+  font-weight: 800;
 }
 
-.public-dashboard-panel ul {
-  margin-left: 1rem;
+.public-dashboard-panel p {
+  color: #1f2937;
+  line-height: 1.65;
+}
+
+body.theme-dark .public-dashboard-panel {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+body.theme-dark .public-dashboard-panel p {
+  color: #1f2937;
+}
+
+.public-dashboard-panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14);
+  border-color: rgba(16, 185, 129, 0.28);
+}
+
+.public-dashboard-panel-featured {
+  min-height: auto;
+}
+
+@media (min-width: 700px) {
+  .public-dashboard-panel-featured {
+    grid-column: 1 / -1;
+    max-width: none;
+    width: 100%;
+    justify-self: stretch;
+  }
+}
+
+@media (min-width: 1200px) {
+  .public-dashboard-panel-featured {
+    grid-column: 1 / -1;
+    max-width: none;
+    min-height: auto;
+  }
+}
+
+.advocacy-inline-grid {
   display: grid;
-  gap: 0.4rem;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
 }
 
-.public-dashboard-panel li {
-  color: var(--text-color);
+@media (min-width: 900px) {
+  .advocacy-inline-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
-.public-dashboard-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.advocacy-inline-block {
+  margin-top: 0.2rem;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: #ffffff;
 }
 
-.public-focus-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.advocacy-inline-block h4 {
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
 }
 
-.public-focus-tags span {
-  background: var(--green-glow);
-  border: 1px solid rgba(16, 185, 129, 0.24);
-  color: var(--text-primary);
-  border-radius: 999px;
-  padding: 0.35rem 0.7rem;
-  font-size: 0.85rem;
-  font-weight: 600;
+.advocacy-inline-block p {
+  color: #334155;
+  line-height: 1.62;
 }
 
-.public-milestone-text {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-left: 4px solid var(--accent-color);
-  border-radius: 8px;
-  padding: 0.8rem;
-  color: var(--text-secondary);
-}
-
-.public-milestone-link {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  text-decoration: none;
-}
-
-.public-milestone-link span {
-  font-size: 0.86rem;
-  font-weight: 700;
-  color: var(--accent-color);
-}
-
-.public-milestone-link:hover .public-milestone-text {
-  border-color: rgba(16, 185, 129, 0.4);
-  transform: translateY(-1px);
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.home-page .section h2,
-.home-page .section h3,
-.home-page .feature-card h3,
-.home-page .public-dashboard-card h3,
-.home-page .public-dashboard-panel h3 {
-  color: var(--accent-color);
-}
-
-.home-page .section p,
-.home-page .section li,
-.home-page .feature-card p,
-.home-page .public-dashboard-panel li,
-.home-page .public-dashboard-panel p {
-  color: var(--text-secondary);
-}
-
-
-body.theme-light .home-page .feature-card,
-body.theme-light .home-page .public-dashboard-card,
-body.theme-light .home-page .public-dashboard-panel {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(238, 243, 249, 0.98));
-  border-color: rgba(15, 23, 42, 0.08);
-}
-
-body.theme-light .home-page .section p,
-body.theme-light .home-page .section li,
-body.theme-light .home-page .feature-card p,
-body.theme-light .home-page .public-dashboard-card p,
-body.theme-light .home-page .public-dashboard-panel li,
-body.theme-light .home-page .public-dashboard-panel p {
-  color: var(--text-secondary);
-}
-
-body.theme-light .home-page .section h2,
-body.theme-light .home-page .section h3,
-body.theme-light .home-page .feature-card h3,
-body.theme-light .home-page .public-dashboard-card h3,
-body.theme-light .home-page .public-dashboard-panel h3 {
-  color: var(--accent-color);
-}
-
-body.theme-light .home-page .public-milestone-text {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(255, 255, 255, 0.96));
-  color: var(--text-secondary);
-}
-.home-page .feature-card,
-.home-page .public-dashboard-card,
-.home-page .public-dashboard-panel {
-  background: linear-gradient(180deg, rgba(22, 27, 34, 0.98), rgba(11, 15, 25, 0.98));
-  border-color: rgba(16, 185, 129, 0.2);
-}
-
-.home-page .public-focus-tags span {
-  background: var(--green-glow);
-  border-color: rgba(16, 185, 129, 0.28);
-  color: #ffffff;
-}
-
-.home-page .public-milestone-text {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(11, 15, 25, 0.96));
-  border: 1px solid rgba(16, 185, 129, 0.24);
-  border-left: 4px solid var(--accent-color);
-  color: #ffffff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-}
-
-body.theme-dark .home-page .section h2,
-body.theme-dark .home-page .section h3,
-body.theme-dark .home-page .public-dashboard-card h3,
-body.theme-dark .home-page .public-dashboard-panel h3 {
-  color: var(--accent-color);
-}
-
-body.theme-dark .home-page .section p,
-body.theme-dark .home-page .section li,
-body.theme-dark .home-page .public-dashboard-card p,
-body.theme-dark .home-page .public-dashboard-panel li,
-body.theme-dark .home-page .public-dashboard-panel p {
-  color: var(--text-secondary);
-}
-
-body.theme-dark .home-page .public-milestone-text {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(11, 15, 25, 0.98));
-  border-color: rgba(16, 185, 129, 0.28);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+@media (min-width: 1200px) {
+  .public-dashboard-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 /* ===== Contact ===== */
@@ -642,22 +602,29 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .donate-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
   gap: 1rem;
   margin: 1.2rem 0;
 }
 
 .donate-card {
-  background: #1b2230;
-  border: 1px solid var(--card-border);
+  flex: 1 1 240px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.1);
   border-radius: 12px;
   padding: 24px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
 
 .donate-card h3 {
-  color: var(--text-primary);
+  color: var(--miles-green-primary);
   margin-bottom: 0.5rem;
+}
+
+.donate-card p {
+  color: #1f2937;
 }
 
 .donate-highlight {
@@ -674,6 +641,32 @@ body.theme-dark .home-page .public-milestone-text {
   gap: 0.8rem;
   flex-wrap: wrap;
   margin-top: 1rem;
+}
+
+body.theme-dark .donate-section {
+  background: var(--miles-bg-card);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.theme-dark .donate-section p {
+  color: var(--miles-text-main);
+}
+
+body.theme-dark .donate-card {
+  background: #0f1522;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.theme-dark .donate-card h3 {
+  color: var(--miles-green-primary);
+}
+
+body.theme-dark .donate-card p {
+  color: var(--miles-text-main);
+}
+
+body.theme-dark .donate-highlight p {
+  color: var(--miles-text-main);
 }
 
 /* ===== Team Section ===== */
@@ -810,7 +803,7 @@ body.theme-dark .home-page .public-milestone-text {
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1rem;
 }
 
@@ -1859,18 +1852,311 @@ body.theme-dark .home-page .public-milestone-text {
   }
 }
 
+/* ===== Dual-Authorization Pending Actions Review Feed ===== */
+.par-panel {
+  background: var(--miles-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 1.5rem;
+}
+
+.par-title {
+  color: var(--miles-green-primary);
+  font-size: 1.15rem;
+  margin-bottom: 0.3rem;
+}
+
+.par-subtitle {
+  color: var(--miles-text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.par-empty {
+  color: var(--miles-text-muted);
+  font-size: 0.9rem;
+}
+
+.par-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.par-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 16px 18px;
+  background: var(--miles-bg-main);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  transition: opacity 0.3s ease;
+}
+
+.par-row--approved {
+  border-color: rgba(16, 185, 129, 0.35);
+  opacity: 0.7;
+}
+
+.par-row--rejected {
+  border-color: rgba(100, 116, 139, 0.35);
+  opacity: 0.5;
+}
+
+.par-row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.par-row-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.par-action-type {
+  color: var(--miles-green-primary);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.par-collection {
+  color: var(--miles-text-muted);
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 0.1rem 0.5rem;
+}
+
+.par-proposed-label {
+  color: var(--miles-text-muted);
+  font-size: 0.82rem;
+}
+
+.par-username {
+  color: var(--miles-text-main);
+  font-weight: 600;
+}
+
+.par-data-summary {
+  color: var(--miles-text-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.par-row-error {
+  color: #f87171;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.par-row-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.par-awaiting-badge {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  background: rgba(96, 165, 250, 0.06);
+  color: #93c5fd;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.par-btn-approve {
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--miles-green-primary);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.par-btn-approve:hover:not(:disabled) {
+  background: var(--miles-green-hover);
+}
+
+.par-btn-approve:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.par-btn-reject {
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: transparent;
+  color: var(--miles-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.par-btn-reject:hover:not(:disabled) {
+  border-color: rgba(148, 163, 184, 0.7);
+  color: var(--miles-text-main);
+}
+
+.par-btn-reject:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.par-flash-approved {
+  color: var(--miles-green-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.par-flash-rejected {
+  color: var(--miles-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ===== Executive Team Registry ===== */
+.exec-registry-header {
+  margin-bottom: 1.5rem;
+}
+
+.exec-registry-title {
+  color: var(--miles-green-primary);
+  font-size: 1.3rem;
+  margin-bottom: 0.35rem;
+}
+
+.exec-registry-subtitle {
+  color: var(--miles-text-muted);
+  font-size: 0.95rem;
+}
+
+.exec-registry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.exec-profile-card {
+  background: var(--miles-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.exec-profile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.exec-profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.exec-profile-name {
+  color: var(--miles-text-main);
+  font-size: 1.05rem;
+}
+
+.exec-profile-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--miles-green-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.exec-profile-role {
+  color: var(--miles-green-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.exec-profile-bio {
+  color: var(--miles-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.exec-profile-updated {
+  color: var(--miles-text-muted);
+  font-size: 0.78rem;
+  margin-top: 0.35rem;
+}
+
 .miles-stat-row {
   margin-top: 18px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: minmax(0, 340px);
+  gap: 10px;
 }
 
 .miles-stat-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 24px;
+  padding: 12px 14px;
+}
+
+.miles-stat-card-button {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.miles-stat-card-button:hover {
+  border-color: rgba(16, 185, 129, 0.38);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  transform: translateY(-1px);
+}
+
+.miles-stat-card-button:focus-visible {
+  outline: 2px solid rgba(16, 185, 129, 0.58);
+  outline-offset: 2px;
+}
+
+.miles-stat-card-active {
+  border-color: rgba(16, 185, 129, 0.42);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.24), 0 10px 24px rgba(0, 0, 0, 0.22);
 }
 
 .miles-stat-card h3 {
@@ -1881,20 +2167,25 @@ body.theme-dark .home-page .public-milestone-text {
 
 .miles-stat-card p {
   color: var(--text-primary);
-  font-size: 1.55rem;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
 .miles-stat-card p span {
-  margin-left: 8px;
+  margin-left: 6px;
   color: var(--accent-color);
-  font-size: 0.95rem;
+  font-size: 0.82rem;
+}
+
+.miles-stat-card small {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
 }
 
 .miles-badges {
-  margin-top: 10px;
+  margin-top: 4px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -1903,8 +2194,8 @@ body.theme-dark .home-page .public-milestone-text {
   color: var(--text-primary);
   border: 1px solid rgba(16, 185, 129, 0.22);
   border-radius: 999px;
-  font-size: 0.75rem;
-  padding: 4px 10px;
+  font-size: 0.7rem;
+  padding: 3px 8px;
 }
 
 .miles-dashboard-grid {
@@ -1941,9 +2232,25 @@ body.theme-dark .home-page .public-milestone-text {
 .miles-overview-support-grid {
   margin-top: 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  max-width: 100%;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 10px;
+  max-width: 760px;
+}
+
+.miles-overview-card-clickable {
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.miles-overview-card-clickable:hover {
+  border-color: rgba(16, 185, 129, 0.38);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+  transform: translateY(-1px);
+}
+
+.miles-overview-card-clickable:focus-visible {
+  outline: 2px solid rgba(16, 185, 129, 0.58);
+  outline-offset: 2px;
 }
 
 .miles-panel {
@@ -2280,6 +2587,60 @@ body.theme-dark .home-page .public-milestone-text {
   color: #eaf8ec;
 }
 
+.admin-help-warning-banner {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  margin: 1rem 0 0.5rem;
+  padding: 14px 16px;
+  background: rgba(239, 68, 68, 0.07);
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  border-radius: 10px;
+}
+
+.admin-help-warning-icon {
+  font-size: 1.3rem;
+  line-height: 1.4;
+  flex-shrink: 0;
+  color: #f87171;
+}
+
+.admin-help-warning-banner strong {
+  display: block;
+  color: #f87171;
+  font-size: 0.97rem;
+  margin-bottom: 0.3rem;
+}
+
+.admin-help-warning-banner p {
+  color: var(--miles-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.admin-help-contact-note {
+  margin-top: 1.25rem;
+  padding: 12px 16px;
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  border-radius: 10px;
+}
+
+.admin-help-contact-note p {
+  color: var(--miles-text-muted);
+  font-size: 0.88rem;
+}
+
+.admin-help-contact-note a {
+  color: var(--miles-green-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.admin-help-contact-note a:hover {
+  text-decoration: underline;
+}
+
 .admin-help-block {
   margin-top: 14px;
   padding: 12px;
@@ -2338,6 +2699,7 @@ body.theme-dark .home-page .public-milestone-text {
 
   .miles-stat-row {
     grid-template-columns: 1fr;
+    max-width: 100%;
   }
 
   .miles-overview-row,

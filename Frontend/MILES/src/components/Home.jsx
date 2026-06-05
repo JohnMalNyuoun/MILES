@@ -1,54 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import defaultSiteContent from '../content/defaultSiteContent';
 
 function Home({ siteContent = defaultSiteContent }) {
   const homeContent = siteContent.home || defaultSiteContent.home;
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [recentWorkshops, setRecentWorkshops] = useState([]);
-
-  useEffect(() => {
-    const loadPublicDashboardData = async () => {
-      try {
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
-        const [teamResponse, projectsResponse, workshopsResponse] = await Promise.all([
-          fetch(`${apiBaseUrl}/api/team`),
-          fetch(`${apiBaseUrl}/api/projects`),
-          fetch(`${apiBaseUrl}/api/workshops`),
-        ]);
-
-        if (!teamResponse.ok || !projectsResponse.ok || !workshopsResponse.ok) {
-          return;
-        }
-
-        const [teamData, projectsData, workshopData] = await Promise.all([
-          teamResponse.json(),
-          projectsResponse.json(),
-          workshopsResponse.json(),
-        ]);
-
-        setTeamMembers(Array.isArray(teamData) ? teamData : []);
-        setProjects(Array.isArray(projectsData) ? projectsData : []);
-        setRecentWorkshops(Array.isArray(workshopData.recentSchedules) ? workshopData.recentSchedules : []);
-      } catch (error) {
-        setTeamMembers([]);
-        setProjects([]);
-        setRecentWorkshops([]);
-      }
-    };
-
-    loadPublicDashboardData();
-  }, []);
-
-  const workshopCount = useMemo(() => {
-    return recentWorkshops.length;
-  }, [recentWorkshops]);
-
-  const latestWorkshop = recentWorkshops[0] || null;
-  const latestMilestoneText = latestWorkshop
-    ? `Latest recorded workshop: ${latestWorkshop.nextSessionTopic || latestWorkshop.title} at ${latestWorkshop.nextSessionLocation || 'MILES venue'}${latestWorkshop.nextSessionDate ? ` on ${latestWorkshop.nextSessionDate}` : ''}.`
-    : 'No workshop has been recorded yet. Record the next community workshop from the admin dashboard.';
 
   const renderLink = (item, className, children) => {
     if (!item?.path) {
@@ -98,52 +53,70 @@ function Home({ siteContent = defaultSiteContent }) {
       </section>
 
       <section className="section public-dashboard-section">
-        <h2>Community Dashboard</h2>
+        <h2>Our Pillars of Impact</h2>
         <p>
-          Public visibility for MILES progress. This section shares key updates with all users.
+          Mothers in Learning, Empowerment &amp; Support operates a comprehensive intervention framework to uplift young mothers and girls.
         </p>
-
-        <div className="public-dashboard-stats">
-          <article className="public-dashboard-card">
-            <h3>Mothers Supported</h3>
-            <p>{teamMembers.length}</p>
-          </article>
-          <article className="public-dashboard-card">
-            <h3>Recent Mentorship</h3>
-            <p>{projects.length} Active Records</p>
-          </article>
-          <article className="public-dashboard-card">
-            <h3>Workshops</h3>
-            <p>{workshopCount} Recorded</p>
-          </article>
-        </div>
 
         <div className="public-dashboard-grid">
           <article className="public-dashboard-panel">
-            <h3>Our Core Focus</h3>
-            <div className="public-focus-tags">
-              <span>Early Pregnancy Prevention</span>
-              <span>Combating Negative Peer Pressure</span>
+            <h3>Academic Re-enrollment</h3>
+            <p>
+              Actively monitoring, mentoring, and establishing pathways for young mothers to return to school and continue their education journeys cleanly.
+            </p>
+          </article>
+
+          <article className="public-dashboard-panel">
+            <h3>Pregnancy Prevention</h3>
+            <p>
+              Deploying targeted workshops and awareness tracks to safeguard young girls, offering guidance, resources, and continuous reproductive health advocacy.
+            </p>
+          </article>
+
+          <article className="public-dashboard-panel">
+            <h3>Resilience Against Peer Pressure</h3>
+            <p>
+              Building strong peer-led support structures to combat negative social pressure and empower young women with confidence and leadership tools.
+            </p>
+          </article>
+
+          <article className="public-dashboard-panel">
+            <h3>Community Mentorship</h3>
+            <p>
+              Providing personalized family monitoring, community networks, and critical intervention advocacy alongside local educational framework partners.
+            </p>
+          </article>
+
+          <article
+            className="public-dashboard-panel public-dashboard-panel-featured"
+          >
+            <h3>Advocacy &amp; GBV Prevention</h3>
+            <p>
+              Challenging deep-rooted cultural beliefs and protecting the girl child from dangerous traditional practices. Click to explore our complete protection framework.
+            </p>
+
+            <div className="advocacy-inline-grid">
+              <section className="advocacy-inline-block">
+                <h4>Countering Gender-Based Violence (GBV)</h4>
+                <p>
+                  Systematically breaking down the silence surrounding physical, psychological, and economic violence against women and girls through safe spaces, reporting advocacy, and survivor support tracks.
+                </p>
+              </section>
+
+              <section className="advocacy-inline-block">
+                <h4>Eradicating Dangerous Traditional Practices</h4>
+                <p>
+                  Confronting and campaigning against harmful traditional frameworks, including child, early, and forced marriages, and female genital mutilation (FGM), which strip the girl child of her health, dignity, and education.
+                </p>
+              </section>
+
+              <section className="advocacy-inline-block">
+                <h4>Community Shift &amp; Awareness</h4>
+                <p>
+                  Engaging traditional elders, parents, and youth leaders in structured dialogue workshops to shift community mindsets, replace outdated dogmas with protective support, and keep girls safely enrolled in schools.
+                </p>
+              </section>
             </div>
-          </article>
-
-          <article className="public-dashboard-panel">
-            <h3>Team Overview</h3>
-            <ul>
-              <li><strong>Nyajuok William</strong> - Founder</li>
-              <li><strong>John Mal Nyuon</strong> - Program Coordinator</li>
-              <li><strong>Nyaluit Mabil</strong> - Young Mothers Representative</li>
-            </ul>
-          </article>
-
-          <article className="public-dashboard-panel">
-            <h3>Latest Community Milestone</h3>
-            <Link to="/workshops" className="public-milestone-link">
-              <p className="public-milestone-text">
-                {latestMilestoneText}
-              </p>
-              <span>View all workshop activities</span>
-            </Link>
           </article>
         </div>
       </section>

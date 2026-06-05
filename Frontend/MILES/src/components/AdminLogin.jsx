@@ -6,7 +6,7 @@ const getApiBaseUrl = () => import.meta.env.VITE_API_BASE_URL || '';
 function AdminLogin() {
   const apiBaseUrl = useMemo(() => getApiBaseUrl(), []);
   const navigate = useNavigate();
-  const [authForm, setAuthForm] = useState({ email: '', password: '' });
+  const [authForm, setAuthForm] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -14,8 +14,8 @@ function AdminLogin() {
     event.preventDefault();
     setError('');
 
-    if (!authForm.email || !authForm.password) {
-      setError('Email and password are required.');
+    if (!authForm.username || !authForm.password) {
+      setError('Username and password are required.');
       return;
     }
 
@@ -54,14 +54,14 @@ function AdminLogin() {
 
         <form onSubmit={handleAuthSubmit} className="admin-form">
           <label>
-            Email
+            Username
             <input
-              type="email"
-              value={authForm.email}
+              type="text"
+              value={authForm.username}
               onChange={(event) =>
-                setAuthForm((current) => ({ ...current, email: event.target.value }))
+                setAuthForm((current) => ({ ...current, username: event.target.value }))
               }
-              placeholder="admin@example.com"
+              placeholder="admin_username"
             />
           </label>
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import defaultSiteContent from '../content/defaultSiteContent';
+import PendingActionsReview from './PendingActionsReview';
 
 const getApiBaseUrl = () => import.meta.env.VITE_API_BASE_URL || '';
 
@@ -314,18 +315,10 @@ function AdminDashboard() {
     bio: '',
     image: '',
     videoUrl: '',
-    returnToSchool: false,
-    schoolName: '',
-    educationLevel: '',
-    dropoutCause: '',
-    supportSummary: '',
-    currentChallenges: '',
-    caseStatus: '',
-    guardianContact: '',
-    workshopFocus: '',
   });
   const [adminForm, setAdminForm] = useState({
     name: '',
+    username: '',
     email: '',
     password: '',
   });
@@ -344,15 +337,6 @@ function AdminDashboard() {
     bio: '',
     image: '',
     videoUrl: '',
-    returnToSchool: false,
-    schoolName: '',
-    educationLevel: '',
-    dropoutCause: '',
-    supportSummary: '',
-    currentChallenges: '',
-    caseStatus: '',
-    guardianContact: '',
-    workshopFocus: '',
   });
   const [siteContentObject, setSiteContentObject] = useState(defaultSiteContent);
   const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
@@ -526,15 +510,6 @@ function AdminDashboard() {
       bio: member.bio || '',
       image: member.image || '',
       videoUrl: member.videoUrl || '',
-      returnToSchool: Boolean(member.returnToSchool),
-      schoolName: member.schoolName || '',
-      educationLevel: member.educationLevel || '',
-      dropoutCause: member.dropoutCause || '',
-      supportSummary: member.supportSummary || '',
-      currentChallenges: member.currentChallenges || '',
-      caseStatus: member.caseStatus || '',
-      guardianContact: member.guardianContact || '',
-      workshopFocus: member.workshopFocus || '',
     });
   };
 
@@ -613,15 +588,6 @@ function AdminDashboard() {
         bio: '',
         image: '',
         videoUrl: '',
-        returnToSchool: false,
-        schoolName: '',
-        educationLevel: '',
-        dropoutCause: '',
-        supportSummary: '',
-        currentChallenges: '',
-        caseStatus: '',
-        guardianContact: '',
-        workshopFocus: '',
       });
       setMessage(data.message || 'Team member saved to the database successfully.');
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
@@ -637,8 +603,8 @@ function AdminDashboard() {
     event.preventDefault();
     clearStatus();
 
-    if (!adminForm.name || !adminForm.email || !adminForm.password) {
-      setError('Admin name, email and password are required.');
+    if (!adminForm.name || !adminForm.username || !adminForm.email || !adminForm.password) {
+      setError('Admin name, username, email and password are required.');
       return;
     }
 
@@ -657,6 +623,7 @@ function AdminDashboard() {
 
       setAdminForm({
         name: '',
+        username: '',
         email: '',
         password: '',
       });
@@ -1516,12 +1483,21 @@ function AdminDashboard() {
 
         {!isWorkspaceView && (
           <>
-        <div className="miles-stat-row">
-          <article className="miles-stat-card">
+        <div className="miles-stat-row" aria-label="Admin overview shortcuts">
+          <button
+            type="button"
+            className={`miles-stat-card miles-stat-card-button ${activeSection === 'manage-team' ? 'miles-stat-card-active' : ''}`}
+            onClick={() => openWorkspaceSection('manage-team', 'team')}
+          >
             <h3>Team Members</h3>
             <p>{supportTeamMembers.length} <span>From database</span></p>
-          </article>
-          <article className="miles-stat-card">
+            <small>Open Team records</small>
+          </button>
+          <button
+            type="button"
+            className={`miles-stat-card miles-stat-card-button ${activeSection === 'manage-projects' ? 'miles-stat-card-active' : ''}`}
+            onClick={() => openWorkspaceSection('manage-projects', 'activity')}
+          >
             <h3>Recent Mentorship</h3>
             <p>{projects.length} Active Records</p>
             <div className="miles-badges">
@@ -1529,11 +1505,17 @@ function AdminDashboard() {
                 <span key={topic}>{topic}</span>
               ))}
             </div>
-          </article>
-          <article className="miles-stat-card">
+            <small>Open Case management</small>
+          </button>
+          <button
+            type="button"
+            className={`miles-stat-card miles-stat-card-button ${activeSection === 'create-admin' ? 'miles-stat-card-active' : ''}`}
+            onClick={() => openWorkspaceSection('create-admin', 'activity')}
+          >
             <h3>Admin Users</h3>
             <p>{dashboard?.stats?.userCount ?? 0} <span>Authorized</span></p>
-          </article>
+            <small>Open Admin account tools</small>
+          </button>
         </div>
 
         <div className="miles-overview-row">
@@ -1547,16 +1529,37 @@ function AdminDashboard() {
         </div>
 
         <div className="miles-overview-support-grid">
-          <article className={`miles-panel miles-panel-compact miles-quick-actions-panel ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}>
+          <article
+            className={`miles-panel miles-panel-compact miles-quick-actions-panel miles-overview-card-clickable ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => openWorkspaceSection('workshop-schedule', 'quick-actions')}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openWorkspaceSection('workshop-schedule', 'quick-actions');
+              }
+            }}
+          >
             <h2>Quick Actions</h2>
             <div className="miles-action-stack">
-              <button type="button" onClick={() => openWorkspaceSection('manage-team', 'team')}>View Team</button>
               <button type="button" onClick={() => openWorkspaceSection('manage-projects', 'quick-actions')}>Log New Case Intervention</button>
               <button type="button" onClick={() => openWorkspaceSection('workshop-schedule', 'quick-actions')}>Schedule Workshop</button>
             </div>
           </article>
 
-          <article className={`miles-panel miles-panel-compact ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}>
+          <article
+            className={`miles-panel miles-panel-compact miles-overview-card-clickable ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => openWorkspaceSection('edit-navbar', 'tasks')}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openWorkspaceSection('edit-navbar', 'tasks');
+              }
+            }}
+          >
             <h2>Pending Tasks</h2>
             <ul className="miles-task-list">
               {filteredPendingTasks.length > 0 ? (
@@ -1567,27 +1570,6 @@ function AdminDashboard() {
                 ))
               ) : (
                 <li>No pending task matches your search.</li>
-              )}
-            </ul>
-          </article>
-
-          <article className={`miles-panel ${activeOverviewPanel === 'team' ? 'miles-panel-priority' : ''}`}>
-            <h2>Team</h2>
-            <ul className="miles-team-list miles-team-list-fullwidth">
-              {filteredSupportTeamPreview.slice(0, 5).length > 0 ? (
-                filteredSupportTeamPreview.slice(0, 5).map((member) => (
-                  <li key={member._id}>
-                    <span className="miles-avatar-slot">{(member.name || 'T').charAt(0)}</span>
-                    <div>
-                      <strong>{member.name}</strong>
-                      <p>{member.role || 'Team Member'}</p>
-                      <small>{member.bio || 'Profile details not yet recorded.'}</small>
-                      <small>Updated: {formatDateTime(member.updatedAt || member.createdAt)}</small>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li>No team member profile matches your search.</li>
               )}
             </ul>
           </article>
@@ -1613,6 +1595,11 @@ function AdminDashboard() {
             </ul>
           </article>
         </div>
+
+        <PendingActionsReview
+          currentUsername={user?.username}
+          authHeaders={authHeaders}
+        />
 
         <article className="miles-panel miles-workspace-panel">
           <h2>Management Workspace</h2>
@@ -1681,6 +1668,17 @@ function AdminDashboard() {
                   value={adminForm.name}
                   onChange={(event) =>
                     setAdminForm((current) => ({ ...current, name: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Username
+                <input
+                  type="text"
+                  value={adminForm.username}
+                  onChange={(event) =>
+                    setAdminForm((current) => ({ ...current, username: event.target.value }))
                   }
                 />
               </label>
@@ -1855,194 +1853,112 @@ function AdminDashboard() {
 
         {activeSection === 'manage-team' && (
           <article className="admin-card admin-panel-card">
-            <h2>Team</h2>
-            <ul className="admin-list">
-              {filteredTeamRecords.length > 0 ? filteredTeamRecords.map((member) => (
-                <li key={member._id}>
-                  {editingTeamId === member._id ? (
-                    <form onSubmit={handleUpdateTeam} className="admin-form admin-inline-form">
-                      <label>
-                        Name
-                        <input
-                          value={editingTeamForm.name}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, name: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Support Role
-                        <input
-                          value={editingTeamForm.role}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, role: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Cause of School Dropout
-                        <textarea
-                          value={editingTeamForm.dropoutCause}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, dropoutCause: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Current School Name
-                        <input
-                          value={editingTeamForm.schoolName}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, schoolName: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Education Level / Class
-                        <input
-                          value={editingTeamForm.educationLevel}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, educationLevel: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Bio
-                        <textarea
-                          value={editingTeamForm.bio}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, bio: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Team Photo URL or Filename
-                        <input
-                          value={editingTeamForm.image}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, image: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Team Video URL
-                        <input
-                          value={editingTeamForm.videoUrl}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, videoUrl: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Support Summary
-                        <textarea
-                          value={editingTeamForm.supportSummary}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, supportSummary: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Current Challenges
-                        <textarea
-                          value={editingTeamForm.currentChallenges}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, currentChallenges: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Guardian or Emergency Contact
-                        <input
-                          value={editingTeamForm.guardianContact}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, guardianContact: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Workshop Focus
-                        <textarea
-                          value={editingTeamForm.workshopFocus}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, workshopFocus: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <div className="admin-row-actions">
-                        <button type="submit" disabled={loading}>Save</button>
-                        <button
-                          type="button"
-                          className="admin-secondary-btn"
-                          onClick={() => setEditingTeamId('')}
-                          disabled={loading}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <>
-                      <div>
-                        <strong>{member.name}</strong>
-                        <p>{member.role}</p>
-                        {member.dropoutCause && <p><strong>Dropout Cause:</strong> {member.dropoutCause}</p>}
-                        {member.schoolName && <p><strong>School:</strong> {member.schoolName}</p>}
-                        {member.educationLevel && <p><strong>Class:</strong> {member.educationLevel}</p>}
-                        {member.supportSummary && <p><strong>Support:</strong> {member.supportSummary}</p>}
-                        {member.currentChallenges && <p><strong>Challenges:</strong> {member.currentChallenges}</p>}
-                        {member.workshopFocus && <p><strong>Workshop Focus:</strong> {member.workshopFocus}</p>}
-                        {member.guardianContact && <p><strong>Contact:</strong> {member.guardianContact}</p>}
-                        {(member.image || member.videoUrl) && (
-                          <div className="admin-media-links">
-                            {member.image && (
-                              <a
-                                className="admin-secondary-btn admin-link-pill"
-                                href={member.image}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                View Photo
-                              </a>
-                            )}
-                            {member.videoUrl && (
-                              <a
-                                className="admin-secondary-btn admin-link-pill"
-                                href={member.videoUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                View Video
-                              </a>
-                            )}
+            <div className="exec-registry-header">
+              <h2 className="exec-registry-title">Active Core Leadership &amp; Representatives</h2>
+              <p className="exec-registry-subtitle">View, edit, and update profiles for core leadership, administrators, and community representatives.</p>
+            </div>
+
+            {filteredTeamRecords.length === 0 ? (
+              <p className="admin-panel-hint">No team profile matches your search.</p>
+            ) : (
+              <div className="exec-registry-grid">
+                {filteredTeamRecords.map((member) => (
+                  <div key={member._id} className="exec-profile-card">
+                    {editingTeamId === member._id ? (
+                      <form onSubmit={handleUpdateTeam} className="admin-form admin-inline-form">
+                        <label>
+                          Name
+                          <input
+                            value={editingTeamForm.name}
+                            onChange={(event) =>
+                              setEditingTeamForm((current) => ({ ...current, name: event.target.value }))
+                            }
+                          />
+                        </label>
+                        <label>
+                          Role
+                          <input
+                            value={editingTeamForm.role}
+                            onChange={(event) =>
+                              setEditingTeamForm((current) => ({ ...current, role: event.target.value }))
+                            }
+                          />
+                        </label>
+                        <label>
+                          Bio
+                          <textarea
+                            value={editingTeamForm.bio}
+                            onChange={(event) =>
+                              setEditingTeamForm((current) => ({ ...current, bio: event.target.value }))
+                            }
+                          />
+                        </label>
+                        <label>
+                          Photo URL or Filename
+                          <input
+                            value={editingTeamForm.image}
+                            onChange={(event) =>
+                              setEditingTeamForm((current) => ({ ...current, image: event.target.value }))
+                            }
+                          />
+                        </label>
+                        <label>
+                          Video URL
+                          <input
+                            value={editingTeamForm.videoUrl}
+                            onChange={(event) =>
+                              setEditingTeamForm((current) => ({ ...current, videoUrl: event.target.value }))
+                            }
+                          />
+                        </label>
+                        <div className="admin-row-actions">
+                          <button type="submit" disabled={loading}>Save</button>
+                          <button
+                            type="button"
+                            className="admin-secondary-btn"
+                            onClick={() => setEditingTeamId('')}
+                            disabled={loading}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <>
+                        <div className="exec-profile-meta">
+                          <div className="exec-profile-name-row">
+                            <strong className="exec-profile-name">{member.name}</strong>
+                            <span className="exec-profile-badge">
+                              {member.role?.toLowerCase().includes('representative') ? 'Core Team' : 'Active Staff'}
+                            </span>
                           </div>
-                        )}
-                        <p>Updated: {formatDateTime(member.updatedAt || member.createdAt)}</p>
-                      </div>
-                      <div className="admin-row-actions">
-                        <button
-                          type="button"
-                          className="admin-secondary-btn"
-                          onClick={() => beginTeamEdit(member)}
-                          disabled={loading}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteTeam(member._id)}
-                          disabled={loading}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </li>
-              )) : (
-                <li>No team profile matches your search.</li>
-              )}
-            </ul>
+                          <p className="exec-profile-role">{member.role}</p>
+                          {member.bio && <p className="exec-profile-bio">{member.bio}</p>}
+                          <p className="exec-profile-updated">Updated: {formatDateTime(member.updatedAt || member.createdAt)}</p>
+                        </div>
+                        <div className="admin-row-actions">
+                          <button
+                            type="button"
+                            className="admin-secondary-btn"
+                            onClick={() => beginTeamEdit(member)}
+                            disabled={loading}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteTeam(member._id)}
+                            disabled={loading}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </article>
         )}
 
@@ -3207,47 +3123,84 @@ function AdminDashboard() {
 
         {activeSection === 'help-guide' && (
           <article className="admin-card admin-panel-card">
-            <h2>Help & Guidance</h2>
+            <h2>Help &amp; Guidance</h2>
             <p className="admin-panel-hint">
-              Use this guide to navigate the dashboard and publish updates to the live website.
+              Use this guide to navigate the dashboard safely. Read every section before making any changes.
             </p>
 
+            <div className="admin-help-warning-banner">
+              <span className="admin-help-warning-icon">⚠</span>
+              <div>
+                <strong>Supervision Required</strong>
+                <p>
+                  This admin panel controls the live MILES website and its database. If you are not
+                  a trained technical operator, you must <strong>not use this dashboard alone</strong>.
+                  Always have a supervising MILES technical team member present before making any
+                  edits, deletions, or approvals. Unsupervised changes can permanently alter or
+                  remove live content and data records.
+                </p>
+              </div>
+            </div>
+
             <section className="admin-help-block">
-              <h3>1. Dashboard Overview</h3>
+              <h3>1. Who Should Use This Dashboard</h3>
               <ul>
-                <li>Use the left sidebar to jump between major areas like Team, Reports, and Settings.</li>
-                <li>The top cards show live counts from your backend database.</li>
-                <li>Panels in the middle show stories and pending data checks.</li>
+                <li>Only authorized MILES administrators with a registered account may log in.</li>
+                <li>If you are a non-technical staff member, you must be accompanied by a technical supervisor at all times.</li>
+                <li>Do not share your login credentials with anyone, including other MILES staff.</li>
+                <li>If you are unsure what a section does, stop and contact your technical supervisor before proceeding.</li>
               </ul>
             </section>
 
             <section className="admin-help-block">
-              <h3>2. Editing Website Content</h3>
+              <h3>2. The Two-Admin Approval Rule</h3>
+              <ul>
+                <li>All staged content changes require sign-off from a <strong>second administrator</strong> before going live.</li>
+                <li>You cannot approve your own submissions — the other admin must review and confirm each action.</li>
+                <li>Check the <strong>Dual-Authorization Review Feed</strong> on your dashboard home to see pending actions awaiting your review.</li>
+                <li>If no second admin is available, hold all changes until supervision is present.</li>
+              </ul>
+            </section>
+
+            <section className="admin-help-block">
+              <h3>3. Editing Website Content Safely</h3>
               <ul>
                 <li>Open section cards like Edit Hero, Edit Home, Edit Donate, or Edit Learn.</li>
-                <li>Update the fields, then click the Save button at the bottom of that section.</li>
-                <li>Your changes are sent directly to backend APIs and stored in the database.</li>
-                <li>After saving, the dashboard shows a success alert and updated timestamps.</li>
+                <li>Read all existing content in a field before overwriting it.</li>
+                <li>Update only the specific fields you intend to change — leave everything else untouched.</li>
+                <li>Click Save and wait for the green success message before navigating away.</li>
+                <li>Confirm timestamps updated after saving to verify the change reached the database.</li>
               </ul>
             </section>
 
             <section className="admin-help-block">
-              <h3>3. Managing Team and Projects</h3>
+              <h3>4. Managing Team and Projects</h3>
               <ul>
-                <li>Create records from Add Team Member or Add Project.</li>
-                <li>Use Manage Team Members and Manage Projects to edit or delete existing records.</li>
-                <li>Each record row displays when it was last updated.</li>
+                <li>Use <strong>Manage Team</strong> to view, edit, or remove leadership and representative profiles.</li>
+                <li>Use <strong>Add Project</strong> and <strong>Manage Projects</strong> to maintain programme records.</li>
+                <li>Do not delete any record without verbal confirmation from your supervisor first.</li>
+                <li>Deletion is permanent — deleted records cannot be recovered from this dashboard.</li>
               </ul>
             </section>
 
             <section className="admin-help-block">
-              <h3>4. Safety Checklist Before Publishing</h3>
+              <h3>5. Safety Checklist Before Every Action</h3>
               <ul>
-                <li>Verify names, links, and spellings before clicking save.</li>
-                <li>Check Pending Tasks panel for missing image files or project links.</li>
-                <li>Confirm timestamps changed after save to ensure update reached the database.</li>
+                <li>✔ Verify names, dates, links, and spellings before clicking Save or Approve.</li>
+                <li>✔ Ensure a second admin or technical supervisor is present or reachable.</li>
+                <li>✔ Never perform bulk deletes or mass edits without explicit technical instruction.</li>
+                <li>✔ Log out immediately after your session is complete. Do not leave the dashboard open unattended.</li>
+                <li>✔ Report any unexpected errors or unusual behaviour to the technical team immediately.</li>
               </ul>
             </section>
+
+            <div className="admin-help-contact-note">
+              <p>
+                Need help? Contact the MILES technical team at{' '}
+                <a href="mailto:milesproject@gmail.com">milesproject@gmail.com</a> before making
+                any changes you are uncertain about.
+              </p>
+            </div>
           </article>
         )}
 
