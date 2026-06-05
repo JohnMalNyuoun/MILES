@@ -59,8 +59,11 @@ const ongoingActivity = {
   location: 'Scorpion Community Centre, Kakuma Refugee Camp',
 };
 
+const buildFacebookEmbedUrl = (postUrl) => `https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(postUrl)}&show_text=true&width=500`;
+
 function Projects() {
   const [projects, setProjects] = useState([]);
+  const [workshopPosts, setWorkshopPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -76,8 +79,17 @@ function Projects() {
 
         const data = await response.json();
         setProjects(data);
+
+        const postsResponse = await fetch(`${apiBaseUrl}/api/workshop-posts`);
+        if (postsResponse.ok) {
+          const postData = await postsResponse.json();
+          setWorkshopPosts(Array.isArray(postData) ? postData : []);
+        } else {
+          setWorkshopPosts([]);
+        }
       } catch (err) {
         setError('Unable to load projects right now.');
+        setWorkshopPosts([]);
       } finally {
         setLoading(false);
       }
@@ -115,6 +127,32 @@ function Projects() {
           This mentorship activity is continuing gradually with recurring sessions and community follow-ups.
         </p>
         <ImpactEventCard event={ongoingActivity} />
+      </section>
+
+      <section className="projects-video-section">
+        <h2 className="projects-activity-title">Featured Facebook Posts</h2>
+        <p className="projects-activity-subtitle">
+          View the Facebook posts directly inside the MILES site.
+        </p>
+        <div className="projects-posts-grid">
+          {workshopPosts.map((post, index) => (
+            <article key={post._id || post.postUrl || post.url || `post-${index}`} className="projects-post-card">
+              <h3>{post.title || 'Workshop update from the field'}</h3>
+              <p className="projects-post-summary">
+                {post.summary || post.details || 'A community update shared from the workshop feed.'}
+              </p>
+              <div className="projects-video-embed">
+                <iframe
+                  title={post.title || `Workshop post ${index + 1}`}
+                  src={buildFacebookEmbedUrl(post.postUrl || post.url)}
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
       {projects.length === 0 ? (

@@ -18,7 +18,7 @@ const teamSchema = new mongoose.Schema(
 		},
 		isMotherProfile: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 		returnToSchool: {
 			type: Boolean,
@@ -48,7 +48,7 @@ const teamSchema = new mongoose.Schema(
 		},
 		caseStatus: {
 			type: String,
-			default: 'Active Support',
+			default: '',
 			trim: true,
 		},
 		guardianContact: {

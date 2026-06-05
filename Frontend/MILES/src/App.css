@@ -8,42 +8,70 @@
 }
 
 :root {
-  --bg-color: #ffffff;
-  --text-color: #333333;
-  --nav-bg: #2e7d32;
-  --nav-text: #ffffff;
-  --accent-color: #2e7d32;
-  --accent-dark: #1b5e20;
-  --accent-soft: #a5d6a7;
-  --card-bg: #f1f8e9;
-  --card-border: #c8e6c9;
-  --soft-bg: #f8fff4;
-  --soft-text: #445a46;
-  --text-strong: #1d2a1f;
-  --text-muted: #506453;
+  --main-bg: #f3f6fb;
+  --card-bg: #ffffff;
+  --sidebar-bg: #090d14;
+  --primary-green: #10b981;
+  --primary-green-hover: #047857;
+  --green-glow: rgba(16, 185, 129, 0.1);
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --surface-elevated: #f8fafc;
+  --on-dark-text: #f8fafc;
+  --on-dark-muted: #cbd5e1;
+  --canvas-top: #fbfdff;
+  --canvas-bottom: #e8eef7;
+  --bg-color: var(--main-bg);
+  --text-color: var(--text-secondary);
+  --nav-bg: #ffffff;
+  --nav-text: #0f172a;
+  --accent-color: var(--primary-green);
+  --accent-dark: var(--primary-green-hover);
+  --accent-soft: rgba(16, 185, 129, 0.18);
+  --card-border: var(--border-subtle);
+  --soft-bg: #eef3f9;
+  --soft-text: var(--text-secondary);
+  --text-strong: var(--text-primary);
+  --text-muted: var(--text-secondary);
   --font-body: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif;
   --font-heading: 'Source Serif 4', Georgia, serif;
 }
 
 body.theme-dark {
-  --bg-color: #102016;
-  --text-color: #ecf5ec;
-  --nav-bg: #0d1610;
-  --nav-text: #f4fff4;
-  --accent-color: #7fd48b;
-  --accent-dark: #5fb56f;
-  --accent-soft: #a7dfb0;
-  --card-bg: #1a2b1f;
-  --card-border: #355c3d;
-  --soft-bg: #16241a;
-  --soft-text: #d5ead8;
-  --text-strong: #eff8ef;
-  --text-muted: #c6ddc9;
+  --main-bg: #0b0f19;
+  --card-bg: #1a202c;
+  --sidebar-bg: #090d14;
+  --primary-green: #10b981;
+  --primary-green-hover: #047857;
+  --green-glow: rgba(16, 185, 129, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --surface-elevated: #111723;
+  --on-dark-text: #ffffff;
+  --on-dark-muted: #cbd5e1;
+  --canvas-top: #0f1420;
+  --canvas-bottom: #0b0f19;
+  --bg-color: var(--main-bg);
+  --text-color: var(--text-secondary);
+  --nav-bg: var(--sidebar-bg);
+  --nav-text: var(--text-primary);
+  --accent-color: var(--primary-green);
+  --accent-dark: var(--primary-green-hover);
+  --accent-soft: rgba(16, 185, 129, 0.18);
+  --card-border: var(--border-subtle);
+  --soft-bg: #111723;
+  --soft-text: var(--text-secondary);
+  --text-strong: var(--text-primary);
+  --text-muted: var(--text-secondary);
 }
 
 body {
   font-family: var(--font-body);
-  background-color: var(--bg-color);
+  background:
+    radial-gradient(circle at top, rgba(16, 185, 129, 0.06), transparent 28%),
+    linear-gradient(180deg, var(--canvas-top) 0%, var(--bg-color) 34%, var(--canvas-bottom) 100%);
   color: var(--text-color);
   line-height: 1.7;
   font-size: 16px;
@@ -59,7 +87,7 @@ h4 {
   font-family: var(--font-heading);
   letter-spacing: 0.2px;
   line-height: 1.25;
-  color: var(--text-strong);
+  color: var(--accent-color);
 }
 
 /* ===== Navbar ===== */
@@ -72,13 +100,19 @@ h4 {
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.36);
+  border-bottom: 1px solid var(--border-subtle);
   flex-wrap: wrap;
   gap: 1rem;
 }
 
+body.theme-light .navbar {
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
 .navbar-brand a {
-  color: var(--nav-text);
+  color: var(--accent-color);
   text-decoration: none;
   font-size: 1.6rem;
   font-weight: 700;
@@ -88,11 +122,28 @@ h4 {
   gap: 0.5rem;
 }
 
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.navbar-menu-title {
+  color: var(--accent-color);
+  text-transform: uppercase;
+}
+
 .navbar-logo {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.navbar-logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar-links {
@@ -112,18 +163,25 @@ h4 {
 }
 
 .navbar-links li a {
-  color: var(--text-color);
+  color: var(--text-secondary);
   text-decoration: none;
   font-size: 1rem;
-  font-weight: 500;
-  padding: 0.5rem 0;
-  border-bottom: 2px solid transparent;
-  transition: border-color 0.3s, color 0.3s;
+  font-weight: 600;
+  padding: 0.75rem 0.9rem;
+  border-left: 3px solid transparent;
+  border-radius: 12px;
+  transition: border-color 0.3s, color 0.3s, background-color 0.3s;
 }
 
 .navbar-links li a:hover {
-  border-bottom: 2px solid var(--accent-soft);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+}
+
+.navbar-links li a.active {
   color: var(--accent-color);
+  border-left-color: var(--accent-color);
+  background: var(--green-glow);
 }
 
 .navbar-actions {
@@ -134,16 +192,26 @@ h4 {
 
 .theme-toggle,
 .menu-toggle {
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--nav-text);
   border-radius: 8px;
   cursor: pointer;
 }
 
+body.theme-light .theme-toggle,
+body.theme-light .menu-toggle {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.14);
+  color: #0f172a;
+}
+
 .theme-toggle {
   padding: 0.55rem 0.85rem;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .menu-toggle {
@@ -163,6 +231,20 @@ h4 {
   display: block;
 }
 
+body.theme-light .navbar-links {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+body.theme-light .navbar-links li a {
+  color: #475569;
+}
+
+body.theme-light .navbar-links li a:hover {
+  color: #0f172a;
+  background: rgba(15, 23, 42, 0.04);
+}
+
 /* ===== Hero ===== */
 .hero {
   position: relative;
@@ -175,7 +257,7 @@ h4 {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: linear-gradient(180deg, rgba(9, 13, 20, 0.38), rgba(9, 13, 20, 0.72));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -189,21 +271,21 @@ h4 {
 
 .hero-content h1 {
   font-size: 3.5rem;
-  color: #ffffff;
+  color: var(--accent-color);
   margin-bottom: 0.5rem;
   letter-spacing: 3px;
 }
 
 .hero-content h2 {
   font-size: 1.3rem;
-  color: #a5d6a7;
+  color: var(--text-secondary);
   margin-bottom: 1rem;
   font-weight: 500;
 }
 
 .hero-content p {
   font-size: 1.1rem;
-  color: #e0e0e0;
+  color: #dbe7f3;
   margin-bottom: 1.5rem;
 }
 
@@ -231,10 +313,10 @@ h4 {
 }
 
 .page h1 {
-  color: var(--accent-dark);
+  color: var(--accent-color);
   font-size: 2rem;
   margin-bottom: 1.5rem;
-  border-bottom: 3px solid var(--accent-soft);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.24);
   padding-bottom: 0.5rem;
 }
 
@@ -249,7 +331,7 @@ h4 {
 }
 
 .section h3 {
-  color: var(--accent-dark);
+  color: var(--accent-color);
   font-size: 1.15rem;
   margin-bottom: 0.45rem;
   margin-top: 0.8rem;
@@ -289,8 +371,8 @@ h4 {
   height: 100%;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 1.5rem;
+  border-radius: 12px;
+  padding: 24px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -306,7 +388,7 @@ h4 {
 }
 
 .feature-card p {
-  color: var(--text-color);
+  color: var(--text-secondary);
   font-size: 0.95rem;
 }
 
@@ -326,7 +408,7 @@ h4 {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 1rem;
+  padding: 24px;
 }
 
 .public-dashboard-card h3 {
@@ -339,7 +421,7 @@ h4 {
   margin: 0;
   font-size: 1.35rem;
   font-weight: 700;
-  color: var(--accent-dark);
+  color: var(--text-primary);
 }
 
 .public-dashboard-grid {
@@ -352,12 +434,12 @@ h4 {
   background: var(--soft-bg);
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 1rem;
+  padding: 24px;
 }
 
 .public-dashboard-panel h3 {
   margin-bottom: 0.55rem;
-  color: var(--accent-dark);
+  color: var(--accent-color);
   font-size: 1.05rem;
 }
 
@@ -384,9 +466,9 @@ h4 {
 }
 
 .public-focus-tags span {
-  background: #edf7e7;
-  border: 1px solid #c8e6c9;
-  color: #1b5e20;
+  background: var(--green-glow);
+  border: 1px solid rgba(16, 185, 129, 0.24);
+  color: var(--text-primary);
   border-radius: 999px;
   padding: 0.35rem 0.7rem;
   font-size: 0.85rem;
@@ -394,71 +476,125 @@ h4 {
 }
 
 .public-milestone-text {
-  background: #edf7e7;
-  border-left: 4px solid #2e7d32;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 4px solid var(--accent-color);
   border-radius: 8px;
   padding: 0.8rem;
-  color: #2f4b33;
+  color: var(--text-secondary);
+}
+
+.public-milestone-link {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-decoration: none;
+}
+
+.public-milestone-link span {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+.public-milestone-link:hover .public-milestone-text {
+  border-color: rgba(16, 185, 129, 0.4);
+  transform: translateY(-1px);
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .home-page .section h2,
 .home-page .section h3,
-.home-page .section p,
-.home-page .section li,
 .home-page .feature-card h3,
-.home-page .feature-card p,
 .home-page .public-dashboard-card h3,
-.home-page .public-dashboard-card p,
-.home-page .public-dashboard-panel h3,
-.home-page .public-dashboard-panel li,
-.home-page .public-dashboard-panel p {
-  color: #ffffff;
+.home-page .public-dashboard-panel h3 {
+  color: var(--accent-color);
 }
 
+.home-page .section p,
+.home-page .section li,
+.home-page .feature-card p,
+.home-page .public-dashboard-panel li,
+.home-page .public-dashboard-panel p {
+  color: var(--text-secondary);
+}
+
+
+body.theme-light .home-page .feature-card,
+body.theme-light .home-page .public-dashboard-card,
+body.theme-light .home-page .public-dashboard-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(238, 243, 249, 0.98));
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+body.theme-light .home-page .section p,
+body.theme-light .home-page .section li,
+body.theme-light .home-page .feature-card p,
+body.theme-light .home-page .public-dashboard-card p,
+body.theme-light .home-page .public-dashboard-panel li,
+body.theme-light .home-page .public-dashboard-panel p {
+  color: var(--text-secondary);
+}
+
+body.theme-light .home-page .section h2,
+body.theme-light .home-page .section h3,
+body.theme-light .home-page .feature-card h3,
+body.theme-light .home-page .public-dashboard-card h3,
+body.theme-light .home-page .public-dashboard-panel h3 {
+  color: var(--accent-color);
+}
+
+body.theme-light .home-page .public-milestone-text {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(255, 255, 255, 0.96));
+  color: var(--text-secondary);
+}
 .home-page .feature-card,
 .home-page .public-dashboard-card,
 .home-page .public-dashboard-panel {
-  background: linear-gradient(180deg, rgba(23, 48, 31, 0.96), rgba(16, 33, 22, 0.96));
-  border-color: rgba(127, 212, 139, 0.28);
+  background: linear-gradient(180deg, rgba(22, 27, 34, 0.98), rgba(11, 15, 25, 0.98));
+  border-color: rgba(16, 185, 129, 0.2);
 }
 
 .home-page .public-focus-tags span {
-  background: rgba(127, 212, 139, 0.12);
-  border-color: rgba(127, 212, 139, 0.38);
+  background: var(--green-glow);
+  border-color: rgba(16, 185, 129, 0.28);
   color: #ffffff;
 }
 
 .home-page .public-milestone-text {
-  background: linear-gradient(135deg, rgba(127, 212, 139, 0.16), rgba(15, 31, 20, 0.92));
-  border: 1px solid rgba(127, 212, 139, 0.34);
-  border-left: 4px solid #7fd48b;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(11, 15, 25, 0.96));
+  border: 1px solid rgba(16, 185, 129, 0.24);
+  border-left: 4px solid var(--accent-color);
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 body.theme-dark .home-page .section h2,
 body.theme-dark .home-page .section h3,
+body.theme-dark .home-page .public-dashboard-card h3,
+body.theme-dark .home-page .public-dashboard-panel h3 {
+  color: var(--accent-color);
+}
+
 body.theme-dark .home-page .section p,
 body.theme-dark .home-page .section li,
 body.theme-dark .home-page .public-dashboard-card p,
-body.theme-dark .home-page .public-dashboard-card h3,
-body.theme-dark .home-page .public-dashboard-panel h3,
 body.theme-dark .home-page .public-dashboard-panel li,
 body.theme-dark .home-page .public-dashboard-panel p {
-  color: #ffffff;
+  color: var(--text-secondary);
 }
 
 body.theme-dark .home-page .public-milestone-text {
-  background: linear-gradient(135deg, rgba(127, 212, 139, 0.22), rgba(9, 18, 12, 0.98));
-  border-color: rgba(167, 223, 176, 0.45);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(11, 15, 25, 0.98));
+  border-color: rgba(16, 185, 129, 0.28);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
 }
 
 /* ===== Contact ===== */
 .contact-info {
   background: var(--card-bg);
-  padding: 1.5rem;
-  border-radius: 8px;
+  padding: 24px;
+  border-radius: 12px;
   border-left: 4px solid var(--accent-color);
   margin-top: 1rem;
 }
@@ -482,8 +618,8 @@ body.theme-dark .home-page .public-milestone-text {
 .focus-detail {
   background: var(--soft-bg);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 1.4rem;
+  border-radius: 12px;
+  padding: 24px;
 }
 
 .focus-detail h2 {
@@ -495,14 +631,14 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .donate-section {
-  background: #f8fff4;
-  border: 1px solid #c8e6c9;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 24px;
 }
 
 .donate-section p {
-  color: #4b5f4e;
+  color: var(--text-secondary);
 }
 
 .donate-grid {
@@ -513,20 +649,21 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .donate-card {
-  background: #eef8e9;
-  border: 1px solid #d7eccd;
-  border-radius: 10px;
-  padding: 1rem;
+  background: #1b2230;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 24px;
 }
 
 .donate-card h3 {
-  color: #1b5e20;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .donate-highlight {
-  background: #edf7e7;
-  border-left: 4px solid #2e7d32;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  border-left: 4px solid var(--accent-color);
   border-radius: 8px;
   padding: 1rem;
   margin: 1rem 0;
@@ -548,7 +685,7 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .team-section h2 {
-  color: #1b5e20;
+  color: var(--accent-color);
   font-size: 2rem;
   margin-bottom: 2rem;
 }
@@ -561,10 +698,10 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .team-card {
-  background: #f1f8e9;
-  border: 1px solid #c8e6c9;
-  border-radius: 10px;
-  padding: 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 24px;
   max-width: 250px;
   text-align: center;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -581,31 +718,31 @@ body.theme-dark .home-page .public-milestone-text {
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 0.75rem;
-  border: 2px solid #2e7d32;
+  border: 2px solid var(--accent-color);
 }
 
 .team-img-placeholder {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-color: #c8e6c9;
+  background-color: var(--green-glow);
   margin: 0 auto 0.75rem;
-  border: 2px solid #2e7d32;
+  border: 2px solid var(--accent-color);
 }
 
 .team-card h3 {
-  color: #1b5e20;
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
 }
 
 .team-role {
-  color: #2e7d32;
+  color: var(--accent-color);
   font-weight: 600;
   margin-bottom: 0.75rem;
 }
 
 .team-card p {
-  color: #555;
+  color: var(--text-secondary);
   font-size: 0.8rem;
 }
 
@@ -617,12 +754,12 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .projects-section h1 {
-  color: #1b5e20;
+  color: var(--accent-color);
   margin-bottom: 0.5rem;
 }
 
 .projects-subtitle {
-  color: #4e6b50;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
 }
 
@@ -631,13 +768,44 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .projects-activity-title {
-  color: #2e7d32;
+  color: var(--accent-color);
   margin-bottom: 0.35rem;
 }
 
 .projects-activity-subtitle {
-  color: #4e6b50;
+  color: var(--text-secondary);
   margin-bottom: 0.8rem;
+}
+
+.projects-video-section {
+  margin-bottom: 2rem;
+}
+
+.projects-video-embed {
+  position: relative;
+  width: min(100%, 560px);
+  height: 720px;
+  margin: 0 auto;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface-elevated);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.projects-video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+@media (min-width: 900px) {
+  .projects-video-embed {
+    width: min(100%, 560px);
+    height: 760px;
+  }
 }
 
 .projects-grid {
@@ -647,22 +815,22 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .project-card {
-  background: #f1f8e9;
-  border: 1px solid #c8e6c9;
-  border-radius: 10px;
-  padding: 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
 .project-card h3 {
-  color: #1b5e20;
+  color: var(--text-primary);
   font-size: 1.1rem;
 }
 
 .project-card p {
-  color: #555;
+  color: var(--text-secondary);
   font-size: 0.95rem;
 }
 
@@ -675,8 +843,8 @@ body.theme-dark .home-page .public-milestone-text {
 .project-tag {
   font-size: 0.78rem;
   border-radius: 999px;
-  background: #c8e6c9;
-  color: #1b5e20;
+  background: var(--green-glow);
+  color: var(--text-primary);
   padding: 0.2rem 0.6rem;
 }
 
@@ -689,7 +857,7 @@ body.theme-dark .home-page .public-milestone-text {
 .project-link {
   display: inline-block;
   font-size: 0.88rem;
-  color: #1b5e20;
+  color: var(--accent-color);
   font-weight: 600;
   text-decoration: none;
 }
@@ -701,11 +869,11 @@ body.theme-dark .home-page .public-milestone-text {
 /* ===== Impact Event Card ===== */
 .impact-card {
   margin-top: 1rem;
-  background: #f8fff4;
-  border: 1px solid #c8e6c9;
-  border-left: 5px solid #2e7d32;
-  border-radius: 10px;
-  padding: 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 5px solid var(--accent-color);
+  border-radius: 12px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -720,12 +888,12 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .impact-card-header h3 {
-  color: #1b5e20;
+  color: var(--text-primary);
 }
 
 .impact-total {
-  background: #c8e6c9;
-  color: #1b5e20;
+  background: var(--green-glow);
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 700;
   padding: 0.2rem 0.6rem;
@@ -734,18 +902,18 @@ body.theme-dark .home-page .public-milestone-text {
 
 .impact-description,
 .impact-focus {
-  color: #445a46;
+  color: var(--text-secondary);
 }
 
 .impact-subtitle {
-  color: #1b5e20;
+  color: var(--text-primary);
   margin-bottom: 0.4rem;
   font-size: 1rem;
 }
 
 .impact-list {
   margin-left: 1rem;
-  color: #445a46;
+  color: var(--text-secondary);
 }
 
 .impact-list li {
@@ -761,11 +929,11 @@ body.theme-dark .home-page .public-milestone-text {
 
 .impact-breakdown span,
 .impact-meta span {
-  background: #edf7e7;
-  border: 1px solid #d7eccd;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--card-border);
   border-radius: 6px;
   padding: 0.25rem 0.5rem;
-  color: #35523a;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -776,8 +944,8 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .impact-photo-card {
-  background: #ffffff;
-  border: 1px solid #d7eccd;
+  background: #1b2230;
+  border: 1px solid var(--card-border);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -792,15 +960,15 @@ body.theme-dark .home-page .public-milestone-text {
 .impact-photo-card figcaption {
   padding: 0.5rem;
   font-size: 0.85rem;
-  color: #446247;
+  color: var(--text-secondary);
 }
 
 .impact-visitor {
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
-  background: #edf7e7;
-  border: 1px solid #d7eccd;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.22);
   border-radius: 8px;
   padding: 0.6rem;
 }
@@ -816,17 +984,18 @@ body.theme-dark .home-page .public-milestone-text {
 .impact-visitor p {
   margin: 0;
   font-size: 0.95rem;
-  color: #35523a;
+  color: var(--text-secondary);
 }
 
 /* ===== Footer ===== */
 .footer {
-  background-color: #1b5e20;
-  color: #c8e6c9;
+  background-color: var(--sidebar-bg);
+  color: var(--text-secondary);
   text-align: center;
   padding: 1.5rem 2rem;
   margin-top: 3rem;
   font-size: 0.9rem;
+  border-top: 1px solid var(--border-subtle);
 }
 
 .footer-links {
@@ -841,13 +1010,13 @@ body.theme-dark .home-page .public-milestone-text {
   color: #ffffff;
   text-decoration: none;
   font-weight: 700;
-  border: 1px solid #a5d6a7;
+  border: 1px solid rgba(16, 185, 129, 0.24);
   border-radius: 999px;
   padding: 0.35rem 0.8rem;
 }
 
 .footer-links a:hover {
-  background: #2e7d32;
+  background: var(--green-glow);
 }
 
 /* ===== Admin Dashboard ===== */
@@ -867,7 +1036,7 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .admin-header h1 {
-  color: #1b5e20;
+  color: var(--accent-color);
   font-size: clamp(1.8rem, 2.6vw, 2.5rem);
   letter-spacing: 0.3px;
 }
@@ -881,23 +1050,23 @@ body.theme-dark .home-page .public-milestone-text {
 .admin-auth-card,
 .admin-card,
 .admin-stat-card {
-  background: #f8fff4;
-  border: 1px solid #c8e6c9;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
 }
 
 .admin-auth-card {
   max-width: 520px;
   margin: 1.5rem auto;
-  padding: 1.25rem;
+  padding: 24px;
 }
 
 .admin-card {
-  padding: 1rem;
+  padding: 24px;
 }
 
 .admin-card h2 {
-  color: #1b5e20;
+  color: var(--accent-color);
   margin-bottom: 0.75rem;
   font-size: 1.45rem;
 }
@@ -910,18 +1079,18 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .admin-stat-card {
-  padding: 0.9rem;
+  padding: 24px;
 }
 
 .admin-stat-card h3 {
-  color: #2e7d32;
+  color: var(--accent-color);
   font-size: 1.05rem;
 }
 
 .admin-stat-card p {
   font-size: 1.7rem;
   font-weight: 700;
-  color: #1b5e20;
+  color: var(--text-primary);
 }
 
 .admin-grid {
@@ -943,11 +1112,11 @@ body.theme-dark .home-page .public-milestone-text {
   flex-direction: column;
   align-items: flex-start;
   gap: 0.35rem;
-  border: 1px solid #c8e6c9;
-  background: #edf7e7;
-  color: #1b5e20;
-  border-radius: 10px;
-  padding: 0.8rem;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border-radius: 12px;
+  padding: 24px;
   font-weight: 700;
   cursor: pointer;
   text-align: left;
@@ -957,28 +1126,28 @@ body.theme-dark .home-page .public-milestone-text {
 
 .admin-section-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(27, 94, 32, 0.12);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.26);
 }
 
 .admin-section-card.active {
-  background: #2e7d32;
+  background: var(--green-glow);
   color: #fff;
-  border-color: #2e7d32;
+  border-color: rgba(16, 185, 129, 0.42);
 }
 
 .admin-section-badge {
   border-radius: 999px;
-  border: 1px solid #7cbf85;
-  background: #dff1de;
-  color: #1b5e20;
+  border: 1px solid rgba(16, 185, 129, 0.24);
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--text-primary);
   font-size: 0.72rem;
   line-height: 1;
   padding: 0.25rem 0.45rem;
 }
 
 .admin-section-card.active .admin-section-badge {
-  background: #f5fff7;
-  border-color: #f5fff7;
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.32);
 }
 
 .admin-section-title {
@@ -990,11 +1159,11 @@ body.theme-dark .home-page .public-milestone-text {
   font-size: 0.88rem;
   line-height: 1.45;
   font-weight: 500;
-  color: #4e6b50;
+  color: var(--text-secondary);
 }
 
 .admin-section-card.active .admin-section-description {
-  color: #def3e2;
+  color: var(--text-primary);
 }
 
 .admin-panel-wrap {
@@ -1007,7 +1176,7 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .admin-panel-hint {
-  color: #4b604e;
+  color: var(--text-secondary);
   font-size: 0.98rem;
 }
 
@@ -1021,7 +1190,7 @@ body.theme-dark .home-page .public-milestone-text {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  color: #2f4b33;
+  color: var(--text-primary);
   font-weight: 700;
   font-size: 0.96rem;
   line-height: 1.4;
@@ -1029,12 +1198,13 @@ body.theme-dark .home-page .public-milestone-text {
 
 .admin-form input,
 .admin-form textarea {
-  border: 1px solid #c8e6c9;
+  border: 1px solid var(--card-border);
   border-radius: 8px;
   padding: 0.62rem 0.75rem;
   font-size: 0.96rem;
   line-height: 1.5;
-  color: #213525;
+  color: var(--text-primary);
+  background: var(--surface-elevated);
 }
 
 .admin-form textarea {
@@ -1046,16 +1216,23 @@ body.theme-dark .home-page .public-milestone-text {
 .admin-logout,
 .admin-list button {
   border: none;
-  border-radius: 8px;
-  padding: 0.55rem 0.8rem;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
   font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .admin-form button,
 .admin-logout {
-  background: #2e7d32;
+  background: var(--accent-color);
   color: #fff;
+}
+
+.admin-form button:hover,
+.admin-logout:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
 }
 
 .admin-form button:disabled,
@@ -1072,10 +1249,10 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .admin-list li {
-  border: 1px solid #d7eccd;
-  border-radius: 10px;
-  background: #ffffff;
-  padding: 0.65rem;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  padding: 24px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -1084,14 +1261,14 @@ body.theme-dark .home-page .public-milestone-text {
 
 .admin-list li p {
   margin-top: 0.25rem;
-  color: #435c46;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   line-height: 1.5;
 }
 
 .admin-list li strong {
   font-size: 1rem;
-  color: #173a1d;
+  color: var(--text-primary);
 }
 
 .admin-list button {
@@ -1100,7 +1277,7 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .admin-secondary-btn {
-  background: #35523a;
+  background: #253142;
   color: #fff;
 }
 
@@ -1139,17 +1316,19 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .admin-alert-success {
-  background: #e4f4e6;
-  color: #1b5e20;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--text-primary);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .admin-alert-error {
-  background: #fdeaea;
-  color: #8a1111;
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .admin-loading {
-  color: #2e7d32;
+  color: var(--accent-color);
   font-weight: 600;
 }
 
@@ -1176,8 +1355,8 @@ body.theme-dark .home-page .public-milestone-text {
   max-width: 100vw;
   overflow-x: hidden;
   min-height: calc(100vh - 80px);
-  background: #0f1f14;
-  color: #ffffff;
+  background: var(--main-bg);
+  color: var(--text-primary);
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 20px;
@@ -1185,10 +1364,10 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-admin-sidebar {
-  background: #122219;
-  border: 1px solid rgba(127, 212, 139, 0.28);
+  background: var(--sidebar-bg);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 20px 14px;
+  padding: 24px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
 }
 
@@ -1198,7 +1377,7 @@ body.theme-dark .home-page .public-milestone-text {
   gap: 12px;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(127, 212, 139, 0.32);
+  border-bottom: 1px solid var(--card-border);
 }
 
 .miles-sidebar-logo {
@@ -1208,19 +1387,19 @@ body.theme-dark .home-page .public-milestone-text {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #2e7d32, #1b5e20);
+  background: linear-gradient(145deg, var(--accent-color), var(--accent-dark));
   color: #ffffff;
   font-weight: 800;
 }
 
 .miles-sidebar-brand h2 {
-  color: #ffffff;
+  color: var(--accent-color);
   font-size: 1.05rem;
   margin-bottom: 2px;
 }
 
 .miles-sidebar-brand p {
-  color: #b6d0b9;
+  color: var(--on-dark-muted);
   font-size: 0.82rem;
 }
 
@@ -1232,7 +1411,7 @@ body.theme-dark .home-page .public-milestone-text {
 .miles-nav-item {
   border: none;
   background: transparent;
-  color: #d7e7d9;
+  color: var(--on-dark-muted);
   border-radius: 10px;
   padding: 10px 12px;
   text-align: left;
@@ -1247,14 +1426,24 @@ body.theme-dark .home-page .public-milestone-text {
 
 .miles-nav-item:hover,
 .miles-nav-item.active {
-  background: #1e3526;
-  color: #ffffff;
-  border-left-color: #7fd48b;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--accent-color);
+  border-left-color: var(--accent-color);
+}
+
+.miles-nav-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--on-dark-text);
 }
 
 .miles-nav-icon {
   font-size: 0.9rem;
-  color: #7fd48b;
+  color: var(--on-dark-muted);
+}
+
+.miles-nav-item:hover .miles-nav-icon,
+.miles-nav-item.active .miles-nav-icon {
+  color: var(--accent-color);
 }
 
 .miles-admin-main {
@@ -1264,10 +1453,10 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-admin-header {
-  background: #1a3122;
-  border: 1px solid rgba(127, 212, 139, 0.28);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 18px;
+  padding: 24px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -1276,12 +1465,12 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-admin-header h1 {
-  color: #ffffff;
+  color: var(--accent-color);
   font-size: clamp(1.2rem, 2vw, 1.5rem);
 }
 
 .miles-admin-header p {
-  color: #bdd5c0;
+  color: var(--text-secondary);
   font-size: 0.95rem;
 }
 
@@ -1293,26 +1482,26 @@ body.theme-dark .home-page .public-milestone-text {
 
 .miles-admin-search {
   width: min(360px, 52vw);
-  border: 1px solid rgba(127, 212, 139, 0.35);
+  border: 1px solid rgba(16, 185, 129, 0.22);
   border-radius: 10px;
-  background: #14261b;
-  color: #ffffff;
+  background: var(--surface-elevated);
+  color: var(--text-primary);
   padding: 10px 12px;
 }
 
 .miles-admin-search::placeholder {
-  color: #aac4ae;
+  color: var(--text-secondary);
 }
 
 .miles-profile-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #14261b;
-  border: 1px solid rgba(127, 212, 139, 0.35);
+  background: var(--surface-elevated);
+  border: 1px solid rgba(16, 185, 129, 0.22);
   padding: 6px 10px;
   border-radius: 999px;
-  color: #ffffff;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -1323,9 +1512,351 @@ body.theme-dark .home-page .public-milestone-text {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #2e7d32;
+  background: var(--accent-color);
   color: #ffffff;
   font-weight: 700;
+}
+
+.workshops-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.workshop-hero-card,
+.workshop-record-card,
+.workshop-activity-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+}
+
+.workshop-post-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 1rem;
+}
+
+.workshop-posts-grid,
+.projects-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.workshop-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.projects-post-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 1rem;
+}
+
+.projects-post-card h3 {
+  margin: 0;
+}
+
+.workshop-post-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.workshop-post-label {
+  margin-bottom: 0.35rem;
+  color: var(--accent-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+}
+
+.workshop-post-header h3 {
+  margin: 0;
+}
+
+.workshop-post-date {
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: var(--surface-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.workshop-post-summary {
+  color: var(--text-secondary);
+}
+
+.workshop-post-embed {
+  position: relative;
+  width: min(100%, 560px);
+  height: 720px;
+  margin: 0 auto;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface-elevated);
+  border: 1px solid var(--card-border);
+}
+
+.workshop-post-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.admin-divider {
+  height: 1px;
+  background: var(--card-border);
+  margin: 1.5rem 0;
+}
+
+.admin-list-block {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.admin-post-list {
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+}
+
+.admin-post-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--surface-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.admin-post-item--editing {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.18), 0 16px 30px rgba(0, 0, 0, 0.08);
+  background: var(--card-bg);
+}
+
+.admin-post-item p {
+  margin-top: 0.35rem;
+}
+
+.admin-meta-line {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.admin-post-item a {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.admin-edit-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  margin: 1rem 0;
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.admin-edit-banner--compact {
+  margin: 0 0 1rem 0;
+}
+
+.admin-post-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-inline-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-inline-panel h4 {
+  margin: 0;
+}
+
+.admin-edit-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: var(--accent-color);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.admin-edit-banner-text {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.workshop-hero-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.workshop-highlight-grid,
+.workshop-record-grid,
+.workshop-activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.workshop-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: var(--green-glow);
+  color: var(--text-primary);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  font-weight: 700;
+}
+
+.workshop-meta-list {
+  list-style: none;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.workshop-meta-list li,
+.workshop-activity-card li {
+  color: var(--text-secondary);
+}
+
+.workshop-meta-list strong,
+.workshop-record-card strong,
+.workshop-activity-card strong {
+  color: var(--text-primary);
+}
+
+.workshop-record-grid {
+  margin-top: 1rem;
+}
+
+.workshop-record-card h3,
+.workshop-activity-card h3 {
+  margin-bottom: 0.65rem;
+}
+
+.workshop-record-card p,
+.workshop-activity-card p {
+  color: var(--text-secondary);
+}
+
+.workshop-record-card ul,
+.workshop-activity-card ul {
+  margin-left: 1rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.workshop-empty-state {
+  color: var(--text-secondary);
+}
+
+.learn-video-section {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+}
+
+.learn-video-eyebrow {
+  margin-bottom: 0.35rem;
+  color: var(--accent-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+}
+
+.learn-video-section h2 {
+  margin-bottom: 0.5rem;
+}
+
+.learn-video-section p {
+  color: var(--text-secondary);
+}
+
+.learn-video-embed {
+  position: relative;
+  width: min(100%, 420px);
+  aspect-ratio: 9 / 16;
+  margin: 0 auto;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface-elevated);
+  border: 1px solid var(--card-border);
+}
+
+.learn-video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+@media (min-width: 900px) {
+  .learn-video-section {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+    align-items: center;
+  }
+
+  .learn-video-embed {
+    width: min(100%, 420px);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem 1.25rem;
+  }
+
+  .workshop-post-embed {
+    height: 780px;
+  }
 }
 
 .miles-stat-row {
@@ -1336,27 +1867,27 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-stat-card {
-  background: #1a3122;
-  border: 1px solid rgba(127, 212, 139, 0.25);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 16px;
+  padding: 24px;
 }
 
 .miles-stat-card h3 {
-  color: #b6d0b9;
+  color: var(--accent-color);
   font-size: 0.92rem;
   margin-bottom: 10px;
 }
 
 .miles-stat-card p {
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 1.55rem;
   font-weight: 700;
 }
 
 .miles-stat-card p span {
   margin-left: 8px;
-  color: #8be29a;
+  color: var(--accent-color);
   font-size: 0.95rem;
 }
 
@@ -1368,9 +1899,9 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-badges span {
-  background: rgba(15, 179, 23, 0.2);
-  color: #b9f0bf;
-  border: 1px solid rgba(127, 212, 139, 0.4);
+  background: var(--green-glow);
+  color: var(--text-primary);
+  border: 1px solid rgba(16, 185, 129, 0.22);
   border-radius: 999px;
   font-size: 0.75rem;
   padding: 4px 10px;
@@ -1416,16 +1947,16 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-panel {
-  background: #15301f;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 10px 24px rgba(8, 95, 27, 0.22);
+  padding: 24px;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28);
   min-width: 0;
 }
 
 .miles-panel-compact {
-  padding: 14px 16px;
+  padding: 24px;
 }
 
 .miles-panel-compact h2 {
@@ -1434,7 +1965,7 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-panel h2 {
-  color: #ffffff;
+  color: var(--accent-color);
   font-size: 1.05rem;
   margin-bottom: 12px;
 }
@@ -1442,7 +1973,7 @@ body.theme-dark .home-page .public-milestone-text {
 .miles-panel p,
 .miles-panel li,
 .miles-panel label {
-  color: #c6ddc9;
+  color: var(--text-secondary);
 }
 
 .miles-recent-activity {
@@ -1457,7 +1988,7 @@ body.theme-dark .home-page .public-milestone-text {
   max-height: 370px;
   padding-right: 4px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(127, 212, 139, 0.45) transparent;
+  scrollbar-color: rgba(16, 185, 129, 0.35) transparent;
 }
 
 .miles-recent-activity-scroll::-webkit-scrollbar {
@@ -1465,7 +1996,7 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-recent-activity-scroll::-webkit-scrollbar-thumb {
-  background: rgba(127, 212, 139, 0.45);
+  background: rgba(16, 185, 129, 0.35);
   border-radius: 999px;
 }
 
@@ -1481,10 +2012,10 @@ body.theme-dark .home-page .public-milestone-text {
 .miles-action-stack button,
 .miles-donor-panel button {
   border: none;
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
   font-weight: 700;
-  background: #2e7d32;
+  background: var(--accent-color);
   color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1498,7 +2029,7 @@ body.theme-dark .home-page .public-milestone-text {
 
 .miles-action-stack button:hover,
 .miles-donor-panel button:hover {
-  background: #25692a;
+  background: var(--accent-dark);
   transform: translateY(-1px);
 }
 
@@ -1513,10 +2044,10 @@ body.theme-dark .home-page .public-milestone-text {
 .miles-team-list li,
 .miles-story-list li,
 .miles-task-list li {
-  border: 1px solid rgba(127, 212, 139, 0.28);
-  border-radius: 10px;
-  background: #1a2d21;
-  padding: 10px;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  border-radius: 12px;
+  background: var(--surface-elevated);
+  padding: 24px;
 }
 
 .miles-team-list li {
@@ -1539,7 +2070,7 @@ body.theme-dark .home-page .public-milestone-text {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #2e7d32;
+  background: var(--accent-color);
   color: #ffffff;
   display: inline-flex;
   align-items: center;
@@ -1548,7 +2079,7 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-team-list strong {
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .miles-story-list li {
@@ -1582,16 +2113,17 @@ body.theme-dark .home-page .public-milestone-text {
   font-size: 0.75rem;
   padding: 4px 9px;
   border-radius: 999px;
+  border: 1px solid var(--border-subtle);
 }
 
 .miles-badge-published {
-  background: rgba(46, 125, 50, 0.3);
-  color: #d8f5dd;
+  background: rgba(16, 185, 129, 0.16);
+  color: var(--text-primary);
 }
 
 .miles-badge-pending {
-  background: rgba(90, 143, 96, 0.35);
-  color: #def3e1;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
 }
 
 .miles-task-list label {
@@ -1626,10 +2158,10 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-workspace-page-header {
-  background: #15301f;
-  border: 1px solid rgba(127, 212, 139, 0.3);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
-  padding: 16px 18px;
+  padding: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1637,16 +2169,16 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-workspace-page-header h2 {
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 6px;
 }
 
 .miles-workspace-page-header p {
-  color: #bdd5c0;
+  color: var(--text-secondary);
 }
 
 .miles-workspace-kicker {
-  color: #8be29a;
+  color: var(--accent-color);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -1655,9 +2187,9 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-workspace-back {
-  border: 1px solid rgba(127, 212, 139, 0.35);
-  background: #1e3526;
-  color: #ffffff;
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
   border-radius: 10px;
   padding: 10px 14px;
   font-weight: 700;
@@ -1691,60 +2223,60 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .miles-admin-main .admin-section-card {
-  background: #1a3122;
-  border-color: rgba(127, 212, 139, 0.32);
-  color: #ffffff;
+  background: var(--card-bg);
+  border-color: rgba(16, 185, 129, 0.18);
+  color: var(--text-primary);
 }
 
 .miles-admin-main .admin-section-description {
-  color: #bdd5c0;
+  color: var(--text-secondary);
 }
 
 .miles-admin-main .admin-section-card.active {
-  background: rgba(46, 125, 50, 0.28);
-  border-color: #7fd48b;
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.34);
 }
 
 .miles-admin-main .admin-card,
 .miles-admin-main .admin-auth-card,
 .miles-admin-main .admin-stat-card {
-  background: #1a3122;
-  border-color: rgba(127, 212, 139, 0.3);
+  background: var(--card-bg);
+  border-color: var(--card-border);
 }
 
 .miles-admin-main .admin-card h2,
 .miles-admin-main .admin-form label,
 .miles-admin-main .admin-list li strong {
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .miles-admin-main .admin-form input,
 .miles-admin-main .admin-form textarea {
-  background: #14261b;
-  color: #ffffff;
-  border-color: rgba(127, 212, 139, 0.35);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+  border-color: rgba(16, 185, 129, 0.22);
 }
 
 .miles-admin-main .admin-panel-hint,
 .miles-admin-main .admin-list li p {
-  color: #bdd5c0;
+  color: var(--text-secondary);
 }
 
 .miles-admin-main .admin-form button,
 .miles-admin-main .admin-logout,
 .miles-admin-main .admin-secondary-btn {
-  background: #2e7d32;
+  background: var(--accent-color);
   transition: all 0.3s ease;
 }
 
 .miles-admin-main .admin-form button:hover,
 .miles-admin-main .admin-logout:hover,
 .miles-admin-main .admin-secondary-btn:hover {
-  background: #25692a;
+  background: var(--accent-dark);
 }
 
 .miles-admin-main .admin-list button {
-  background: #3b6f3f;
+  background: #2b3647;
   color: #eaf8ec;
 }
 
@@ -1752,12 +2284,12 @@ body.theme-dark .home-page .public-milestone-text {
   margin-top: 14px;
   padding: 12px;
   border-radius: 10px;
-  border: 1px solid rgba(127, 212, 139, 0.28);
-  background: rgba(20, 38, 27, 0.8);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  background: var(--surface-elevated);
 }
 
 .admin-help-block h3 {
-  color: #b9f0bf;
+  color: var(--accent-color);
   margin-bottom: 8px;
 }
 
@@ -1768,13 +2300,13 @@ body.theme-dark .home-page .public-milestone-text {
 }
 
 .admin-help-block li {
-  color: #e4f1e6;
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
 .miles-panel-priority {
-  border-color: #7fd48b;
-  box-shadow: 0 0 0 1px rgba(127, 212, 139, 0.35), 0 10px 24px rgba(0, 0, 0, 0.24);
+  border-color: rgba(16, 185, 129, 0.32);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.22), 0 18px 36px rgba(0, 0, 0, 0.3);
 }
 
 .miles-recent-activity ul,
@@ -1786,7 +2318,7 @@ body.theme-dark .home-page .public-milestone-text {
 .miles-recent-activity li p,
 .miles-story-list li p,
 .miles-team-list li small {
-  color: #bdd5c0;
+  color: var(--text-secondary);
   font-size: 0.78rem;
   margin-top: 4px;
 }

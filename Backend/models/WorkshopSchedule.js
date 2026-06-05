@@ -66,6 +66,23 @@ const workshopScheduleSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
+		workshopSummary: {
+			type: String,
+			default: '',
+		},
+		targetAudience: {
+			type: String,
+			default: '',
+			trim: true,
+		},
+		keyOutcomes: {
+			type: String,
+			default: '',
+		},
+		followUpActions: {
+			type: String,
+			default: '',
+		},
 		activities: {
 			type: [workshopActivitySchema],
 			default: [],

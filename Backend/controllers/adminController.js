@@ -4,15 +4,17 @@ const Team = require('../models/Team');
 const User = require('../models/User');
 const WorkshopSchedule = require('../models/WorkshopSchedule');
 
+const teamProfileFilter = {};
+
 const getAdminDashboard = async (req, res, next) => {
 	try {
 		const [projectCount, teamCount, userCount, recentProjects, recentTeam, recentWorkshops] =
 			await Promise.all([
 				Project.countDocuments(),
-				Team.countDocuments(),
+				Team.countDocuments(teamProfileFilter),
 				User.countDocuments(),
 				Project.find().sort({ createdAt: -1 }).limit(5),
-				Team.find().sort({ createdAt: -1 }).limit(5),
+				Team.find(teamProfileFilter).sort({ createdAt: -1 }).limit(5),
 				WorkshopSchedule.find().sort({ createdAt: -1 }).limit(5),
 			]);
 

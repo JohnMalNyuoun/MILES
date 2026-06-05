@@ -8,19 +8,23 @@ const defaultWorkshopSchedule = {
 	nextSessionLocation: '',
 	nextSessionFacilitator: '',
 	notes: '',
+	workshopSummary: '',
+	targetAudience: '',
+	keyOutcomes: '',
+	followUpActions: '',
 	activities: [
 		{
 			title: 'Peer mentorship circle',
 			date: '',
 			location: 'Scorpion Center',
-			status: 'Planned',
+			status: 'Recorded',
 			details: 'Create a safe sharing space for mothers returning to school.',
 		},
 		{
 			title: 'School re-enrollment follow-up',
 			date: '',
 			location: 'Kakuma schools',
-			status: 'Planned',
+			status: 'Recorded',
 			details: 'Coordinate with schools and families to remove attendance barriers.',
 		},
 	],
@@ -32,6 +36,10 @@ const mergeWorkshopSchedule = (schedule = {}) => ({
 	activities: Array.isArray(schedule.activities) && schedule.activities.length > 0
 		? schedule.activities
 		: defaultWorkshopSchedule.activities,
+	workshopSummary: schedule.workshopSummary || '',
+	targetAudience: schedule.targetAudience || '',
+	keyOutcomes: schedule.keyOutcomes || '',
+	followUpActions: schedule.followUpActions || '',
 });
 
 const getWorkshopSchedule = async (req, res, next) => {

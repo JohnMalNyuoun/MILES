@@ -40,6 +40,7 @@ const defaultSiteContent = {
     brandText: 'MILES',
     homeLabel: 'Home',
     aboutLabel: 'About',
+    workshopsLabel: 'Workshops',
     projectsLabel: 'Projects',
     donateLabel: 'Donate',
     contactLabel: 'Contact',

@@ -138,9 +138,12 @@ function Home({ siteContent = defaultSiteContent }) {
 
           <article className="public-dashboard-panel">
             <h3>Latest Community Milestone</h3>
-            <p className="public-milestone-text">
-              {latestMilestoneText}
-            </p>
+            <Link to="/workshops" className="public-milestone-link">
+              <p className="public-milestone-text">
+                {latestMilestoneText}
+              </p>
+              <span>View all workshop activities</span>
+            </Link>
           </article>
         </div>
       </section>

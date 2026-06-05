@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import defaultSiteContent from '../content/defaultSiteContent';
 
@@ -18,12 +18,6 @@ const SECTION_CARDS = [
     badge: 'PR',
   },
   {
-    key: 'create-team',
-    title: 'Add Mother Profile',
-    description: 'Register a full support profile for a mother under MILES care.',
-    badge: 'TM',
-  },
-  {
     key: 'manage-projects',
     title: 'Manage Projects',
     description: 'Edit or delete existing project entries.',
@@ -31,9 +25,9 @@ const SECTION_CARDS = [
   },
   {
     key: 'manage-team',
-    title: 'Manage Mother Profiles',
-    description: 'View, edit, and track full support records for all mothers.',
-    badge: 'MT',
+    title: 'Manage Team',
+    description: 'View, edit, and update team records.',
+    badge: 'TM',
   },
   {
     key: 'workshop-schedule',
@@ -251,6 +245,10 @@ const buildWorkshopFormFromContent = (content) => {
     nextSessionLocation: workshops.nextSessionLocation || '',
     nextSessionFacilitator: workshops.nextSessionFacilitator || '',
     notes: workshops.notes || '',
+    workshopSummary: workshops.workshopSummary || '',
+    targetAudience: workshops.targetAudience || '',
+    keyOutcomes: workshops.keyOutcomes || '',
+    followUpActions: workshops.followUpActions || '',
     activityOneTitle: activities[0]?.title || '',
     activityOneDate: activities[0]?.date || '',
     activityOneLocation: activities[0]?.location || '',
@@ -267,6 +265,15 @@ const buildWorkshopFormFromContent = (content) => {
     activityThreeStatus: activities[2]?.status || 'Planned',
     activityThreeDetails: activities[2]?.details || '',
   };
+};
+
+const emptyWorkshopPostForm = {
+  title: '',
+  postUrl: '',
+  workshopDate: '',
+  postedDate: '',
+  summary: '',
+  details: '',
 };
 
 function AdminDashboard() {
@@ -313,7 +320,7 @@ function AdminDashboard() {
     dropoutCause: '',
     supportSummary: '',
     currentChallenges: '',
-    caseStatus: 'Active Support',
+    caseStatus: '',
     guardianContact: '',
     workshopFocus: '',
   });
@@ -343,7 +350,7 @@ function AdminDashboard() {
     dropoutCause: '',
     supportSummary: '',
     currentChallenges: '',
-    caseStatus: 'Active Support',
+    caseStatus: '',
     guardianContact: '',
     workshopFocus: '',
   });
@@ -351,6 +358,7 @@ function AdminDashboard() {
   const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
   const [workshopUpdatedAt, setWorkshopUpdatedAt] = useState('');
   const [recentWorkshopSchedules, setRecentWorkshopSchedules] = useState([]);
+  const [workshopPosts, setWorkshopPosts] = useState([]);
   const [heroForm, setHeroForm] = useState(() => buildHeroFormFromContent(defaultSiteContent));
   const [homeForm, setHomeForm] = useState(() => buildHomeFormFromContent(defaultSiteContent));
   const [navbarForm, setNavbarForm] = useState(() => buildNavbarFormFromContent(defaultSiteContent));
@@ -359,6 +367,10 @@ function AdminDashboard() {
   const [donateForm, setDonateForm] = useState(() => buildDonateFormFromContent(defaultSiteContent));
   const [learnForm, setLearnForm] = useState(() => buildLearnFormFromContent(defaultSiteContent));
   const [workshopForm, setWorkshopForm] = useState(() => buildWorkshopFormFromContent(defaultSiteContent));
+  const [newWorkshopPostForm, setNewWorkshopPostForm] = useState(() => ({ ...emptyWorkshopPostForm }));
+  const [editingWorkshopPostForm, setEditingWorkshopPostForm] = useState(() => ({ ...emptyWorkshopPostForm }));
+  const [editingWorkshopPostId, setEditingWorkshopPostId] = useState('');
+  const workshopPostEditRef = useRef(null);
   const [dashboardSearch, setDashboardSearch] = useState('');
   const [activeOverviewPanel, setActiveOverviewPanel] = useState('activity');
   const [searchDrivenSection, setSearchDrivenSection] = useState('');
@@ -387,6 +399,7 @@ function AdminDashboard() {
   const returnToDashboard = (panelKey = 'activity') => {
     setEditingProjectId('');
     setEditingTeamId('');
+    setEditingWorkshopPostId('');
     setSearchParams({}, { replace: true });
     setActiveOverviewPanel(panelKey);
     scrollToTop();
@@ -395,7 +408,7 @@ function AdminDashboard() {
   const fetchPublicLists = async () => {
     const [projectsResponse, teamResponse] = await Promise.all([
       fetch(`${apiBaseUrl}/api/projects`),
-      fetch(`${apiBaseUrl}/api/team`),
+      fetch(`${apiBaseUrl}/api/team?profile=team`),
     ]);
 
     if (!projectsResponse.ok || !teamResponse.ok) {
@@ -477,6 +490,17 @@ function AdminDashboard() {
     setWorkshopUpdatedAt(data.updatedAt || '');
   };
 
+  const fetchWorkshopPosts = async () => {
+    const response = await fetch(`${apiBaseUrl}/api/workshop-posts`);
+
+    if (!response.ok) {
+      throw new Error('Failed to load workshop posts.');
+    }
+
+    const data = await response.json();
+    setWorkshopPosts(Array.isArray(data) ? data : []);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
@@ -508,7 +532,7 @@ function AdminDashboard() {
       dropoutCause: member.dropoutCause || '',
       supportSummary: member.supportSummary || '',
       currentChallenges: member.currentChallenges || '',
-      caseStatus: member.caseStatus || 'Active Support',
+      caseStatus: member.caseStatus || '',
       guardianContact: member.guardianContact || '',
       workshopFocus: member.workshopFocus || '',
     });
@@ -595,11 +619,11 @@ function AdminDashboard() {
         dropoutCause: '',
         supportSummary: '',
         currentChallenges: '',
-        caseStatus: 'Active Support',
+        caseStatus: '',
         guardianContact: '',
         workshopFocus: '',
       });
-      setMessage(data.message || 'Young mother case saved to the database successfully.');
+      setMessage(data.message || 'Team member saved to the database successfully.');
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
       returnToDashboard('team');
     } catch (err) {
@@ -993,6 +1017,10 @@ function AdminDashboard() {
           nextSessionLocation: workshopForm.nextSessionLocation,
           nextSessionFacilitator: workshopForm.nextSessionFacilitator,
           notes: workshopForm.notes,
+          workshopSummary: workshopForm.workshopSummary,
+          targetAudience: workshopForm.targetAudience,
+          keyOutcomes: workshopForm.keyOutcomes,
+          followUpActions: workshopForm.followUpActions,
           activities: [
             {
               title: workshopForm.activityOneTitle,
@@ -1036,6 +1064,115 @@ function AdminDashboard() {
     }
   };
 
+  const handleSaveWorkshopPost = async (event) => {
+    event.preventDefault();
+    clearStatus();
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiBaseUrl}/api/workshop-posts`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify(newWorkshopPostForm),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to save workshop post.');
+      }
+
+      setNewWorkshopPostForm({ ...emptyWorkshopPostForm });
+      await fetchWorkshopPosts();
+      setMessage('Workshop post recorded successfully.');
+      returnToDashboard('quick-actions');
+    } catch (err) {
+      setError(err.message || 'Unable to save workshop post.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateWorkshopPost = async (event) => {
+    event.preventDefault();
+    clearStatus();
+
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${apiBaseUrl}/api/workshop-posts/${editingWorkshopPostId}`,
+        {
+        method: 'PUT',
+        headers: authHeaders,
+        body: JSON.stringify(editingWorkshopPostForm),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to save workshop post.');
+      }
+
+      setEditingWorkshopPostForm({ ...emptyWorkshopPostForm });
+      setEditingWorkshopPostId('');
+      await fetchWorkshopPosts();
+      setMessage('Workshop post updated successfully.');
+      returnToDashboard('quick-actions');
+    } catch (err) {
+      setError(err.message || 'Unable to save workshop post.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteWorkshopPost = async (postId) => {
+    clearStatus();
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiBaseUrl}/api/workshop-posts/${postId}`, {
+        method: 'DELETE',
+        headers: authHeaders,
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to delete workshop post.');
+      }
+
+      await fetchWorkshopPosts();
+      setMessage('Workshop post deleted successfully.');
+      returnToDashboard('quick-actions');
+    } catch (err) {
+      setError(err.message || 'Unable to delete workshop post.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const beginWorkshopPostEdit = (post) => {
+    setEditingWorkshopPostId(post._id);
+    setEditingWorkshopPostForm({
+      title: post.title || '',
+      postUrl: post.postUrl || '',
+      workshopDate: post.workshopDate || '',
+      postedDate: post.postedDate || '',
+      summary: post.summary || '',
+      details: post.details || '',
+    });
+    setMessage('Editing workshop post. Update the fields and save changes.');
+    window.requestAnimationFrame(() => {
+      if (workshopPostEditRef.current) {
+        workshopPostEditRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  };
+
+  const cancelWorkshopPostEdit = () => {
+    setEditingWorkshopPostId('');
+    setEditingWorkshopPostForm({ ...emptyWorkshopPostForm });
+    setMessage('');
+  };
+
   useEffect(() => {
     const init = async () => {
       if (!token || !isAdmin) return;
@@ -1043,7 +1180,7 @@ function AdminDashboard() {
       try {
         setLoading(true);
         await Promise.all([fetchDashboard(), fetchPublicLists()]);
-        await Promise.all([fetchAdminSiteContent(), fetchWorkshopSchedule()]);
+        await Promise.all([fetchAdminSiteContent(), fetchWorkshopSchedule(), fetchWorkshopPosts()]);
       } catch (err) {
         setError(err.message || 'Unable to initialize dashboard.');
       } finally {
@@ -1092,23 +1229,7 @@ function AdminDashboard() {
 
   const mentorshipBadgeTopics = ['Pregnancy Prevention', 'Peer Pressure'];
   const normalizedDashboardSearch = dashboardSearch.trim().toLowerCase();
-  const recentActivityItems = [
-    ...(dashboard?.recentTeam || []).slice(0, 2).map((member) => ({
-      id: `team-${member._id}`,
-      text: `${member.name} joined the team as ${member.role}.`,
-      when: member.updatedAt || member.createdAt,
-    })),
-    ...(dashboard?.recentProjects || []).slice(0, 2).map((project) => ({
-      id: `project-${project._id}`,
-      text: `Project \"${project.title}\" was updated in the dashboard.`,
-      when: project.updatedAt || project.createdAt,
-    })),
-    ...(dashboard?.recentWorkshops || []).slice(0, 2).map((workshop) => ({
-      id: `workshop-${workshop._id}`,
-      text: `Workshop "${workshop.nextSessionTopic || workshop.title}" was recorded.`,
-      when: workshop.updatedAt || workshop.createdAt,
-    })),
-  ].slice(0, 6);
+  const supportTeamMembers = team;
 
   const advocacyStories = projects.slice(0, 3).map((project) => ({
     id: project._id,
@@ -1135,11 +1256,11 @@ function AdminDashboard() {
   const pendingTasks = [
     {
       id: 'pending-profile-images',
-      label: `${team.filter((member) => !member.image).length} mother profile(s) missing photo`,
+      label: `${supportTeamMembers.filter((member) => !member.image).length} team profile(s) missing photo`,
     },
     {
       id: 'pending-profile-videos',
-      label: `${team.filter((member) => !member.videoUrl).length} mother profile(s) missing video link`,
+      label: `${supportTeamMembers.filter((member) => !member.videoUrl).length} team profile(s) missing video link`,
     },
     {
       id: 'pending-live-links',
@@ -1148,12 +1269,6 @@ function AdminDashboard() {
     {
       id: 'pending-repo-links',
       label: `${projects.filter((project) => !project.repoUrl).length} project(s) missing repository URL`,
-    },
-    {
-      id: 'pending-workshop-date',
-      label: workshopForm.nextSessionDate
-        ? 'Next workshop schedule is set.'
-        : 'Next workshop date has not been set yet.',
     },
     {
       id: 'recorded-workshops',
@@ -1169,29 +1284,15 @@ function AdminDashboard() {
       .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
   });
 
-  const filteredRecentActivityItems = recentActivityItems.filter((item) => {
-    if (!normalizedDashboardSearch) return true;
-
-    return [item.text, formatDateTime(item.when)]
-      .filter(Boolean)
-      .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
-  });
-
   const filteredPendingTasks = pendingTasks.filter((task) => {
     if (!normalizedDashboardSearch) return true;
     return task.label.toLowerCase().includes(normalizedDashboardSearch);
   });
 
-  const filteredTeamPreview = team.filter((member) => {
+  const filteredSupportTeamPreview = supportTeamMembers.filter((member) => {
     if (!normalizedDashboardSearch) return true;
 
-    return [
-      member.name,
-      member.role,
-      member.schoolName,
-      member.caseStatus,
-      member.dropoutCause,
-    ]
+    return [member.name, member.role, member.bio]
       .filter(Boolean)
       .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
   });
@@ -1218,29 +1319,11 @@ function AdminDashboard() {
       .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
   });
 
-  const filteredTeamRecords = team.filter((member) => {
-    if (!normalizedDashboardSearch) return true;
-
-    return [
-      member.name,
-      member.role,
-      member.dropoutCause,
-      member.schoolName,
-      member.educationLevel,
-      member.supportSummary,
-      member.currentChallenges,
-      member.caseStatus,
-      member.guardianContact,
-      member.workshopFocus,
-    ]
-      .filter(Boolean)
-      .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
-  });
+  const filteredTeamRecords = filteredSupportTeamPreview;
 
   const sectionPanelMap = {
     'create-admin': 'activity',
     'create-project': 'activity',
-    'create-team': 'team',
     'manage-projects': 'activity',
     'manage-team': 'team',
     'workshop-schedule': 'quick-actions',
@@ -1272,7 +1355,7 @@ function AdminDashboard() {
       };
     }
 
-    if (filteredTeamRecords.length > 0 || filteredTeamPreview.length > 0) {
+    if (filteredSupportTeamPreview.length > 0) {
       return { section: 'manage-team', panel: 'team' };
     }
 
@@ -1292,8 +1375,8 @@ function AdminDashboard() {
   }, [
     filteredPendingTasks.length,
     filteredProjects.length,
-    filteredTeamPreview.length,
     filteredTeamRecords.length,
+    filteredSupportTeamPreview.length,
     filteredWorkshopActivities.length,
     normalizedDashboardSearch,
   ]);
@@ -1350,14 +1433,6 @@ function AdminDashboard() {
           >
             <span className="miles-nav-icon">▣</span>
             Dashboard
-          </button>
-          <button
-            type="button"
-            className={`miles-nav-item ${activeOverviewPanel === 'team' ? 'active' : ''}`}
-            onClick={() => handleSidebarClick('create-team', 'team')}
-          >
-            <span className="miles-nav-icon">◉</span>
-            Mothers
           </button>
           <button
             type="button"
@@ -1443,8 +1518,8 @@ function AdminDashboard() {
           <>
         <div className="miles-stat-row">
           <article className="miles-stat-card">
-            <h3>Mothers Supported</h3>
-            <p>{dashboard?.stats?.teamCount ?? team.length} <span>From database</span></p>
+            <h3>Team Members</h3>
+            <p>{supportTeamMembers.length} <span>From database</span></p>
           </article>
           <article className="miles-stat-card">
             <h3>Recent Mentorship</h3>
@@ -1462,22 +1537,6 @@ function AdminDashboard() {
         </div>
 
         <div className="miles-overview-row">
-          <article className={`miles-panel miles-recent-activity ${activeOverviewPanel === 'activity' ? 'miles-panel-priority' : ''}`}>
-            <h2>Recent Activity Feed</h2>
-            <ul className="miles-recent-activity-scroll">
-              {filteredRecentActivityItems.length > 0 ? (
-                filteredRecentActivityItems.map((item) => (
-                  <li key={item.id}>
-                    <strong>{item.text}</strong>
-                    <p>{formatDateTime(item.when)}</p>
-                  </li>
-                ))
-              ) : (
-                <li>{normalizedDashboardSearch ? 'No activity matches your search.' : 'No recent database activity yet.'}</li>
-              )}
-            </ul>
-          </article>
-
           <div className="miles-overview-side-stack">
             <article className={`miles-panel miles-panel-compact miles-donor-panel ${activeOverviewPanel === 'donor' ? 'miles-panel-priority' : ''}`}>
               <h2>Donor Report Generator</h2>
@@ -1491,8 +1550,7 @@ function AdminDashboard() {
           <article className={`miles-panel miles-panel-compact miles-quick-actions-panel ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}>
             <h2>Quick Actions</h2>
             <div className="miles-action-stack">
-              <button type="button" onClick={() => openWorkspaceSection('create-team', 'quick-actions')}>Add New Mother Profile</button>
-              <button type="button" onClick={() => openWorkspaceSection('manage-team', 'quick-actions')}>View Mothers Under Support</button>
+              <button type="button" onClick={() => openWorkspaceSection('manage-team', 'team')}>View Team</button>
               <button type="button" onClick={() => openWorkspaceSection('manage-projects', 'quick-actions')}>Log New Case Intervention</button>
               <button type="button" onClick={() => openWorkspaceSection('workshop-schedule', 'quick-actions')}>Schedule Workshop</button>
             </div>
@@ -1514,19 +1572,23 @@ function AdminDashboard() {
           </article>
 
           <article className={`miles-panel ${activeOverviewPanel === 'team' ? 'miles-panel-priority' : ''}`}>
-            <h2>Mothers Under Support</h2>
+            <h2>Team</h2>
             <ul className="miles-team-list miles-team-list-fullwidth">
-              {filteredTeamPreview.slice(0, 5).map((member) => (
-                <li key={member._id}>
-                  <span className="miles-avatar-slot">{(member.name || 'M').charAt(0)}</span>
-                  <div>
-                    <strong>{member.name}</strong>
-                    <p>{member.returnToSchool ? 'Returned to school' : 'Re-enrollment in progress'}</p>
-                    <small>{member.schoolName ? `School: ${member.schoolName}` : 'School not yet recorded'}</small>
-                    <small>Updated: {formatDateTime(member.updatedAt || member.createdAt)}</small>
-                  </div>
-                </li>
-              ))}
+              {filteredSupportTeamPreview.slice(0, 5).length > 0 ? (
+                filteredSupportTeamPreview.slice(0, 5).map((member) => (
+                  <li key={member._id}>
+                    <span className="miles-avatar-slot">{(member.name || 'T').charAt(0)}</span>
+                    <div>
+                      <strong>{member.name}</strong>
+                      <p>{member.role || 'Team Member'}</p>
+                      <small>{member.bio || 'Profile details not yet recorded.'}</small>
+                      <small>Updated: {formatDateTime(member.updatedAt || member.createdAt)}</small>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li>No team member profile matches your search.</li>
+              )}
             </ul>
           </article>
 
@@ -1538,7 +1600,7 @@ function AdminDashboard() {
                   <li key={activity.id}>
                     <div className="miles-story-copy">
                       <span>{activity.title}</span>
-                      <p>{activity.when ? formatDateTime(activity.when) : 'Date pending'}</p>
+                      {activity.when ? <p>{formatDateTime(activity.when)}</p> : null}
                     </div>
                     <em className={activity.status === 'Completed' ? 'miles-badge-published' : 'miles-badge-pending'}>
                       {activity.status}
@@ -1710,159 +1772,6 @@ function AdminDashboard() {
           </article>
         )}
 
-        {activeSection === 'create-team' && (
-          <article className="admin-card admin-panel-card">
-            <h2>Add Mother Under Support</h2>
-            <form onSubmit={handleCreateTeamMember} className="admin-form">
-              <label>
-                Name
-                <input
-                  value={teamForm.name}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, name: event.target.value }))
-                  }
-                />
-              </label>
-
-              <label>
-                Support Role
-                <input
-                  value={teamForm.role}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, role: event.target.value }))
-                  }
-                  placeholder="Young Mother / Peer Mentor"
-                />
-              </label>
-
-              <label>
-                Cause of School Dropout
-                <textarea
-                  value={teamForm.dropoutCause}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, dropoutCause: event.target.value }))
-                  }
-                />
-              </label>
-
-              <label>
-                Has Returned to School
-                <input
-                  type="checkbox"
-                  checked={teamForm.returnToSchool}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, returnToSchool: event.target.checked }))
-                  }
-                />
-              </label>
-
-              <label>
-                Current School Name
-                <input
-                  value={teamForm.schoolName}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, schoolName: event.target.value }))
-                  }
-                />
-              </label>
-
-              <label>
-                Education Level / Class
-                <input
-                  value={teamForm.educationLevel}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, educationLevel: event.target.value }))
-                  }
-                />
-              </label>
-
-              <label>
-                Bio
-                <textarea
-                  value={teamForm.bio}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, bio: event.target.value }))
-                  }
-                />
-              </label>
-
-              <label>
-                Mother Photo URL or Filename
-                <input
-                  value={teamForm.image}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, image: event.target.value }))
-                  }
-                  placeholder="Nyajuok.jpeg"
-                />
-              </label>
-
-              <label>
-                Mother Video URL
-                <input
-                  value={teamForm.videoUrl}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, videoUrl: event.target.value }))
-                  }
-                  placeholder="https://..."
-                />
-              </label>
-
-              <label>
-                Support Summary
-                <textarea
-                  value={teamForm.supportSummary}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, supportSummary: event.target.value }))
-                  }
-                />
-              </label>
-
-              <label>
-                Current Challenges
-                <textarea
-                  value={teamForm.currentChallenges}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, currentChallenges: event.target.value }))
-                  }
-                />
-              </label>
-
-              <label>
-                Case Status
-                <input
-                  value={teamForm.caseStatus}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, caseStatus: event.target.value }))
-                  }
-                />
-              </label>
-
-              <label>
-                Guardian or Emergency Contact
-                <input
-                  value={teamForm.guardianContact}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, guardianContact: event.target.value }))
-                  }
-                />
-              </label>
-
-              <label>
-                Workshop Focus for this Mother
-                <textarea
-                  value={teamForm.workshopFocus}
-                  onChange={(event) =>
-                    setTeamForm((current) => ({ ...current, workshopFocus: event.target.value }))
-                  }
-                />
-              </label>
-
-              <button type="submit" disabled={loading}>Create Mother Profile</button>
-            </form>
-          </article>
-        )}
-
         {activeSection === 'manage-projects' && (
           <article className="admin-card admin-panel-card">
             <h2>Manage Projects</h2>
@@ -1946,7 +1855,7 @@ function AdminDashboard() {
 
         {activeSection === 'manage-team' && (
           <article className="admin-card admin-panel-card">
-            <h2>Mothers Under Support</h2>
+            <h2>Team</h2>
             <ul className="admin-list">
               {filteredTeamRecords.length > 0 ? filteredTeamRecords.map((member) => (
                 <li key={member._id}>
@@ -1980,16 +1889,6 @@ function AdminDashboard() {
                         />
                       </label>
                       <label>
-                        Has Returned to School
-                        <input
-                          type="checkbox"
-                          checked={editingTeamForm.returnToSchool}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, returnToSchool: event.target.checked }))
-                          }
-                        />
-                      </label>
-                      <label>
                         Current School Name
                         <input
                           value={editingTeamForm.schoolName}
@@ -2017,7 +1916,7 @@ function AdminDashboard() {
                         />
                       </label>
                       <label>
-                        Mother Photo URL or Filename
+                        Team Photo URL or Filename
                         <input
                           value={editingTeamForm.image}
                           onChange={(event) =>
@@ -2026,7 +1925,7 @@ function AdminDashboard() {
                         />
                       </label>
                       <label>
-                        Mother Video URL
+                        Team Video URL
                         <input
                           value={editingTeamForm.videoUrl}
                           onChange={(event) =>
@@ -2049,15 +1948,6 @@ function AdminDashboard() {
                           value={editingTeamForm.currentChallenges}
                           onChange={(event) =>
                             setEditingTeamForm((current) => ({ ...current, currentChallenges: event.target.value }))
-                          }
-                        />
-                      </label>
-                      <label>
-                        Case Status
-                        <input
-                          value={editingTeamForm.caseStatus}
-                          onChange={(event) =>
-                            setEditingTeamForm((current) => ({ ...current, caseStatus: event.target.value }))
                           }
                         />
                       </label>
@@ -2097,13 +1987,11 @@ function AdminDashboard() {
                         <strong>{member.name}</strong>
                         <p>{member.role}</p>
                         {member.dropoutCause && <p><strong>Dropout Cause:</strong> {member.dropoutCause}</p>}
-                        <p><strong>School Return:</strong> {member.returnToSchool ? 'Returned to school' : 'In progress'}</p>
                         {member.schoolName && <p><strong>School:</strong> {member.schoolName}</p>}
                         {member.educationLevel && <p><strong>Class:</strong> {member.educationLevel}</p>}
                         {member.supportSummary && <p><strong>Support:</strong> {member.supportSummary}</p>}
                         {member.currentChallenges && <p><strong>Challenges:</strong> {member.currentChallenges}</p>}
                         {member.workshopFocus && <p><strong>Workshop Focus:</strong> {member.workshopFocus}</p>}
-                        <p><strong>Case Status:</strong> {member.caseStatus || 'Active Support'}</p>
                         {member.guardianContact && <p><strong>Contact:</strong> {member.guardianContact}</p>}
                         {(member.image || member.videoUrl) && (
                           <div className="admin-media-links">
@@ -2152,7 +2040,7 @@ function AdminDashboard() {
                   )}
                 </li>
               )) : (
-                <li>No mother profile matches your search.</li>
+                <li>No team profile matches your search.</li>
               )}
             </ul>
           </article>
@@ -2226,6 +2114,43 @@ function AdminDashboard() {
                   value={workshopForm.notes}
                   onChange={(event) =>
                     setWorkshopForm((current) => ({ ...current, notes: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Workshop Summary
+                <textarea
+                  value={workshopForm.workshopSummary}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, workshopSummary: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Target Audience
+                <input
+                  value={workshopForm.targetAudience}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, targetAudience: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Key Outcomes
+                <textarea
+                  value={workshopForm.keyOutcomes}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, keyOutcomes: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Follow-Up Actions
+                <textarea
+                  value={workshopForm.followUpActions}
+                  onChange={(event) =>
+                    setWorkshopForm((current) => ({ ...current, followUpActions: event.target.value }))
                   }
                 />
               </label>
@@ -2376,6 +2301,196 @@ function AdminDashboard() {
 
               <button type="submit" disabled={loading}>Save Workshop Schedule</button>
             </form>
+
+            <div className="admin-divider" />
+
+            <h3>Manual Facebook Posts</h3>
+            <p className="admin-panel-hint">
+              Add new posts, edit the selected post, or remove an outdated entry.
+            </p>
+            <div className="admin-post-panels">
+              {editingWorkshopPostId && (
+                <article className="admin-card admin-inline-panel" ref={workshopPostEditRef}>
+                  <div className="admin-edit-banner admin-edit-banner--compact">
+                    <span className="admin-edit-badge">Editing Workshop Post</span>
+                    <span className="admin-edit-banner-text">
+                      Update the selected post and save the changes.
+                    </span>
+                    <button type="button" className="admin-secondary-btn" onClick={cancelWorkshopPostEdit}>
+                      Cancel Edit
+                    </button>
+                  </div>
+                  <form onSubmit={handleUpdateWorkshopPost} className="admin-form">
+                    <label>
+                      Post Title
+                      <input
+                        value={editingWorkshopPostForm.title}
+                        onChange={(event) =>
+                          setEditingWorkshopPostForm((current) => ({ ...current, title: event.target.value }))
+                        }
+                      />
+                    </label>
+                    <label>
+                      Facebook Post URL
+                      <input
+                        value={editingWorkshopPostForm.postUrl}
+                        onChange={(event) =>
+                          setEditingWorkshopPostForm((current) => ({ ...current, postUrl: event.target.value }))
+                        }
+                      />
+                    </label>
+                    <label>
+                      Workshop Date
+                      <input
+                        type="date"
+                        value={editingWorkshopPostForm.workshopDate}
+                        onChange={(event) =>
+                          setEditingWorkshopPostForm((current) => ({ ...current, workshopDate: event.target.value }))
+                        }
+                      />
+                    </label>
+                    <label>
+                      Posted Date
+                      <input
+                        type="date"
+                        value={editingWorkshopPostForm.postedDate}
+                        onChange={(event) =>
+                          setEditingWorkshopPostForm((current) => ({ ...current, postedDate: event.target.value }))
+                        }
+                      />
+                    </label>
+                    <label>
+                      Summary
+                      <textarea
+                        value={editingWorkshopPostForm.summary}
+                        onChange={(event) =>
+                          setEditingWorkshopPostForm((current) => ({ ...current, summary: event.target.value }))
+                        }
+                      />
+                    </label>
+                    <label>
+                      Details
+                      <textarea
+                        value={editingWorkshopPostForm.details}
+                        onChange={(event) =>
+                          setEditingWorkshopPostForm((current) => ({ ...current, details: event.target.value }))
+                        }
+                      />
+                    </label>
+                    <button type="submit" disabled={loading}>Update Workshop Post</button>
+                  </form>
+                </article>
+              )}
+
+              <article className="admin-card admin-inline-panel">
+                <h4>Add New Workshop Post</h4>
+                <form onSubmit={handleSaveWorkshopPost} className="admin-form">
+                  <label>
+                    Post Title
+                    <input
+                      value={newWorkshopPostForm.title}
+                      onChange={(event) =>
+                        setNewWorkshopPostForm((current) => ({ ...current, title: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label>
+                    Facebook Post URL
+                    <input
+                      value={newWorkshopPostForm.postUrl}
+                      onChange={(event) =>
+                        setNewWorkshopPostForm((current) => ({ ...current, postUrl: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label>
+                    Workshop Date
+                    <input
+                      type="date"
+                      value={newWorkshopPostForm.workshopDate}
+                      onChange={(event) =>
+                        setNewWorkshopPostForm((current) => ({ ...current, workshopDate: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label>
+                    Posted Date
+                    <input
+                      type="date"
+                      value={newWorkshopPostForm.postedDate}
+                      onChange={(event) =>
+                        setNewWorkshopPostForm((current) => ({ ...current, postedDate: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label>
+                    Summary
+                    <textarea
+                      value={newWorkshopPostForm.summary}
+                      onChange={(event) =>
+                        setNewWorkshopPostForm((current) => ({ ...current, summary: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label>
+                    Details
+                    <textarea
+                      value={newWorkshopPostForm.details}
+                      onChange={(event) =>
+                        setNewWorkshopPostForm((current) => ({ ...current, details: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <button type="submit" disabled={loading}>Add Workshop Post</button>
+                </form>
+              </article>
+            </div>
+
+            <div className="admin-list-block">
+              <h4>Recorded Facebook Posts</h4>
+              {workshopPosts.length > 0 ? (
+                <ul className="admin-post-list">
+                  {workshopPosts.map((post) => (
+                    <li
+                      key={post._id}
+                      className={`admin-post-item ${editingWorkshopPostId === post._id ? 'admin-post-item--editing' : ''}`}
+                    >
+                      <div>
+                        <strong>{post.title || 'Workshop post'}</strong>
+                        <p>{post.summary || post.details || 'No summary recorded yet.'}</p>
+                        <p className="admin-meta-line">
+                          Workshop Date: {post.workshopDate || 'Pending'}
+                          {' · '}
+                          Posted Date: {post.postedDate || 'Pending'}
+                        </p>
+                        <a href={post.postUrl} target="_blank" rel="noreferrer">
+                          Open Facebook post
+                        </a>
+                      </div>
+                      <div className="admin-row-actions">
+                        <button
+                          type="button"
+                          className="admin-secondary-btn"
+                          onClick={() => beginWorkshopPostEdit(post)}
+                          disabled={loading}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteWorkshopPost(post._id)}
+                          disabled={loading}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="admin-panel-hint">No manual Facebook posts have been added yet.</p>
+              )}
+            </div>
           </article>
         )}
 
@@ -3102,7 +3217,7 @@ function AdminDashboard() {
               <ul>
                 <li>Use the left sidebar to jump between major areas like Team, Reports, and Settings.</li>
                 <li>The top cards show live counts from your backend database.</li>
-                <li>Panels in the middle show recent activity, stories, and pending data checks.</li>
+                <li>Panels in the middle show stories and pending data checks.</li>
               </ul>
             </section>
 

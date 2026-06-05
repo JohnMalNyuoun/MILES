@@ -22,7 +22,7 @@ const Team = () => {
         const fetchTeam = async () => {
             try {
                 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''
-                const response = await fetch(`${apiBaseUrl}/api/team`)
+                const response = await fetch(`${apiBaseUrl}/api/team?profile=team`)
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch team data')

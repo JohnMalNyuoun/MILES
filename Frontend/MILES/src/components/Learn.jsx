@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import defaultSiteContent from '../content/defaultSiteContent';
 
+const featuredFacebookVideo = 'https://www.facebook.com/reel/1378362574108660/';
+const featuredFacebookVideoEmbedUrl = `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(featuredFacebookVideo)}&show_text=false&width=315`;
+
 function Learn({ siteContent = defaultSiteContent }) {
   const [teamMembers, setTeamMembers] = useState([]);
   const learnContent = {
@@ -62,6 +65,26 @@ function Learn({ siteContent = defaultSiteContent }) {
 
         <h3>{learnContent.dignityTitle}</h3>
         <p>{learnContent.dignityText}</p>
+      </section>
+
+      <section className="learn-video-section">
+        <div>
+          <p className="learn-video-eyebrow">Featured Video</p>
+          <h2>Watch the MILES community update</h2>
+          <p>
+            This video stays in the Learn More section so visitors can watch the community update
+            alongside the program overview.
+          </p>
+        </div>
+        <div className="learn-video-embed">
+          <iframe
+            title="MILES featured Facebook video"
+            src={featuredFacebookVideoEmbedUrl}
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            allowFullScreen
+            loading="lazy"
+          />
+        </div>
       </section>
 
       <section className="section">

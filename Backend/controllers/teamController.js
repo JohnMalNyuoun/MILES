@@ -2,7 +2,14 @@ const Team = require('../models/Team');
 
 const getTeams = async (req, res, next) => {
 	try {
-		const teams = await Team.find().sort({ createdAt: -1 });
+		const { profile } = req.query;
+		const filters = {};
+
+		if (profile === 'mothers') {
+			filters.isMotherProfile = true;
+		}
+
+		const teams = await Team.find(filters).sort({ createdAt: -1 });
 		res.status(200).json(teams);
 	} catch (error) {
 		next(error);
@@ -31,11 +38,11 @@ const createTeam = async (req, res, next) => {
 
 		const team = await Team.create({
 			...req.body,
-			isMotherProfile: req.body.isMotherProfile !== false,
+			isMotherProfile: req.body.isMotherProfile === true,
 		});
 
 		res.status(201).json({
-			message: 'Young mother case saved to the database successfully',
+			message: 'Team member saved to the database successfully',
 			team,
 		});
 	} catch (error) {
@@ -55,7 +62,7 @@ const updateTeam = async (req, res, next) => {
 		}
 
 		res.status(200).json({
-			message: 'Young mother case updated in the database successfully',
+			message: 'Team member updated in the database successfully',
 			team,
 		});
 	} catch (error) {

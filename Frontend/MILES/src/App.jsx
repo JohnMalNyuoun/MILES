@@ -9,6 +9,7 @@ import About from './components/About'
 import Contact from './components/Contact'
 import Learn from './components/Learn'
 import Projects from './components/Projects'
+import Workshops from './components/Workshops'
 import FocusDetail from './components/FocusDetail'
 import Donate from './components/Donate'
 import Footer from './components/Footer'
@@ -64,6 +65,7 @@ const  App = () => {
                 <Route path="/about" element={<About siteContent={siteContent} />} />
                 <Route path="/contact" element={<Contact siteContent={siteContent} />} />
                 <Route path="/team" element={<Team />} />
+                <Route path="/workshops" element={<Workshops />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/learn" element={<Learn siteContent={siteContent} />} />
                 <Route path="/focus/:topic" element={<FocusDetail />} />
