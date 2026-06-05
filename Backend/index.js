@@ -46,11 +46,7 @@ app.use(express.static(frontendDistPath));
 
 app.use(errorHandler);
 
-app.get('*', (req, res) => {
-	if (req.path.startsWith('/api')) {
-		return res.status(404).json({ message: 'API route not found' });
-	}
-
+app.get(/^(?!\/api).*/, (req, res) => {
 	return res.sendFile(frontendIndexPath);
 });
 
