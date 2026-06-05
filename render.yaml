@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: miles-backend
+    name: miles-integrated
     runtime: node
     rootDir: .
-    buildCommand: npm --prefix Backend install && npm --prefix Frontend/MILES install && npm --prefix Frontend/MILES run build
-    startCommand: npm --prefix Backend start
+    buildCommand: npm run install:all && npm run build
+    startCommand: node index.js
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
