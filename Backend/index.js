@@ -1,7 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const fs = require('fs');
 const path = require('path');
 
 const connectDB = require('./config/db');
@@ -17,7 +16,7 @@ const errorHandler = require('./middleware/errorHandler');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const frontendDistPath = path.join(__dirname, '..', 'Frontend', 'MILES', 'dist');
 const frontendIndexPath = path.join(frontendDistPath, 'index.html');
 
@@ -35,14 +34,6 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.get('/', (req, res) => {
-	if (fs.existsSync(frontendIndexPath)) {
-		return res.sendFile(frontendIndexPath);
-	}
-
-	res.send('MILES backend is running!');
-});
-
 app.use('/api/team', teamRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/auth', authRoutes);
@@ -53,15 +44,15 @@ app.use('/api/workshop-posts', workshopPostRoutes);
 
 app.use(express.static(frontendDistPath));
 
-app.use((req, res, next) => {
-	if (req.method === 'GET' && !req.path.startsWith('/api') && fs.existsSync(frontendIndexPath)) {
-		return res.sendFile(frontendIndexPath);
+app.use(errorHandler);
+
+app.get('*', (req, res) => {
+	if (req.path.startsWith('/api')) {
+		return res.status(404).json({ message: 'API route not found' });
 	}
 
-	next();
+	return res.sendFile(frontendIndexPath);
 });
-
-app.use(errorHandler);
 
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
