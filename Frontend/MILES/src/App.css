@@ -2172,18 +2172,21 @@ body.theme-dark .donate-highlight p {
 
 .exec-registry-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
 }
 
 .exec-profile-card {
-  background: var(--miles-bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
   padding: 24px;
+  padding-bottom: 92px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
 .exec-profile-meta {
@@ -2201,7 +2204,7 @@ body.theme-dark .donate-highlight p {
 }
 
 .exec-profile-name {
-  color: var(--miles-text-main);
+  color: #0f172a;
   font-size: 1.05rem;
 }
 
@@ -2223,16 +2226,62 @@ body.theme-dark .donate-highlight p {
   font-weight: 600;
 }
 
+.exec-profile-structure-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.exec-profile-data-pill {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.exec-profile-data-pill strong {
+  color: #0f172a;
+  font-size: 0.9rem;
+}
+
+.exec-profile-data-label {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .exec-profile-bio {
-  color: var(--miles-text-muted);
+  color: #475569;
   font-size: 0.9rem;
   line-height: 1.55;
 }
 
 .exec-profile-updated {
-  color: var(--miles-text-muted);
+  color: #64748b;
   font-size: 0.78rem;
   margin-top: 0.35rem;
+}
+
+.exec-profile-actions {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  justify-content: space-between;
+}
+
+.exec-profile-card.is-editing {
+  padding-bottom: 24px;
+}
+
+.exec-profile-card.is-editing .admin-row-actions {
+  position: static;
 }
 
 .miles-stat-row {
@@ -2577,6 +2626,7 @@ body.theme-dark .donate-highlight p {
 
 .miles-workspace-page {
   margin-top: 18px;
+  padding-top: 6rem;
 }
 
 .miles-workspace-page-header {
@@ -2826,6 +2876,36 @@ body.theme-dark .donate-highlight p {
   .miles-workspace-page-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (min-width: 768px) {
+  .exec-registry-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .exec-registry-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .exec-profile-structure-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .exec-profile-actions {
+    position: static;
+  }
+
+  .exec-profile-card {
+    padding-bottom: 24px;
+  }
+
+  .miles-workspace-page {
+    padding-top: 4.5rem;
   }
 }
 

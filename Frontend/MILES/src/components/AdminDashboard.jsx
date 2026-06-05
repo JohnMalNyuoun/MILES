@@ -1800,7 +1800,7 @@ function AdminDashboard() {
         )}
 
         {activeSection === 'manage-team' && (
-          <article className="admin-card admin-panel-card">
+          <article className="admin-card admin-panel-card exec-registry-shell pt-24 mt-8">
             <div className="exec-registry-header">
               <h2 className="exec-registry-title">Active Core Leadership &amp; Representatives</h2>
               <p className="exec-registry-subtitle">View, edit, and update profiles for core leadership, administrators, and community representatives.</p>
@@ -1809,9 +1809,9 @@ function AdminDashboard() {
             {filteredTeamRecords.length === 0 ? (
               <p className="admin-panel-hint">No team profile matches your search.</p>
             ) : (
-              <div className="exec-registry-grid">
+              <div className="exec-registry-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredTeamRecords.map((member) => (
-                  <div key={member._id} className="exec-profile-card">
+                  <div key={member._id} className={`exec-profile-card ${editingTeamId === member._id ? 'is-editing' : ''}`}>
                     {editingTeamId === member._id ? (
                       <form onSubmit={handleUpdateTeam} className="admin-form admin-inline-form">
                         <label>
@@ -1881,10 +1881,20 @@ function AdminDashboard() {
                             </span>
                           </div>
                           <p className="exec-profile-role">{member.role}</p>
+                          <div className="exec-profile-structure-meta">
+                            <div className="exec-profile-data-pill">
+                              <span className="exec-profile-data-label">School Return</span>
+                              <strong>{member.returnToSchool ? 'Returned' : 'Pending'}</strong>
+                            </div>
+                            <div className="exec-profile-data-pill">
+                              <span className="exec-profile-data-label">Case Status</span>
+                              <strong>{member.caseStatus || 'Under Review'}</strong>
+                            </div>
+                          </div>
                           {member.bio && <p className="exec-profile-bio">{member.bio}</p>}
                           <p className="exec-profile-updated">Updated: {formatDateTime(member.updatedAt || member.createdAt)}</p>
                         </div>
-                        <div className="admin-row-actions">
+                        <div className="admin-row-actions exec-profile-actions">
                           <button
                             type="button"
                             className="admin-secondary-btn"
