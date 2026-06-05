@@ -46,17 +46,33 @@ const createAdminUser = async (req, res, next) => {
 				.json({ message: 'Name, username, email and password are required' });
 		}
 
-		const existingUser = await User.findOne({ username: username.trim() });
+		const normalizedUsername = username.trim();
+		const normalizedEmail = email.trim().toLowerCase();
+
+		const existingUser = await User.findOne({ username: normalizedUsername });
 		if (existingUser) {
 			return res.status(400).json({ message: 'Username is already in use' });
+		}
+
+		const existingAdmin = await Admin.findOne({ username: normalizedUsername });
+		if (existingAdmin) {
+			return res.status(400).json({ message: 'Admin profile username already exists' });
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const adminUser = await User.create({
 			name,
-			username: username.trim(),
-			email,
+			username: normalizedUsername,
+			email: normalizedEmail,
 			password: hashedPassword,
+		});
+
+		const adminProfile = await Admin.create({
+			name,
+			username: normalizedUsername,
+			email: normalizedEmail,
+			password: hashedPassword,
+			isVerified: true,
 		});
 
 		res.status(201).json({
@@ -67,6 +83,12 @@ const createAdminUser = async (req, res, next) => {
 				username: adminUser.username,
 				email: adminUser.email,
 				role: 'admin',
+			},
+			adminProfile: {
+				id: adminProfile._id,
+				username: adminProfile.username,
+				email: adminProfile.email,
+				isVerified: adminProfile.isVerified,
 			},
 		});
 	} catch (error) {
