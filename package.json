@@ -7,7 +7,7 @@
     "postinstall": "npm run install:all",
     "install:all": "npm --prefix Backend install && npm --prefix Frontend/MILES install",
     "build": "npm --prefix Frontend/MILES install && npm --prefix Frontend/MILES run build",
-    "start": "node index.js",
+    "start": "npm run build && node index.js",
     "start:one-port": "npm run install:all && npm run build && npm --prefix Backend start"
   }
 }

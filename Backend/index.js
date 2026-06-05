@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const fs = require('fs');
 const path = require('path');
 
 const connectDB = require('./config/db');
@@ -19,6 +20,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const frontendDistPath = path.join(__dirname, '..', 'Frontend', 'MILES', 'dist');
 const frontendIndexPath = path.join(frontendDistPath, 'index.html');
+const hasFrontendBuild = () => fs.existsSync(frontendIndexPath);
 
 connectDB();
 
@@ -42,11 +44,19 @@ app.use('/api/content', contentRoutes);
 app.use('/api/workshops', workshopRoutes);
 app.use('/api/workshop-posts', workshopPostRoutes);
 
-app.use(express.static(frontendDistPath));
+if (hasFrontendBuild()) {
+	app.use(express.static(frontendDistPath));
+} else {
+	console.warn(`Frontend build not found at ${frontendIndexPath}. Serving API only until frontend is built.`);
+}
 
 app.use(errorHandler);
 
 app.get(/^(?!\/api).*/, (req, res) => {
+	if (!hasFrontendBuild()) {
+		return res.status(503).send('Frontend is not built yet. Please run the frontend build step.');
+	}
+
 	return res.sendFile(frontendIndexPath);
 });
 
