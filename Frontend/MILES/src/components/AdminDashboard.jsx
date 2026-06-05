@@ -1881,16 +1881,6 @@ function AdminDashboard() {
                             </span>
                           </div>
                           <p className="exec-profile-role">{member.role}</p>
-                          <div className="exec-profile-structure-meta">
-                            <div className="exec-profile-data-pill">
-                              <span className="exec-profile-data-label">School Return</span>
-                              <strong>{member.returnToSchool ? 'Returned' : 'Pending'}</strong>
-                            </div>
-                            <div className="exec-profile-data-pill">
-                              <span className="exec-profile-data-label">Case Status</span>
-                              <strong>{member.caseStatus || 'Under Review'}</strong>
-                            </div>
-                          </div>
                           {member.bio && <p className="exec-profile-bio">{member.bio}</p>}
                           <p className="exec-profile-updated">Updated: {formatDateTime(member.updatedAt || member.createdAt)}</p>
                         </div>

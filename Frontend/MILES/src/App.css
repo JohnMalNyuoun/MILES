@@ -2182,11 +2182,11 @@ body.theme-dark .donate-highlight p {
   border: 1px solid #f1f5f9;
   border-radius: 16px;
   padding: 24px;
-  padding-bottom: 92px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  padding-bottom: 80px;
 }
 
 .exec-profile-meta {
@@ -2224,36 +2224,6 @@ body.theme-dark .donate-highlight p {
   color: var(--miles-green-primary);
   font-size: 0.9rem;
   font-weight: 600;
-}
-
-.exec-profile-structure-meta {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin-top: 0.35rem;
-}
-
-.exec-profile-data-pill {
-  display: flex;
-  flex-direction: column;
-  gap: 0.18rem;
-  padding: 0.7rem 0.8rem;
-  border-radius: 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-}
-
-.exec-profile-data-pill strong {
-  color: #0f172a;
-  font-size: 0.9rem;
-}
-
-.exec-profile-data-label {
-  color: #64748b;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
 .exec-profile-bio {
