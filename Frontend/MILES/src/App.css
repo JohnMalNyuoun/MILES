@@ -1228,6 +1228,26 @@ body.theme-dark .donate-highlight p {
   transform: translateY(-1px);
 }
 
+.admin-auth-switch {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.35rem;
+}
+
+.admin-link-btn {
+  border: none;
+  background: transparent;
+  color: var(--accent-color);
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0;
+}
+
+.admin-link-btn:hover {
+  color: var(--accent-dark);
+  text-decoration: underline;
+}
+
 .admin-form button:disabled,
 .admin-list button:disabled {
   opacity: 0.65;

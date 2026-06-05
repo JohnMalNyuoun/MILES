@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 
-const { register, login } = require('../controllers/authController');
+const { register, login, forgotPassword } = require('../controllers/authController');
 const { registerAdmin } = require('../controllers/adminController');
 
 const router = express.Router();
@@ -37,6 +37,22 @@ const handleValidationErrors = (req, res, next) => {
 
 router.post('/register', register);
 router.post('/login', login);
+router.post(
+	'/forgot-password',
+	[
+		body('username').trim().notEmpty().withMessage('username is required.'),
+		body('email')
+			.trim()
+			.isEmail()
+			.withMessage('email must be a valid email format.')
+			.normalizeEmail(),
+		body('newPassword')
+			.isLength({ min: 6 })
+			.withMessage('newPassword must have a minimum length of 6 characters.'),
+	],
+	handleValidationErrors,
+	forgotPassword
+);
 router.post('/register-new-admin', registerNewAdminValidation, handleValidationErrors, registerAdmin);
 
 module.exports = router;
