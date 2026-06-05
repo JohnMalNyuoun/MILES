@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import defaultSiteContent from '../content/defaultSiteContent';
-import PendingActionsReview from './PendingActionsReview';
+import ApprovalQueue from './ApprovalQueue';
 
 const getApiBaseUrl = () => import.meta.env.VITE_API_BASE_URL || '';
 
@@ -277,6 +277,22 @@ const emptyWorkshopPostForm = {
   details: '',
 };
 
+const formatAdminDisplayName = (value) => {
+  if (!value) return 'Admin User';
+
+  const normalizedValue = String(value).trim();
+  if (!normalizedValue) return 'Admin User';
+
+  if (normalizedValue.toLowerCase() === 'nyajuokwilliam') {
+    return 'Nyajuok William';
+  }
+
+  return normalizedValue
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
 function AdminDashboard() {
   const apiBaseUrl = useMemo(() => getApiBaseUrl(), []);
   const navigate = useNavigate();
@@ -360,6 +376,10 @@ function AdminDashboard() {
   const [searchDrivenSection, setSearchDrivenSection] = useState('');
 
   const isAdmin = user?.role === 'admin';
+  const adminDisplayName = useMemo(
+    () => formatAdminDisplayName(user?.name || user?.username || 'Admin User'),
+    [user]
+  );
 
   const authHeaders = useMemo(
     () => ({
@@ -1453,7 +1473,7 @@ function AdminDashboard() {
       </aside>
 
       <div className="miles-admin-main">
-        <header className="miles-admin-header">
+        <header className="miles-admin-header flex items-center justify-between gap-4">
           <div>
             <h1>MILES | Empowerment Support</h1>
             <p>
@@ -1463,16 +1483,18 @@ function AdminDashboard() {
             </p>
           </div>
           <div className="miles-header-tools">
-            <input
-              type="search"
-              className="miles-admin-search"
-              value={dashboardSearch}
-              onChange={(event) => setDashboardSearch(event.target.value)}
-              placeholder="Search activities, cases, or members"
-            />
+            <div className="miles-search-block">
+              <input
+                type="search"
+                className="miles-admin-search"
+                value={dashboardSearch}
+                onChange={(event) => setDashboardSearch(event.target.value)}
+                placeholder="Search activities, cases, or members"
+              />
+            </div>
             <div className="miles-profile-chip">
-              <span className="miles-profile-avatar">A</span>
-              <span>{user?.name || 'Admin'}</span>
+              <span className="miles-profile-avatar">{adminDisplayName.charAt(0)}</span>
+              <span>{adminDisplayName}</span>
             </div>
           </div>
         </header>
@@ -1483,123 +1505,49 @@ function AdminDashboard() {
 
         {!isWorkspaceView && (
           <>
-        <div className="miles-stat-row" aria-label="Admin overview shortcuts">
-          <button
-            type="button"
-            className={`miles-stat-card miles-stat-card-button ${activeSection === 'manage-team' ? 'miles-stat-card-active' : ''}`}
-            onClick={() => openWorkspaceSection('manage-team', 'team')}
-          >
-            <h3>Team Members</h3>
-            <p>{supportTeamMembers.length} <span>From database</span></p>
-            <small>Open Team records</small>
-          </button>
-          <button
-            type="button"
-            className={`miles-stat-card miles-stat-card-button ${activeSection === 'manage-projects' ? 'miles-stat-card-active' : ''}`}
-            onClick={() => openWorkspaceSection('manage-projects', 'activity')}
-          >
-            <h3>Recent Mentorship</h3>
-            <p>{projects.length} Active Records</p>
-            <div className="miles-badges">
-              {mentorshipBadgeTopics.map((topic) => (
-                <span key={topic}>{topic}</span>
-              ))}
-            </div>
-            <small>Open Case management</small>
-          </button>
-          <button
-            type="button"
-            className={`miles-stat-card miles-stat-card-button ${activeSection === 'create-admin' ? 'miles-stat-card-active' : ''}`}
-            onClick={() => openWorkspaceSection('create-admin', 'activity')}
-          >
-            <h3>Admin Users</h3>
-            <p>{dashboard?.stats?.userCount ?? 0} <span>Authorized</span></p>
-            <small>Open Admin account tools</small>
-          </button>
-        </div>
+        <div className="miles-admin-split grid grid-cols-1 lg:grid-cols-5 gap-8 mt-6">
+          <div className="miles-metrics-column lg:col-span-2 flex flex-col gap-6" aria-label="Admin overview shortcuts">
+            <button
+              type="button"
+              className={`miles-metric-card miles-stat-card-button ${activeSection === 'manage-team' ? 'miles-stat-card-active' : ''}`}
+              onClick={() => openWorkspaceSection('manage-team', 'team')}
+            >
+              <h3>Team Members</h3>
+              <p>{supportTeamMembers.length} <span>From database</span></p>
+              <small>Open Team records</small>
+            </button>
+            <button
+              type="button"
+              className={`miles-metric-card miles-stat-card-button ${activeSection === 'manage-projects' ? 'miles-stat-card-active' : ''}`}
+              onClick={() => openWorkspaceSection('manage-projects', 'activity')}
+            >
+              <h3>Recent Mentorship</h3>
+              <p>{projects.length} Active Records</p>
+              <div className="miles-badges">
+                {mentorshipBadgeTopics.map((topic) => (
+                  <span key={topic}>{topic}</span>
+                ))}
+              </div>
+              <small>Open Case management</small>
+            </button>
+            <button
+              type="button"
+              className={`miles-metric-card miles-stat-card-button ${activeSection === 'create-admin' ? 'miles-stat-card-active' : ''}`}
+              onClick={() => openWorkspaceSection('create-admin', 'activity')}
+            >
+              <h3>Admin Users</h3>
+              <p>{dashboard?.stats?.userCount ?? 0} <span>Authorized</span></p>
+              <small>Open Admin account tools</small>
+            </button>
+          </div>
 
-        <div className="miles-overview-row">
-          <div className="miles-overview-side-stack">
-            <article className={`miles-panel miles-panel-compact miles-donor-panel ${activeOverviewPanel === 'donor' ? 'miles-panel-priority' : ''}`}>
-              <h2>Donor Report Generator</h2>
-              <p>Compile the latest impact metrics and stories into a shareable donor report.</p>
-              <button type="button" onClick={() => openWorkspaceSection('edit-donate', 'donor')}>Generate Report</button>
-            </article>
+          <div className="miles-approval-workspace lg:col-span-3 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <ApprovalQueue
+              currentUsername={user?.username}
+              authHeaders={authHeaders}
+            />
           </div>
         </div>
-
-        <div className="miles-overview-support-grid">
-          <article
-            className={`miles-panel miles-panel-compact miles-quick-actions-panel miles-overview-card-clickable ${activeOverviewPanel === 'quick-actions' ? 'miles-panel-priority' : ''}`}
-            role="button"
-            tabIndex={0}
-            onClick={() => openWorkspaceSection('workshop-schedule', 'quick-actions')}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                openWorkspaceSection('workshop-schedule', 'quick-actions');
-              }
-            }}
-          >
-            <h2>Quick Actions</h2>
-            <div className="miles-action-stack">
-              <button type="button" onClick={() => openWorkspaceSection('manage-projects', 'quick-actions')}>Log New Case Intervention</button>
-              <button type="button" onClick={() => openWorkspaceSection('workshop-schedule', 'quick-actions')}>Schedule Workshop</button>
-            </div>
-          </article>
-
-          <article
-            className={`miles-panel miles-panel-compact miles-overview-card-clickable ${activeOverviewPanel === 'tasks' ? 'miles-panel-priority' : ''}`}
-            role="button"
-            tabIndex={0}
-            onClick={() => openWorkspaceSection('edit-navbar', 'tasks')}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                openWorkspaceSection('edit-navbar', 'tasks');
-              }
-            }}
-          >
-            <h2>Pending Tasks</h2>
-            <ul className="miles-task-list">
-              {filteredPendingTasks.length > 0 ? (
-                filteredPendingTasks.map((task) => (
-                  <li key={task.id}>
-                    <span>{task.label}</span>
-                  </li>
-                ))
-              ) : (
-                <li>No pending task matches your search.</li>
-              )}
-            </ul>
-          </article>
-
-          <article className={`miles-panel ${activeOverviewPanel === 'stories' ? 'miles-panel-priority' : ''}`}>
-            <h2>Workshop Activities</h2>
-            <ul className="miles-story-list miles-story-list-clean">
-              {filteredWorkshopActivities.length > 0 ? (
-                filteredWorkshopActivities.map((activity) => (
-                  <li key={activity.id}>
-                    <div className="miles-story-copy">
-                      <span>{activity.title}</span>
-                      {activity.when ? <p>{formatDateTime(activity.when)}</p> : null}
-                    </div>
-                    <em className={activity.status === 'Completed' ? 'miles-badge-published' : 'miles-badge-pending'}>
-                      {activity.status}
-                    </em>
-                  </li>
-                ))
-              ) : (
-                <li>{normalizedDashboardSearch ? 'No workshop activity matches your search.' : 'No workshop activities tracked yet.'}</li>
-              )}
-            </ul>
-          </article>
-        </div>
-
-        <PendingActionsReview
-          currentUsername={user?.username}
-          authHeaders={authHeaders}
-        />
 
         <article className="miles-panel miles-workspace-panel">
           <h2>Management Workspace</h2>
