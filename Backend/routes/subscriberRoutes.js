@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { subscribe, sendUpdateToSubscriber } = require('../controllers/subscriberController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authMiddleware } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
