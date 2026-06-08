@@ -574,6 +574,58 @@ body.theme-dark .public-dashboard-section > p {
   line-height: 1.62;
 }
 
+.home-focus-card {
+  background: var(--panel-surface);
+  border: 1px solid var(--panel-surface-border);
+  box-shadow: var(--panel-shadow);
+}
+
+.home-focus-card h3,
+.home-pillars-card h4 {
+  color: var(--text-strong);
+}
+
+.home-focus-card p,
+.home-pillars-card p,
+.home-advocacy-item p {
+  color: var(--text-color);
+}
+
+.home-focus-card:hover,
+.home-pillars-card:hover {
+  box-shadow: var(--panel-shadow-hover);
+}
+
+.home-pillars-card {
+  background: var(--panel-surface);
+  border: 1px solid var(--panel-surface-border);
+  border-left: 4px solid var(--accent-color);
+  box-shadow: var(--panel-shadow);
+}
+
+.home-advocacy-item {
+  height: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--panel-surface-border);
+  background: var(--panel-surface-alt);
+}
+
+.home-advocacy-item h5 {
+  color: var(--text-strong);
+}
+
+body.theme-light .home-focus-card,
+body.theme-light .home-pillars-card {
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+body.theme-dark .home-focus-card,
+body.theme-dark .home-pillars-card,
+body.theme-dark .home-advocacy-item {
+  border-color: rgba(148, 163, 184, 0.28);
+}
+
 @media (min-width: 1200px) {
   .public-dashboard-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));

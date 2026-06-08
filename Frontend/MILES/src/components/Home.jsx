@@ -46,7 +46,7 @@ function Home({ siteContent = defaultSiteContent }) {
 
           <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Education Card */}
-            <div className="bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition-all group">
+            <div className="home-focus-card bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition-all group flex flex-col h-full">
               <span className="material-symbols-outlined text-primary text-4xl mb-4 block">school</span>
               <h3 className="font-manrope text-headline-md font-semibold text-primary mb-3">Education</h3>
               <p className="text-on-surface-variant text-body-md font-manrope">
@@ -55,7 +55,7 @@ function Home({ siteContent = defaultSiteContent }) {
             </div>
 
             {/* Community Card */}
-            <div className="bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition-all group">
+            <div className="home-focus-card bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition-all group flex flex-col h-full">
               <span className="material-symbols-outlined text-primary text-4xl mb-4 block">groups</span>
               <h3 className="font-manrope text-headline-md font-semibold text-primary mb-3">Community Role</h3>
               <p className="text-on-surface-variant text-body-md font-manrope">
@@ -64,7 +64,7 @@ function Home({ siteContent = defaultSiteContent }) {
             </div>
 
             {/* Mentorship Card */}
-            <div className="bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition-all group">
+            <div className="home-focus-card bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition-all group flex flex-col h-full">
               <span className="material-symbols-outlined text-primary text-4xl mb-4 block">psychology</span>
               <h3 className="font-manrope text-headline-md font-semibold text-primary mb-3">Mentorship</h3>
               <p className="text-on-surface-variant text-body-md font-manrope">
@@ -101,25 +101,25 @@ function Home({ siteContent = defaultSiteContent }) {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform">
+            <div className="home-pillars-card bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform flex flex-col h-full">
               <h4 className="font-manrope text-headline-md font-semibold text-primary mb-4">Academic Re-enrollment</h4>
               <p className="text-on-surface-variant text-body-md font-manrope">
                 Actively monitoring, mentoring, and establishing pathways for young mothers to return to school and continue their education.
               </p>
             </div>
-            <div className="bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform">
+            <div className="home-pillars-card bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform flex flex-col h-full">
               <h4 className="font-manrope text-headline-md font-semibold text-primary mb-4">Pregnancy Prevention</h4>
               <p className="text-on-surface-variant text-body-md font-manrope">
                 Deploying targeted workshops and awareness tracks to safeguard young girls, offering guidance, resources, and advocacy.
               </p>
             </div>
-            <div className="bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform">
+            <div className="home-pillars-card bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform flex flex-col h-full">
               <h4 className="font-manrope text-headline-md font-semibold text-primary mb-4">Resilience Against Peer Pressure</h4>
               <p className="text-on-surface-variant text-body-md font-manrope">
                 Building strong peer-led support structures to combat negative social pressure and empower young women with confidence.
               </p>
             </div>
-            <div className="bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform">
+            <div className="home-pillars-card bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform flex flex-col h-full">
               <h4 className="font-manrope text-headline-md font-semibold text-primary mb-4">Community Mentorship</h4>
               <p className="text-on-surface-variant text-body-md font-manrope">
                 Providing personalized family monitoring, community networks, and critical intervention advocacy alongside mentorship.
@@ -142,7 +142,7 @@ function Home({ siteContent = defaultSiteContent }) {
               Click to explore our complete protection framework.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="space-y-4">
+              <div className="home-advocacy-item space-y-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                   <span className="material-symbols-outlined text-primary">security</span>
                 </div>
@@ -151,7 +151,7 @@ function Home({ siteContent = defaultSiteContent }) {
                   Systematically breaking down the silence surrounding physical, psychological, and economic violence against women and girls.
                 </p>
               </div>
-              <div className="space-y-4">
+              <div className="home-advocacy-item space-y-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                   <span className="material-symbols-outlined text-primary">shield</span>
                 </div>
@@ -160,7 +160,7 @@ function Home({ siteContent = defaultSiteContent }) {
                   Confronting child, early, and forced marriages, and female genital mutilation (FGM) which strip girls of their dignity.
                 </p>
               </div>
-              <div className="space-y-4">
+              <div className="home-advocacy-item space-y-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                   <span className="material-symbols-outlined text-primary">campaign</span>
                 </div>
