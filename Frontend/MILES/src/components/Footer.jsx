@@ -10,7 +10,7 @@ const Footer = () => {
 
         <div className="flex flex-wrap justify-center gap-8">
           <a
-            href="mailto:milesproject@gmail.com"
+            href="mailto:wmal44884@gmail.com"
             className="font-manrope text-label-sm text-on-surface-variant hover:text-primary underline transition-all"
           >
             Email Us
@@ -33,7 +33,7 @@ const Footer = () => {
 
         <div className="flex gap-4 mt-4">
           <a
-            href="mailto:milesproject@gmail.com"
+            href="mailto:wmal44884@gmail.com"
             className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-on-primary transition-all"
             aria-label="Email"
           >

@@ -3532,7 +3532,7 @@ function AdminDashboard() {
             <div className="admin-help-contact-note">
               <p>
                 Need help? Contact the MILES technical team at{' '}
-                <a href="mailto:milesproject@gmail.com">milesproject@gmail.com</a> before making
+                <a href="mailto:wmal44884@gmail.com">wmal44884@gmail.com</a> before making
                 any changes you are uncertain about.
               </p>
             </div>

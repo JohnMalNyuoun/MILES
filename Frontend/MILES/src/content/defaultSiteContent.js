@@ -66,7 +66,7 @@ const defaultSiteContent = {
     title: 'Contact Us',
     intro:
       "We'd love to hear from you. Reach out to learn more about our programs or to get involved.",
-    email: 'milesproject@gmail.com',
+    email: 'wmal44884@gmail.com',
     phone: '+254112419468',
     address: 'Kakuma Refugee Camp, Scorpion Center',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=Kakuma+Refugee+Camp+Scorpion+Center',
@@ -99,7 +99,7 @@ const defaultSiteContent = {
     actions: [
       {
         label: 'Start a Donation Conversation',
-        url: 'mailto:milesproject@gmail.com?subject=Donate%20to%20MILES',
+        url: 'mailto:wmal44884@gmail.com?subject=Donate%20to%20MILES',
         external: true,
       },
       {
