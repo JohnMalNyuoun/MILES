@@ -1,127 +1,214 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import defaultSiteContent from '../content/defaultSiteContent';
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import defaultSiteContent from '../content/defaultSiteContent'
 
 function Home({ siteContent = defaultSiteContent }) {
-  const homeContent = siteContent.home || defaultSiteContent.home;
+  const homeContent = siteContent.home || defaultSiteContent.home
+  const [email, setEmail] = useState('')
+  const [subscribed, setSubscribed] = useState(false)
 
-  const renderLink = (item, className, children) => {
-    if (!item?.path) {
-      return children;
+  const handleSubscribe = (event) => {
+    event.preventDefault()
+    if (email.trim()) {
+      setSubscribed(true)
+      setEmail('')
     }
-
-    if (item.path.startsWith('/')) {
-      return (
-        <Link className={className} to={item.path}>
-          {children}
-        </Link>
-      );
-    }
-
-    return (
-      <a className={className} href={item.path} target="_blank" rel="noreferrer">
-        {children}
-      </a>
-    );
-  };
+  }
 
   return (
-    <div className="page home-page">
-      <section className="section">
-        <h2>{homeContent.welcomeTitle}</h2>
-        <p>{homeContent.welcomeText}</p>
-      </section>
-      <section className="section features">
-        {(homeContent.featureCards || []).map((card, index) => (
-          <React.Fragment key={`${card.title}-${index}`}>
-            {renderLink(
-              card,
-              'feature-link',
-              <div className="feature-card">
-                <h3>{card.title}</h3>
-                <p>{card.description}</p>
-              </div>
-            )}
-          </React.Fragment>
-        ))}
-
-        {(homeContent.quickButtons || []).map((button, index) => (
-          <div key={`${button.label}-${index}`}>
-            {renderLink(button, 'hero-btn', button.label)}
-          </div>
-        ))}
-      </section>
-
-      <section className="section public-dashboard-section">
-        <h2>Our Pillars of Impact</h2>
-        <p>
-          Mothers in Learning, Empowerment &amp; Support operates a comprehensive intervention framework to uplift young mothers and girls.
-        </p>
-
-        <div className="public-dashboard-grid">
-          <article className="public-dashboard-panel">
-            <h3>Academic Re-enrollment</h3>
-            <p>
-              Actively monitoring, mentoring, and establishing pathways for young mothers to return to school and continue their education journeys cleanly.
+    <main>
+      {/* Welcome Section & Core Areas */}
+      <section className="py-section-padding px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+          <div className="lg:col-span-4 space-y-6">
+            <h2 className="font-manrope text-headline-lg font-bold text-primary">
+              {homeContent.welcomeTitle || 'Welcome to MILES'}
+            </h2>
+            <p className="font-manrope text-body-lg text-on-surface-variant leading-relaxed">
+              {homeContent.welcomeText ||
+                'MILES is dedicated to uplifting mothers and girls by providing access to education, building strong community networks, and fostering mentorship opportunities that create lasting change.'}
             </p>
-          </article>
-
-          <article className="public-dashboard-panel">
-            <h3>Pregnancy Prevention</h3>
-            <p>
-              Deploying targeted workshops and awareness tracks to safeguard young girls, offering guidance, resources, and continuous reproductive health advocacy.
-            </p>
-          </article>
-
-          <article className="public-dashboard-panel">
-            <h3>Resilience Against Peer Pressure</h3>
-            <p>
-              Building strong peer-led support structures to combat negative social pressure and empower young women with confidence and leadership tools.
-            </p>
-          </article>
-
-          <article className="public-dashboard-panel">
-            <h3>Community Mentorship</h3>
-            <p>
-              Providing personalized family monitoring, community networks, and critical intervention advocacy alongside local educational framework partners.
-            </p>
-          </article>
-
-          <article
-            className="public-dashboard-panel public-dashboard-panel-featured"
-          >
-            <h3>Advocacy &amp; GBV Prevention</h3>
-            <p>
-              Challenging deep-rooted cultural beliefs and protecting the girl child from dangerous traditional practices. Click to explore our complete protection framework.
-            </p>
-
-            <div className="advocacy-inline-grid">
-              <section className="advocacy-inline-block">
-                <h4>Countering Gender-Based Violence (GBV)</h4>
-                <p>
-                  Systematically breaking down the silence surrounding physical, psychological, and economic violence against women and girls through safe spaces, reporting advocacy, and survivor support tracks.
-                </p>
-              </section>
-
-              <section className="advocacy-inline-block">
-                <h4>Eradicating Dangerous Traditional Practices</h4>
-                <p>
-                  Confronting and campaigning against harmful traditional frameworks, including child, early, and forced marriages, and female genital mutilation (FGM), which strip the girl child of her health, dignity, and education.
-                </p>
-              </section>
-
-              <section className="advocacy-inline-block">
-                <h4>Community Shift &amp; Awareness</h4>
-                <p>
-                  Engaging traditional elders, parents, and youth leaders in structured dialogue workshops to shift community mindsets, replace outdated dogmas with protective support, and keep girls safely enrolled in schools.
-                </p>
-              </section>
+            <div className="flex flex-wrap gap-4 pt-4">
+              <Link
+                to="/about"
+                className="bg-primary text-on-primary px-8 py-3 rounded-lg font-manrope text-label-sm font-semibold hover:bg-surface-tint transition-colors inline-block"
+              >
+                Learn More
+              </Link>
+              <Link
+                to="/team"
+                className="border border-primary text-primary px-8 py-3 rounded-lg font-manrope text-label-sm font-semibold hover:bg-primary/10 transition-colors inline-block"
+              >
+                Meet Our Team
+              </Link>
             </div>
-          </article>
+          </div>
+
+          <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Education Card */}
+            <div className="bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition-all group">
+              <span className="material-symbols-outlined text-primary text-4xl mb-4 block">school</span>
+              <h3 className="font-manrope text-headline-md font-semibold text-primary mb-3">Education</h3>
+              <p className="text-on-surface-variant text-body-md font-manrope">
+                Access learning resources and programs designed to help mothers continue their education journey.
+              </p>
+            </div>
+
+            {/* Community Card */}
+            <div className="bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition-all group">
+              <span className="material-symbols-outlined text-primary text-4xl mb-4 block">groups</span>
+              <h3 className="font-manrope text-headline-md font-semibold text-primary mb-3">Community Role</h3>
+              <p className="text-on-surface-variant text-body-md font-manrope">
+                Join a supportive network of mothers who share experiences, advice, and encouragement.
+              </p>
+            </div>
+
+            {/* Mentorship Card */}
+            <div className="bg-surface-container-low p-8 rounded-xl border border-outline-variant/30 hover:border-primary/50 transition-all group">
+              <span className="material-symbols-outlined text-primary text-4xl mb-4 block">psychology</span>
+              <h3 className="font-manrope text-headline-md font-semibold text-primary mb-3">Mentorship</h3>
+              <p className="text-on-surface-variant text-body-md font-manrope">
+                Connect with mentors who guide and inspire you to reach your full potential.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-12">
+          <Link
+            to="/projects"
+            className="bg-primary text-on-primary px-8 py-3 rounded-lg font-manrope text-label-sm font-semibold hover:bg-surface-tint transition-colors flex items-center gap-2 inline-flex"
+          >
+            <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
+            Our Projects
+          </Link>
+          <Link
+            to="/donate"
+            className="bg-primary-container text-on-primary-container px-8 py-3 rounded-lg font-manrope text-label-sm font-semibold hover:opacity-90 transition-colors flex items-center gap-2 inline-flex"
+          >
+            <span className="material-symbols-outlined text-[18px]">favorite</span>
+            Donate
+          </Link>
         </div>
       </section>
-    </div>
-  );
+
+      {/* Pillars of Impact Section */}
+      <section className="py-section-padding bg-surface-container-lowest">
+        <div className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+          <div className="mb-12">
+            <h2 className="font-manrope text-headline-lg font-bold text-primary mb-4">Our Pillars of Impact</h2>
+            <p className="text-on-surface-variant max-w-3xl font-manrope text-body-lg">
+              Mothers in Learning, Empowerment &amp; Support operates a comprehensive intervention framework to uplift young mothers and girls.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform">
+              <h4 className="font-manrope text-headline-md font-semibold text-primary mb-4">Academic Re-enrollment</h4>
+              <p className="text-on-surface-variant text-body-md font-manrope">
+                Actively monitoring, mentoring, and establishing pathways for young mothers to return to school and continue their education.
+              </p>
+            </div>
+            <div className="bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform">
+              <h4 className="font-manrope text-headline-md font-semibold text-primary mb-4">Pregnancy Prevention</h4>
+              <p className="text-on-surface-variant text-body-md font-manrope">
+                Deploying targeted workshops and awareness tracks to safeguard young girls, offering guidance, resources, and advocacy.
+              </p>
+            </div>
+            <div className="bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform">
+              <h4 className="font-manrope text-headline-md font-semibold text-primary mb-4">Resilience Against Peer Pressure</h4>
+              <p className="text-on-surface-variant text-body-md font-manrope">
+                Building strong peer-led support structures to combat negative social pressure and empower young women with confidence.
+              </p>
+            </div>
+            <div className="bg-surface-container p-6 rounded-xl border-l-4 border-primary shadow-sm hover:-translate-y-1 transition-transform">
+              <h4 className="font-manrope text-headline-md font-semibold text-primary mb-4">Community Mentorship</h4>
+              <p className="text-on-surface-variant text-body-md font-manrope">
+                Providing personalized family monitoring, community networks, and critical intervention advocacy alongside mentorship.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Advocacy Section */}
+      <section className="py-section-padding px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        <div className="bg-surface-container-high rounded-[2rem] p-8 md:p-16 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
+          <div className="relative z-10 max-w-4xl">
+            <h2 className="font-manrope text-headline-lg font-bold text-primary mb-6">
+              Advocacy &amp; GBV Prevention
+            </h2>
+            <p className="font-manrope text-body-lg text-on-surface-variant mb-12 leading-relaxed">
+              Challenging deep-rooted cultural beliefs and protecting the girl child from dangerous traditional practices.
+              Click to explore our complete protection framework.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary">security</span>
+                </div>
+                <h5 className="font-manrope text-headline-md font-semibold text-on-background">Countering GBV</h5>
+                <p className="text-on-surface-variant text-body-md font-manrope">
+                  Systematically breaking down the silence surrounding physical, psychological, and economic violence against women and girls.
+                </p>
+              </div>
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary">shield</span>
+                </div>
+                <h5 className="font-manrope text-headline-md font-semibold text-on-background">Eradicating Harmful Practices</h5>
+                <p className="text-on-surface-variant text-body-md font-manrope">
+                  Confronting child, early, and forced marriages, and female genital mutilation (FGM) which strip girls of their dignity.
+                </p>
+              </div>
+              <div className="space-y-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary">campaign</span>
+                </div>
+                <h5 className="font-manrope text-headline-md font-semibold text-on-background">Community Awareness</h5>
+                <p className="text-on-surface-variant text-body-md font-manrope">
+                  Engaging traditional elders and youth leaders in structured dialogue to shift community mindsets and replace outdated dogmas.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter / CTA */}
+      <section className="py-section-padding bg-primary/5 text-center px-margin-mobile">
+        <div className="max-w-2xl mx-auto space-y-8">
+          <h2 className="font-manrope text-headline-lg font-bold text-on-background">Join Our Mission</h2>
+          <p className="font-manrope text-body-lg text-on-surface-variant">
+            Stay updated with our latest stories of impact and community projects.
+          </p>
+          {subscribed ? (
+            <p className="text-primary font-manrope text-body-lg font-semibold">
+              Thank you for joining! We&apos;ll keep you updated.
+            </p>
+          ) : (
+            <form className="flex flex-col md:flex-row gap-4" onSubmit={handleSubscribe}>
+              <input
+                className="flex-1 bg-surface-container-highest border border-outline rounded-lg px-6 py-3 text-on-surface font-manrope focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                placeholder="Enter your email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button
+                className="bg-primary text-on-primary px-8 py-3 rounded-lg font-manrope text-label-sm font-semibold hover:bg-surface-tint transition-all whitespace-nowrap"
+                type="submit"
+              >
+                Subscribe Now
+              </button>
+            </form>
+          )}
+        </div>
+      </section>
+    </main>
+  )
 }
 
-export default Home;
+export default Home
+

@@ -22,12 +22,17 @@ import defaultSiteContent from './content/defaultSiteContent'
 const  App = () => {
     const [theme, setTheme] = useState(() => {
         const savedTheme = localStorage.getItem('miles-theme')
-        return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light'
+        return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'dark'
     })
 
     useEffect(() => {
         document.body.classList.remove('theme-light', 'theme-dark')
         document.body.classList.add(`theme-${theme}`)
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
         localStorage.setItem('miles-theme', theme)
     }, [theme])
 

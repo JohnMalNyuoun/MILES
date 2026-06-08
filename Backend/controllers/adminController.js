@@ -1,25 +1,58 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const path = require('path');
 const Admin = require('../models/Admin');
 const PendingAction = require('../models/PendingAction');
-const Project = require('../models/Project');
-const Team = require('../models/Team');
 const User = require('../models/User');
 const WorkshopSchedule = require('../models/WorkshopSchedule');
+const { loadCollection, sortByLatest } = require('../utils/localDataStore');
 
-const teamProfileFilter = {};
+const projectDataFilePath = path.join(__dirname, '..', 'data', 'projects.json');
+const teamDataFilePath = path.join(__dirname, '..', 'data', 'team.json');
+
+const normalizeProjectRecord = (record) => ({
+	_id: record._id,
+	title: record.title || '',
+	description: record.description || '',
+	image: record.image || '',
+	techStack: Array.isArray(record.techStack) ? record.techStack : [],
+	liveUrl: record.liveUrl || '',
+	repoUrl: record.repoUrl || '',
+	featured: record.featured === true,
+	createdAt: record.createdAt || '',
+	updatedAt: record.updatedAt || '',
+});
+
+const normalizeTeamRecord = (record) => ({
+	_id: record._id,
+	name: record.name || '',
+	role: record.role || '',
+	bio: record.bio || '',
+	image: record.image || '',
+	videoUrl: record.videoUrl || '',
+	isMotherProfile: record.isMotherProfile === true,
+	createdAt: record.createdAt || '',
+	updatedAt: record.updatedAt || '',
+});
 
 const getAdminDashboard = async (req, res, next) => {
 	try {
-		const [projectCount, teamCount, userCount, recentProjects, recentTeam, recentWorkshops] =
-			await Promise.all([
-				Project.countDocuments(),
-				Team.countDocuments(teamProfileFilter),
-				User.countDocuments(),
-				Project.find().sort({ createdAt: -1 }).limit(5),
-				Team.find(teamProfileFilter).sort({ createdAt: -1 }).limit(5),
-				WorkshopSchedule.find().sort({ createdAt: -1 }).limit(5),
-			]);
+		const [projects, teamMembers, userCount, recentWorkshops] = await Promise.all([
+			loadCollection(projectDataFilePath, []),
+			loadCollection(teamDataFilePath, []),
+			User.countDocuments(),
+			WorkshopSchedule.find().sort({ createdAt: -1 }).limit(5),
+		]);
+
+		const normalizedProjects = sortByLatest(projects.map(normalizeProjectRecord));
+		const normalizedTeam = sortByLatest(teamMembers.map(normalizeTeamRecord)).filter(
+			(member) => member.isMotherProfile !== true
+		);
+
+		const projectCount = normalizedProjects.length;
+		const teamCount = normalizedTeam.length;
+		const recentProjects = normalizedProjects.slice(0, 5);
+		const recentTeam = normalizedTeam.slice(0, 5);
 
 		res.status(200).json({
 			stats: {

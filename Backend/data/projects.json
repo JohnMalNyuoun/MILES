@@ -1,0 +1,47 @@
+[
+  {
+    "_id": "project-1",
+    "title": "Girls Back-to-School Mentorship Drive",
+    "description": "A mentorship and school reintegration initiative that supports girls returning to class through counseling, supplies, and peer mentors.",
+    "techStack": [
+      "Community Outreach",
+      "Mentorship"
+    ],
+    "featured": true,
+    "image": "",
+    "liveUrl": "",
+    "repoUrl": "",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "_id": "project-2",
+    "title": "Young Mothers Learning Circle",
+    "description": "A weekend learning circle designed for young mothers to continue education with flexible schedules and childcare support.",
+    "techStack": [
+      "Education Support",
+      "Workshops"
+    ],
+    "featured": true,
+    "image": "",
+    "liveUrl": "",
+    "repoUrl": "",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "_id": "project-3",
+    "title": "Community Awareness Sessions",
+    "description": "Monthly community sessions focused on the value of girls education, leadership, and safe learning environments.",
+    "techStack": [
+      "Community Engagement",
+      "Advocacy"
+    ],
+    "featured": false,
+    "image": "",
+    "liveUrl": "",
+    "repoUrl": "",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  }
+]

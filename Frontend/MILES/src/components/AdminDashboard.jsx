@@ -19,6 +19,12 @@ const SECTION_CARDS = [
     badge: 'PR',
   },
   {
+    key: 'create-team',
+    title: 'Add Team Member',
+    description: 'Create a new team member profile from admin tools.',
+    badge: 'AT',
+  },
+  {
     key: 'manage-projects',
     title: 'Manage Projects',
     description: 'Edit or delete existing project entries.',
@@ -27,7 +33,7 @@ const SECTION_CARDS = [
   {
     key: 'manage-team',
     title: 'Manage Team',
-    description: 'View, edit, and update team records.',
+    description: 'Review and remove existing team member records.',
     badge: 'TM',
   },
   {
@@ -346,14 +352,6 @@ function AdminDashboard() {
     liveUrl: '',
     repoUrl: '',
   });
-  const [editingTeamId, setEditingTeamId] = useState('');
-  const [editingTeamForm, setEditingTeamForm] = useState({
-    name: '',
-    role: '',
-    bio: '',
-    image: '',
-    videoUrl: '',
-  });
   const [siteContentObject, setSiteContentObject] = useState(defaultSiteContent);
   const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
   const [workshopUpdatedAt, setWorkshopUpdatedAt] = useState('');
@@ -402,7 +400,6 @@ function AdminDashboard() {
 
   const returnToDashboard = (panelKey = 'activity') => {
     setEditingProjectId('');
-    setEditingTeamId('');
     setEditingWorkshopPostId('');
     setSearchParams({}, { replace: true });
     setActiveOverviewPanel(panelKey);
@@ -522,17 +519,6 @@ function AdminDashboard() {
     });
   };
 
-  const beginTeamEdit = (member) => {
-    setEditingTeamId(member._id);
-    setEditingTeamForm({
-      name: member.name || '',
-      role: member.role || '',
-      bio: member.bio || '',
-      image: member.image || '',
-      videoUrl: member.videoUrl || '',
-    });
-  };
-
   const handleCreateProject = async (event) => {
     event.preventDefault();
     clearStatus();
@@ -609,7 +595,7 @@ function AdminDashboard() {
         image: '',
         videoUrl: '',
       });
-      setMessage(data.message || 'Team member saved to the database successfully.');
+      setMessage(data.message || 'Team member saved in backend successfully.');
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
       returnToDashboard('team');
     } catch (err) {
@@ -741,39 +727,6 @@ function AdminDashboard() {
       await Promise.all([fetchDashboard(), fetchPublicLists()]);
     } catch (err) {
       setError(err.message || 'Unable to delete team member.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdateTeam = async (event) => {
-    event.preventDefault();
-    clearStatus();
-
-    if (!editingTeamForm.name || !editingTeamForm.role) {
-      setError('Team member name and role are required.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await fetch(`${apiBaseUrl}/api/team/${editingTeamId}`, {
-        method: 'PUT',
-        headers: authHeaders,
-        body: JSON.stringify(editingTeamForm),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Unable to update team member.');
-      }
-
-      setEditingTeamId('');
-      setMessage('Team member updated successfully.');
-      await Promise.all([fetchDashboard(), fetchPublicLists()]);
-      returnToDashboard('team');
-    } catch (err) {
-      setError(err.message || 'Unable to update team member.');
     } finally {
       setLoading(false);
     }
@@ -1259,7 +1212,7 @@ function AdminDashboard() {
     },
     {
       id: 'recorded-workshops',
-      label: `${recentWorkshopSchedules.length} recent workshop record(s) stored in the database`,
+      label: `${recentWorkshopSchedules.length} recent workshop record(s) stored in backend`,
     },
   ];
 
@@ -1311,6 +1264,7 @@ function AdminDashboard() {
   const sectionPanelMap = {
     'create-admin': 'activity',
     'create-project': 'activity',
+    'create-team': 'team',
     'manage-projects': 'activity',
     'manage-team': 'team',
     'workshop-schedule': 'quick-actions',
@@ -1509,12 +1463,12 @@ function AdminDashboard() {
           <div className="miles-metrics-column lg:col-span-2 flex flex-col gap-6" aria-label="Admin overview shortcuts">
             <button
               type="button"
-              className={`miles-metric-card miles-stat-card-button ${activeSection === 'manage-team' ? 'miles-stat-card-active' : ''}`}
-              onClick={() => openWorkspaceSection('manage-team', 'team')}
+              className={`miles-metric-card miles-stat-card-button ${activeSection === 'create-team' ? 'miles-stat-card-active' : ''}`}
+              onClick={() => openWorkspaceSection('create-team', 'team')}
             >
-              <h3>Team Members</h3>
-              <p>{supportTeamMembers.length} <span>From database</span></p>
-              <small>Open Team records</small>
+              <h3>Add Team Member</h3>
+              <p>{supportTeamMembers.length} <span>Stored in backend</span></p>
+              <small>Open team member form</small>
             </button>
             <button
               type="button"
@@ -1718,6 +1672,65 @@ function AdminDashboard() {
           </article>
         )}
 
+        {activeSection === 'create-team' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Add Team Member</h2>
+            <form onSubmit={handleCreateTeamMember} className="admin-form">
+              <label>
+                Name
+                <input
+                  value={teamForm.name}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, name: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Role
+                <input
+                  value={teamForm.role}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, role: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Bio
+                <textarea
+                  value={teamForm.bio}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, bio: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Photo URL or Filename
+                <input
+                  value={teamForm.image}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, image: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Video URL
+                <input
+                  value={teamForm.videoUrl}
+                  onChange={(event) =>
+                    setTeamForm((current) => ({ ...current, videoUrl: event.target.value }))
+                  }
+                />
+              </label>
+
+              <button type="submit" disabled={loading}>Add Team Member</button>
+            </form>
+          </article>
+        )}
+
         {activeSection === 'manage-projects' && (
           <article className="admin-card admin-panel-card">
             <h2>Manage Projects</h2>
@@ -1803,7 +1816,7 @@ function AdminDashboard() {
           <article className="admin-card admin-panel-card exec-registry-shell pt-24 mt-8">
             <div className="exec-registry-header">
               <h2 className="exec-registry-title">Active Core Leadership &amp; Representatives</h2>
-              <p className="exec-registry-subtitle">View, edit, and update profiles for core leadership, administrators, and community representatives.</p>
+              <p className="exec-registry-subtitle">Review and remove profiles for core leadership, administrators, and community representatives.</p>
             </div>
 
             {filteredTeamRecords.length === 0 ? (
@@ -1811,98 +1824,27 @@ function AdminDashboard() {
             ) : (
               <div className="exec-registry-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredTeamRecords.map((member) => (
-                  <div key={member._id} className={`exec-profile-card ${editingTeamId === member._id ? 'is-editing' : ''}`}>
-                    {editingTeamId === member._id ? (
-                      <form onSubmit={handleUpdateTeam} className="admin-form admin-inline-form">
-                        <label>
-                          Name
-                          <input
-                            value={editingTeamForm.name}
-                            onChange={(event) =>
-                              setEditingTeamForm((current) => ({ ...current, name: event.target.value }))
-                            }
-                          />
-                        </label>
-                        <label>
-                          Role
-                          <input
-                            value={editingTeamForm.role}
-                            onChange={(event) =>
-                              setEditingTeamForm((current) => ({ ...current, role: event.target.value }))
-                            }
-                          />
-                        </label>
-                        <label>
-                          Bio
-                          <textarea
-                            value={editingTeamForm.bio}
-                            onChange={(event) =>
-                              setEditingTeamForm((current) => ({ ...current, bio: event.target.value }))
-                            }
-                          />
-                        </label>
-                        <label>
-                          Photo URL or Filename
-                          <input
-                            value={editingTeamForm.image}
-                            onChange={(event) =>
-                              setEditingTeamForm((current) => ({ ...current, image: event.target.value }))
-                            }
-                          />
-                        </label>
-                        <label>
-                          Video URL
-                          <input
-                            value={editingTeamForm.videoUrl}
-                            onChange={(event) =>
-                              setEditingTeamForm((current) => ({ ...current, videoUrl: event.target.value }))
-                            }
-                          />
-                        </label>
-                        <div className="admin-row-actions">
-                          <button type="submit" disabled={loading}>Save</button>
-                          <button
-                            type="button"
-                            className="admin-secondary-btn"
-                            onClick={() => setEditingTeamId('')}
-                            disabled={loading}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </form>
-                    ) : (
-                      <>
-                        <div className="exec-profile-meta">
-                          <div className="exec-profile-name-row">
-                            <strong className="exec-profile-name">{member.name}</strong>
-                            <span className="exec-profile-badge">
-                              {member.role?.toLowerCase().includes('representative') ? 'Core Team' : 'Active Staff'}
-                            </span>
-                          </div>
-                          <p className="exec-profile-role">{member.role}</p>
-                          {member.bio && <p className="exec-profile-bio">{member.bio}</p>}
-                          <p className="exec-profile-updated">Updated: {formatDateTime(member.updatedAt || member.createdAt)}</p>
-                        </div>
-                        <div className="admin-row-actions exec-profile-actions">
-                          <button
-                            type="button"
-                            className="admin-secondary-btn"
-                            onClick={() => beginTeamEdit(member)}
-                            disabled={loading}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteTeam(member._id)}
-                            disabled={loading}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </>
-                    )}
+                  <div key={member._id} className="exec-profile-card">
+                    <div className="exec-profile-meta">
+                      <div className="exec-profile-name-row">
+                        <strong className="exec-profile-name">{member.name}</strong>
+                        <span className="exec-profile-badge">
+                          {member.role?.toLowerCase().includes('representative') ? 'Core Team' : 'Active Staff'}
+                        </span>
+                      </div>
+                      <p className="exec-profile-role">{member.role}</p>
+                      {member.bio && <p className="exec-profile-bio">{member.bio}</p>}
+                      <p className="exec-profile-updated">Updated: {formatDateTime(member.updatedAt || member.createdAt)}</p>
+                    </div>
+                    <div className="admin-row-actions exec-profile-actions">
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteTeam(member._id)}
+                        disabled={loading}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

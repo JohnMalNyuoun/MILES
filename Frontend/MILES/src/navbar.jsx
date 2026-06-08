@@ -1,101 +1,128 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import logo from './assets/Logo.jpeg'
 import defaultSiteContent from './content/defaultSiteContent'
 
-const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) =>  {
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const navRef = useRef(null)
-    const navContent = siteContent.navbar || defaultSiteContent.navbar
+const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const navRef = useRef(null)
 
-    const handleMenuToggle = () => {
-        setIsMenuOpen((currentState) => !currentState)
+  const handleMenuToggle = () => setIsMenuOpen((s) => !s)
+  const handleLinkClick = () => setIsMenuOpen(false)
+
+  const primaryLinks = [
+    { to: '/', label: 'Impact', end: true },
+    { to: '/projects', label: 'Projects' },
+    { to: '/workshops', label: 'Mentorship' },
+    { to: '/about', label: 'Advocacy' },
+  ]
+
+  const allLinks = [
+    { to: '/', label: 'Impact', end: true },
+    { to: '/about', label: 'About' },
+    { to: '/team', label: 'Team' },
+    { to: '/workshops', label: 'Workshops' },
+    { to: '/projects', label: 'Projects' },
+    { to: '/donate', label: 'Donate' },
+    { to: '/contact', label: 'Contact' },
+    { to: '/admin', label: 'Admin' },
+  ]
+
+  useEffect(() => {
+    if (!isMenuOpen) return
+    const handleOutside = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) setIsMenuOpen(false)
     }
+    document.addEventListener('pointerdown', handleOutside)
+    return () => document.removeEventListener('pointerdown', handleOutside)
+  }, [isMenuOpen])
 
-    const handleLinkClick = () => {
-        setIsMenuOpen(false)
-    }
+  return (
+    <header
+      ref={navRef}
+      className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-outline-variant/30 shadow-sm"
+    >
+      <nav className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-20 max-w-container-max mx-auto">
+        {/* Brand */}
+        <div className="flex items-center gap-2">
+          <Link to="/" onClick={handleLinkClick}>
+            <span className="font-manrope text-headline-lg font-black tracking-tighter text-primary">MILES</span>
+          </Link>
+        </div>
 
-    const themeIcon = theme === 'light' ? '☀' : '🌙'
-    const themeLabel = theme === 'light' ? 'Day Mode' : 'Night Mode'
-    const workshopLabel = navContent.workshopsLabel || defaultSiteContent.navbar.workshopsLabel
-    const teamLabel = navContent.teamLabel || defaultSiteContent.navbar.teamLabel || 'Team'
-    const menuTitle = 'Menu'
-    const navigationLinks = [
-        { to: '/', label: navContent.homeLabel, end: true, icon: 'H' },
-        { to: '/about', label: navContent.aboutLabel, icon: 'A' },
-        { to: '/team', label: teamLabel, icon: 'T' },
-        { to: '/workshops', label: workshopLabel, icon: 'W' },
-        { to: '/projects', label: navContent.projectsLabel, icon: 'P' },
-        { to: '/donate', label: navContent.donateLabel, icon: 'D' },
-        { to: '/contact', label: navContent.contactLabel, icon: 'C' },
-        { to: '/admin', label: navContent.adminLabel, icon: 'AD' },
-    ]
+        {/* Desktop nav links */}
+        <div className="hidden md:flex items-center gap-8">
+          {primaryLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={Boolean(link.end)}
+              className={({ isActive }) =>
+                isActive
+                  ? 'font-manrope text-body-md text-primary border-b-2 border-primary pb-1'
+                  : 'font-manrope text-body-md text-on-surface-variant hover:text-primary transition-colors'
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </div>
 
-    useEffect(() => {
-        if (!isMenuOpen) return
+        {/* Right actions */}
+        <div className="flex items-center gap-4">
+          <Link
+            to="/donate"
+            onClick={handleLinkClick}
+            className="hidden md:flex items-center px-6 py-2 rounded-full font-manrope text-label-sm font-semibold text-on-primary bg-primary hover:bg-surface-tint active:scale-95 transition-all"
+          >
+            Donate
+          </Link>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors text-2xl bg-transparent border-0 cursor-pointer"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+          </button>
+          <button
+            type="button"
+            onClick={handleMenuToggle}
+            className="md:hidden material-symbols-outlined text-on-surface-variant text-2xl bg-transparent border-0 cursor-pointer"
+            aria-label="Open menu"
+            aria-expanded={isMenuOpen}
+          >
+            menu
+          </button>
+        </div>
+      </nav>
 
-        const handleOutsideTouch = (event) => {
-            if (navRef.current && !navRef.current.contains(event.target)) {
-                setIsMenuOpen(false)
-            }
-        }
-
-        document.addEventListener('pointerdown', handleOutsideTouch)
-
-        return () => {
-            document.removeEventListener('pointerdown', handleOutsideTouch)
-        }
-    }, [isMenuOpen])
-
-    return (
-        <nav className="navbar" ref={navRef}>
-            <div className="navbar-brand">
-                <button
-                    className="menu-toggle menu-toggle-inline"
-                    type="button"
-                    onClick={handleMenuToggle}
-                    aria-label="Toggle navigation menu"
-                    aria-expanded={isMenuOpen}
+      {/* Mobile drawer */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-surface-container-lowest border-t border-outline-variant/30 py-4 px-margin-mobile">
+          <ul className="flex flex-col gap-1">
+            {allLinks.map((link) => (
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  end={Boolean(link.end)}
+                  onClick={handleLinkClick}
+                  className={({ isActive }) =>
+                    `flex items-center px-4 py-3 rounded-lg font-manrope text-body-md transition-colors ${
+                      isActive
+                        ? 'text-primary bg-primary/10 border-l-2 border-primary'
+                        : 'text-on-surface-variant hover:text-primary hover:bg-primary/5'
+                    }`
+                  }
                 >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-
-                <Link to="/" onClick={handleLinkClick}>
-                    <span className="navbar-menu-title">{menuTitle}</span>
-                </Link>
-            </div>
-
-            <div className="navbar-actions">
-                <Link to="/" onClick={handleLinkClick} className="navbar-logo-link" aria-label="Go to home">
-                    <img src={logo} alt="MILES Logo" className="navbar-logo" />
-                </Link>
-
-                <button className="theme-toggle" type="button" onClick={toggleTheme}>
-                    <span aria-hidden="true">{themeIcon}</span>
-                    <span>{themeLabel}</span>
-                </button>
-            </div>
-
-            <ul className={`navbar-links ${isMenuOpen ? 'open' : ''}`}>
-                {navigationLinks.map((item) => (
-                    <li key={item.to}>
-                        <NavLink
-                            to={item.to}
-                            end={Boolean(item.end)}
-                            onClick={handleLinkClick}
-                            className={({ isActive }) => (isActive ? 'active' : '')}
-                        >
-                            <span className="navbar-link-icon" aria-hidden="true">{item.icon}</span>
-                            <span>{item.label}</span>
-                        </NavLink>
-                    </li>
-                ))}
-            </ul>
-        </nav>
-    )
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </header>
+  )
 }
 
 export default Navbar

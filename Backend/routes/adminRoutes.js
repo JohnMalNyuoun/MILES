@@ -19,6 +19,22 @@ const {
 
 const router = express.Router();
 
+router.get('/', (req, res) => {
+	res.status(200).json({
+		message: 'Admin API is running',
+		routes: {
+			register: 'POST /api/admin/register',
+			dashboard: 'GET /api/admin/dashboard (auth required)',
+			createAdminUser: 'POST /api/admin/users/admin (auth required)',
+			pendingActions: 'GET /api/admin/pending-actions (auth required)',
+			processApproval: 'POST /api/admin/process-approval (auth required)',
+			rejectAction: 'POST /api/admin/reject-action (auth required)',
+			contentGet: 'GET /api/admin/content (auth required)',
+			contentUpdate: 'PUT /api/admin/content (auth required)',
+		},
+	});
+});
+
 router.post('/register', registerAdmin);
 router.post('/process-approval', authMiddleware, authorizeAdmin, processApproval);
 router.post('/reject-action', authMiddleware, authorizeAdmin, rejectAction);

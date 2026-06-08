@@ -55,6 +55,8 @@ This runs:
 - Backend API on `http://localhost:3000`
 - Frontend Vite dev server on `http://localhost:5173`
 
+The frontend API proxy now reads `VITE_BACKEND_URL` (defaults to `http://localhost:3000`).
+
 Use port `5173` for live frontend changes (HMR).
 
 ### 2. One-port/backend-served frontend
@@ -143,6 +145,7 @@ This upserts the default leadership members defined in `Backend/scripts/seedTeam
 - Main dashboard cards are in `Frontend/MILES/src/components/AdminDashboard.jsx`.
 - Styling is centralized in `Frontend/MILES/src/App.css`.
 - If dashboard layout changes do not appear on integrated backend port, rebuild frontend dist.
+- Team members can be added from admin in the `Add Team Member` dashboard section.
 
 ## Deployment
 

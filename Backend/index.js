@@ -17,7 +17,7 @@ const errorHandler = require('./middleware/errorHandler');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT) || 3000;
 const frontendDistPath = path.join(__dirname, '..', 'Frontend', 'MILES', 'dist');
 const frontendIndexPath = path.join(frontendDistPath, 'index.html');
 const hasFrontendBuild = () => fs.existsSync(frontendIndexPath);

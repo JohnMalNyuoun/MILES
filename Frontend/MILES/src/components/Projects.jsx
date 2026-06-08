@@ -156,7 +156,7 @@ function Projects() {
       </section>
 
       {projects.length === 0 ? (
-        <p className="projects-subtitle">No projects available yet. Add projects in the backend database.</p>
+        <p className="projects-subtitle">No projects available yet. Add projects in backend storage.</p>
       ) : (
         <div className="projects-grid">
           {projects.map((project) => (
