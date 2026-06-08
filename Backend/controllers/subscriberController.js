@@ -4,6 +4,7 @@ const { randomUUID } = require('crypto');
 const { loadCollection, saveCollection, sortByLatest } = require('../utils/localDataStore');
 
 const subscriberDataFilePath = path.join(__dirname, '..', 'data', 'subscribers.json');
+const subscriberUpdatesFilePath = path.join(__dirname, '..', 'data', 'subscriberUpdates.json');
 
 const normalizeSubscriberRecord = (record = {}) => ({
   _id: record._id || randomUUID(),
@@ -11,6 +12,14 @@ const normalizeSubscriberRecord = (record = {}) => ({
   source: record.source || 'website-home-newsletter',
   createdAt: record.createdAt || new Date().toISOString(),
   updatedAt: record.updatedAt || new Date().toISOString(),
+});
+
+const normalizeSubscriberUpdate = (update = {}) => ({
+  _id: update._id || randomUUID(),
+  subscriberId: update.subscriberId || '',
+  email: String(update.email || '').trim().toLowerCase(),
+  message: String(update.message || ''),
+  sentAt: update.sentAt || new Date().toISOString(),
 });
 
 const isValidEmail = (email) =>
@@ -59,8 +68,56 @@ const subscribe = async (req, res, next) => {
   }
 };
 
+const sendUpdateToSubscriber = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { email, message } = req.body || {};
+
+    if (!email || !isValidEmail(email)) {
+      return res.status(400).json({ message: 'Invalid email address.' });
+    }
+
+    if (!message || String(message).trim().length === 0) {
+      return res.status(400).json({ message: 'Message cannot be empty.' });
+    }
+
+    const subscribers = (await loadCollection(subscriberDataFilePath, [])).map(
+      normalizeSubscriberRecord
+    );
+
+    const subscriber = subscribers.find((s) => s._id === id || s.email === email);
+    if (!subscriber) {
+      return res.status(404).json({ message: 'Subscriber not found.' });
+    }
+
+    const updates = (await loadCollection(subscriberUpdatesFilePath, [])).map(
+      normalizeSubscriberUpdate
+    );
+
+    updates.push(
+      normalizeSubscriberUpdate({
+        _id: randomUUID(),
+        subscriberId: subscriber._id,
+        email: subscriber.email,
+        message: String(message).trim(),
+        sentAt: new Date().toISOString(),
+      })
+    );
+
+    await saveCollection(subscriberUpdatesFilePath, updates);
+
+    return res.status(200).json({
+      message: `Update sent successfully to ${subscriber.email}`,
+      updateId: updates[updates.length - 1]._id,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   subscribe,
+  sendUpdateToSubscriber,
   subscriberDataFilePath,
   normalizeSubscriberRecord,
 };

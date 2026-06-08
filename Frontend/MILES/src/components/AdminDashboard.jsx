@@ -372,6 +372,9 @@ function AdminDashboard() {
   const [dashboardSearch, setDashboardSearch] = useState('');
   const [activeOverviewPanel, setActiveOverviewPanel] = useState('activity');
   const [searchDrivenSection, setSearchDrivenSection] = useState('');
+  const [selectedSubscriber, setSelectedSubscriber] = useState(null);
+  const [updateMessage, setUpdateMessage] = useState('');
+  const [sendingUpdate, setSendingUpdate] = useState(false);
 
   const isAdmin = user?.role === 'admin';
   const adminDisplayName = useMemo(
@@ -1167,6 +1170,46 @@ function AdminDashboard() {
     scrollToTop();
   };
 
+  const handleSelectSubscriber = (subscriber) => {
+    setSelectedSubscriber(subscriber);
+    setUpdateMessage('');
+  };
+
+  const handleSendUpdate = async (event) => {
+    event.preventDefault();
+    if (!selectedSubscriber || !updateMessage.trim()) {
+      setError('Please enter a message to send.');
+      return;
+    }
+
+    setSendingUpdate(true);
+    try {
+      const apiBaseUrl = getApiBaseUrl();
+      const response = await fetch(`${apiBaseUrl}/api/subscribers/${selectedSubscriber.id}/message`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify({
+          message: updateMessage,
+          email: selectedSubscriber.email,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to send update: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setMessage(data.message || 'Update sent successfully!');
+      setUpdateMessage('');
+      setSelectedSubscriber(null);
+      setTimeout(clearStatus, 5000);
+    } catch (err) {
+      setError(err.message || 'Failed to send update to subscriber.');
+    } finally {
+      setSendingUpdate(false);
+    }
+  };
+
   const mentorshipBadgeTopics = ['Pregnancy Prevention', 'Peer Pressure'];
   const normalizedDashboardSearch = dashboardSearch.trim().toLowerCase();
   const supportTeamMembers = team;
@@ -1559,14 +1602,91 @@ function AdminDashboard() {
           <h2>Subscriber Notifications</h2>
           <p>Latest people who subscribed to receive MILES activity updates.</p>
           {subscriberNotifications.length > 0 ? (
-            <ul className="miles-subscriber-list">
-              {subscriberNotifications.map((subscriber) => (
-                <li key={subscriber.id}>
-                  <strong>{subscriber.email}</strong>
-                  <small>{formatDateTime(subscriber.when)}</small>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="miles-subscriber-list">
+                {subscriberNotifications.map((subscriber) => (
+                  <li
+                    key={subscriber.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleSelectSubscriber(subscriber)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleSelectSubscriber(subscriber);
+                      }
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <strong>{subscriber.email}</strong>
+                    <small>{formatDateTime(subscriber.when)}</small>
+                  </li>
+                ))}
+              </ul>
+
+              {selectedSubscriber && (
+                <div className="miles-subscriber-detail" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
+                  <h3 style={{ marginBottom: '1rem' }}>Send Update to Subscriber</h3>
+                  <div style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: 'var(--panel-bg)', borderRadius: '8px' }}>
+                    <p style={{ margin: '0', fontSize: '0.95rem' }}>
+                      <strong>Email:</strong> {selectedSubscriber.email}
+                    </p>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                      Subscribed: {formatDateTime(selectedSubscriber.when)}
+                    </p>
+                  </div>
+                  <form onSubmit={handleSendUpdate}>
+                    <textarea
+                      value={updateMessage}
+                      onChange={(e) => setUpdateMessage(e.target.value)}
+                      placeholder="Write an update message or news to share with this subscriber..."
+                      style={{
+                        width: '100%',
+                        minHeight: '120px',
+                        padding: '0.75rem',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        fontFamily: 'inherit',
+                        fontSize: '0.95rem',
+                        marginBottom: '1rem',
+                        resize: 'vertical',
+                      }}
+                    />
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSubscriber(null)}
+                        style={{
+                          padding: '0.5rem 1.5rem',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '6px',
+                          backgroundColor: 'transparent',
+                          cursor: 'pointer',
+                          fontSize: '0.9rem',
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={sendingUpdate || !updateMessage.trim()}
+                        style={{
+                          padding: '0.5rem 1.5rem',
+                          backgroundColor: sendingUpdate ? '#ccc' : 'var(--primary-color)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: sendingUpdate ? 'not-allowed' : 'pointer',
+                          fontSize: '0.9rem',
+                        }}
+                      >
+                        {sendingUpdate ? 'Sending...' : 'Send Update'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+            </>
           ) : (
             <p className="admin-panel-hint">No subscriber notifications yet.</p>
           )}
