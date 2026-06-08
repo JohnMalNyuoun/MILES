@@ -1372,7 +1372,7 @@ function AdminDashboard() {
             className={`miles-nav-item ${activeOverviewPanel === 'activity' ? 'active' : ''}`}
             onClick={() => handleSidebarClick('', 'activity')}
           >
-            <span className="miles-nav-icon">▣</span>
+            <span className="material-symbols-outlined miles-nav-icon">dashboard</span>
             Dashboard
           </button>
           <button
@@ -1380,7 +1380,7 @@ function AdminDashboard() {
             className={`miles-nav-item ${activeOverviewPanel === 'quick-actions' ? 'active' : ''}`}
             onClick={() => handleSidebarClick('workshop-schedule', 'quick-actions')}
           >
-            <span className="miles-nav-icon">◈</span>
+            <span className="material-symbols-outlined miles-nav-icon">school</span>
             Workshops
           </button>
           <button
@@ -1388,15 +1388,15 @@ function AdminDashboard() {
             className={`miles-nav-item ${activeOverviewPanel === 'activity' ? 'active' : ''}`}
             onClick={() => handleSidebarClick('manage-projects', 'activity')}
           >
-            <span className="miles-nav-icon">◌</span>
-            Cases
+            <span className="material-symbols-outlined miles-nav-icon">account_tree</span>
+            Projects
           </button>
           <button
             type="button"
             className={`miles-nav-item ${activeOverviewPanel === 'donor' ? 'active' : ''}`}
             onClick={() => handleSidebarClick('edit-donate', 'donor')}
           >
-            <span className="miles-nav-icon">▤</span>
+            <span className="material-symbols-outlined miles-nav-icon">assessment</span>
             Reports
           </button>
           <button
@@ -1404,15 +1404,15 @@ function AdminDashboard() {
             className={`miles-nav-item ${activeOverviewPanel === 'team' ? 'active' : ''}`}
             onClick={() => handleSidebarClick('manage-team', 'team')}
           >
-            <span className="miles-nav-icon">▥</span>
-            Team
+            <span className="material-symbols-outlined miles-nav-icon">group</span>
+            Members
           </button>
           <button
             type="button"
             className={`miles-nav-item ${activeOverviewPanel === 'tasks' ? 'active' : ''}`}
             onClick={() => handleSidebarClick('edit-navbar', 'tasks')}
           >
-            <span className="miles-nav-icon">⚙</span>
+            <span className="material-symbols-outlined miles-nav-icon">settings</span>
             Settings
           </button>
           <button
@@ -1420,35 +1420,65 @@ function AdminDashboard() {
             className={`miles-nav-item ${activeOverviewPanel === 'stories' ? 'active' : ''}`}
             onClick={() => handleSidebarClick('help-guide', 'stories')}
           >
-            <span className="miles-nav-icon">?</span>
+            <span className="material-symbols-outlined miles-nav-icon">help</span>
             Help
           </button>
         </nav>
+
+        <div className="miles-sidebar-footer">
+          <button
+            type="button"
+            className="miles-primary-action"
+            onClick={() => handleSidebarClick('create-team', 'team')}
+          >
+            <span className="material-symbols-outlined">add_circle</span>
+            New Support Case
+          </button>
+          <div className="miles-sidebar-footer-links">
+            <button type="button" className="miles-sidebar-footer-link" onClick={() => handleSidebarClick('help-guide', 'stories')}>
+              <span className="material-symbols-outlined">help</span>
+              Help
+            </button>
+            <button type="button" className="miles-sidebar-footer-link" onClick={handleLogout}>
+              <span className="material-symbols-outlined">logout</span>
+              Logout
+            </button>
+          </div>
+        </div>
       </aside>
 
       <div className="miles-admin-main">
         <header className="miles-admin-header flex items-center justify-between gap-4">
-          <div>
-            <h1>MILES | Empowerment Support</h1>
-            <p>
-              Program Coordinator | John Mal Nyuon
-              {siteContentUpdatedAt ? ` | Last content update: ${formatDateTime(siteContentUpdatedAt)}` : ''}
-              {workshopUpdatedAt ? ` | Last workshop update: ${formatDateTime(workshopUpdatedAt)}` : ''}
-            </p>
-          </div>
-          <div className="miles-header-tools">
-            <div className="miles-search-block">
+          <div className="miles-header-left">
+            <button type="button" className="miles-top-menu-btn" aria-label="Toggle menu">
+              <span className="material-symbols-outlined">menu</span>
+            </button>
+            <div className="miles-top-search-wrap">
+              <span className="material-symbols-outlined">search</span>
               <input
                 type="search"
                 className="miles-admin-search"
                 value={dashboardSearch}
                 onChange={(event) => setDashboardSearch(event.target.value)}
-                placeholder="Search activities, cases, or members"
+                placeholder="Search resources..."
               />
             </div>
+          </div>
+          <div className="miles-header-tools">
+            <button type="button" className="miles-top-icon-btn" aria-label="Notifications">
+              <span className="material-symbols-outlined">notifications</span>
+              <span className="miles-notification-dot" />
+            </button>
+            <button type="button" className="miles-top-icon-btn" aria-label="Help">
+              <span className="material-symbols-outlined">help</span>
+            </button>
+            <div className="miles-top-divider" />
             <div className="miles-profile-chip">
               <span className="miles-profile-avatar">{adminDisplayName.charAt(0)}</span>
-              <span>{adminDisplayName}</span>
+              <span className="miles-header-identity">
+                <strong>{adminDisplayName}</strong>
+                <small className="miles-header-role">Senior Admin</small>
+              </span>
             </div>
           </div>
         </header>
@@ -1466,36 +1496,40 @@ function AdminDashboard() {
               className={`miles-metric-card miles-stat-card-button ${activeSection === 'create-team' ? 'miles-stat-card-active' : ''}`}
               onClick={() => openWorkspaceSection('create-team', 'team')}
             >
-              <h3>Add Team Member</h3>
-              <p>{supportTeamMembers.length} <span>Stored in backend</span></p>
-              <small>Open team member form</small>
+              <div className="miles-metric-head">
+                <span className="material-symbols-outlined">groups</span>
+                <span>+12%</span>
+              </div>
+              <h3>Active Members</h3>
+              <p>{supportTeamMembers.length}</p>
             </button>
             <button
               type="button"
               className={`miles-metric-card miles-stat-card-button ${activeSection === 'manage-projects' ? 'miles-stat-card-active' : ''}`}
               onClick={() => openWorkspaceSection('manage-projects', 'activity')}
             >
-              <h3>Recent Mentorship</h3>
-              <p>{projects.length} Active Records</p>
-              <div className="miles-badges">
-                {mentorshipBadgeTopics.map((topic) => (
-                  <span key={topic}>{topic}</span>
-                ))}
+              <div className="miles-metric-head">
+                <span className="material-symbols-outlined">assignment_turned_in</span>
+                <span>84%</span>
               </div>
-              <small>Open Case management</small>
+              <h3>Project Completion</h3>
+              <p>{projects.length} active</p>
             </button>
             <button
               type="button"
               className={`miles-metric-card miles-stat-card-button ${activeSection === 'create-admin' ? 'miles-stat-card-active' : ''}`}
               onClick={() => openWorkspaceSection('create-admin', 'activity')}
             >
+              <div className="miles-metric-head">
+                <span className="material-symbols-outlined">admin_panel_settings</span>
+                <span>New</span>
+              </div>
               <h3>Admin Users</h3>
-              <p>{dashboard?.stats?.userCount ?? 0} <span>Authorized</span></p>
-              <small>Open Admin account tools</small>
+              <p>{dashboard?.stats?.userCount ?? 0} authorized</p>
             </button>
           </div>
 
-          <div className="miles-approval-workspace lg:col-span-3 bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+          <div className="miles-approval-workspace lg:col-span-3">
             <ApprovalQueue
               currentUsername={user?.username}
               authHeaders={authHeaders}
