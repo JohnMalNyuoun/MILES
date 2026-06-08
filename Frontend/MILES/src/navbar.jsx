@@ -14,6 +14,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
     { to: '/projects', label: 'Projects' },
     { to: '/workshops', label: 'Mentorship' },
     { to: '/about', label: 'Advocacy' },
+    { to: '/admin', label: 'Admin' },
   ]
 
   const allLinks = [
@@ -57,7 +58,11 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
               to={link.to}
               end={Boolean(link.end)}
               className={({ isActive }) =>
-                isActive
+                link.label === 'Admin'
+                  ? isActive
+                    ? 'font-manrope text-body-md text-on-primary bg-primary px-4 py-1 rounded-full'
+                    : 'font-manrope text-body-md text-primary border border-primary px-4 py-1 rounded-full hover:bg-primary hover:text-on-primary transition-colors'
+                  : isActive
                   ? 'font-manrope text-body-md text-primary border-b-2 border-primary pb-1'
                   : 'font-manrope text-body-md text-on-surface-variant hover:text-primary transition-colors'
               }
