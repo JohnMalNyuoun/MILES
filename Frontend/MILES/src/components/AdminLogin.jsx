@@ -36,7 +36,16 @@ function AdminLogin() {
         body: JSON.stringify(authForm),
       });
 
-      const data = await response.json();
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (_parseError) {
+        throw new Error(
+          response.ok
+            ? 'Server returned an unexpected response. Please try again.'
+            : `Server error (${response.status}). Please check the backend is running on port 5000.`
+        );
+      }
       if (!response.ok) {
         throw new Error(data.message || 'Login failed.');
       }
@@ -87,7 +96,16 @@ function AdminLogin() {
         }),
       });
 
-      const data = await response.json();
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (_parseError) {
+        throw new Error(
+          response.ok
+            ? 'Server returned an unexpected response. Please try again.'
+            : `Server error (${response.status}). Please check the backend is running on port 5000.`
+        );
+      }
       if (!response.ok) {
         throw new Error(data.message || 'Unable to reset password.');
       }
