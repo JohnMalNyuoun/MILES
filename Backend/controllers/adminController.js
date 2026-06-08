@@ -6,6 +6,10 @@ const PendingAction = require('../models/PendingAction');
 const User = require('../models/User');
 const WorkshopSchedule = require('../models/WorkshopSchedule');
 const { loadCollection, sortByLatest } = require('../utils/localDataStore');
+const {
+	subscriberDataFilePath,
+	normalizeSubscriberRecord,
+} = require('./subscriberController');
 
 const projectDataFilePath = path.join(__dirname, '..', 'data', 'projects.json');
 const teamDataFilePath = path.join(__dirname, '..', 'data', 'team.json');
@@ -37,11 +41,12 @@ const normalizeTeamRecord = (record) => ({
 
 const getAdminDashboard = async (req, res, next) => {
 	try {
-		const [projects, teamMembers, userCount, recentWorkshops] = await Promise.all([
+		const [projects, teamMembers, userCount, recentWorkshops, subscribers] = await Promise.all([
 			loadCollection(projectDataFilePath, []),
 			loadCollection(teamDataFilePath, []),
 			User.countDocuments(),
 			WorkshopSchedule.find().sort({ createdAt: -1 }).limit(5),
+			loadCollection(subscriberDataFilePath, []),
 		]);
 
 		const normalizedProjects = sortByLatest(projects.map(normalizeProjectRecord));
@@ -49,20 +54,26 @@ const getAdminDashboard = async (req, res, next) => {
 			(member) => member.isMotherProfile !== true
 		);
 
+		const normalizedSubscribers = sortByLatest(
+			subscribers.map(normalizeSubscriberRecord)
+		);
 		const projectCount = normalizedProjects.length;
 		const teamCount = normalizedTeam.length;
 		const recentProjects = normalizedProjects.slice(0, 5);
 		const recentTeam = normalizedTeam.slice(0, 5);
+		const recentSubscribers = normalizedSubscribers.slice(0, 10);
 
 		res.status(200).json({
 			stats: {
 				projectCount,
 				teamCount,
 				userCount,
+				subscriberCount: normalizedSubscribers.length,
 			},
 			recentProjects,
 			recentTeam,
 			recentWorkshops,
+			recentSubscribers,
 		});
 	} catch (error) {
 		next(error);

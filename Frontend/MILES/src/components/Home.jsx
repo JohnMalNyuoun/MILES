@@ -6,12 +6,42 @@ function Home({ siteContent = defaultSiteContent }) {
   const homeContent = siteContent.home || defaultSiteContent.home
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
+  const [subscribeError, setSubscribeError] = useState('')
+  const [subscribeLoading, setSubscribeLoading] = useState(false)
 
-  const handleSubscribe = (event) => {
+  const handleSubscribe = async (event) => {
     event.preventDefault()
-    if (email.trim()) {
+    const normalizedEmail = email.trim().toLowerCase()
+
+    if (!normalizedEmail) {
+      setSubscribeError('Please enter your email address.')
+      return
+    }
+
+    setSubscribeError('')
+
+    try {
+      setSubscribeLoading(true)
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''
+      const response = await fetch(`${apiBaseUrl}/api/subscribers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: normalizedEmail }),
+      })
+
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to subscribe right now.')
+      }
+
       setSubscribed(true)
       setEmail('')
+    } catch (error) {
+      setSubscribeError(error.message || 'Unable to subscribe right now.')
+    } finally {
+      setSubscribeLoading(false)
     }
   }
 
@@ -198,10 +228,14 @@ function Home({ siteContent = defaultSiteContent }) {
               <button
                 className="bg-primary text-on-primary px-8 py-3 rounded-lg font-manrope text-label-sm font-semibold hover:bg-surface-tint transition-all whitespace-nowrap"
                 type="submit"
+                disabled={subscribeLoading}
               >
-                Subscribe Now
+                {subscribeLoading ? 'Subscribing...' : 'Subscribe Now'}
               </button>
             </form>
+          )}
+          {subscribeError && (
+            <p className="text-red-500 font-manrope text-body-md font-semibold">{subscribeError}</p>
           )}
         </div>
       </section>

@@ -66,6 +66,10 @@
   --panel-surface: #ffffff;
   --panel-surface-alt: #f8fafc;
   --panel-surface-border: rgba(15, 23, 42, 0.08);
+  --embed-width-standard: min(100%, 560px);
+  --embed-height-standard: 720px;
+  --embed-height-standard-lg: 760px;
+  --embed-width-portrait: min(100%, 420px);
   --hero-overlay-start: rgba(8, 20, 18, 0.22);
   --hero-overlay-end: rgba(8, 20, 18, 0.7);
   --font-body: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif;
@@ -869,19 +873,31 @@ body.theme-dark .team-card p {
   margin-bottom: 2rem;
 }
 
-.projects-video-embed {
+/* Shared embedded media container styles */
+.projects-video-embed,
+.workshop-post-embed,
+.learn-video-embed {
   position: relative;
-  width: min(100%, 560px);
-  height: 720px;
-  margin: 0 auto;
   border-radius: 14px;
   overflow: hidden;
   background: var(--surface-elevated);
   border: 1px solid var(--card-border);
+}
+
+.projects-video-embed,
+.workshop-post-embed {
+  width: var(--embed-width-standard);
+  height: var(--embed-height-standard);
+  margin: 0 auto;
+}
+
+.projects-video-embed {
   box-shadow: var(--panel-shadow);
 }
 
-.projects-video-embed iframe {
+.projects-video-embed iframe,
+.workshop-post-embed iframe,
+.learn-video-embed iframe {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -891,8 +907,8 @@ body.theme-dark .team-card p {
 
 @media (min-width: 900px) {
   .projects-video-embed {
-    width: min(100%, 560px);
-    height: 760px;
+    width: var(--embed-width-standard);
+    height: var(--embed-height-standard-lg);
   }
 }
 
@@ -1753,10 +1769,62 @@ body.theme-light .footer {
   right: 8px;
 }
 
+.miles-notification-count {
+  position: absolute;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent-color);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+  top: -2px;
+  right: -4px;
+}
+
 .miles-top-divider {
   width: 1px;
   height: 26px;
   background: var(--card-border);
+}
+
+.miles-subscriber-notifications {
+  margin-top: 1.1rem;
+}
+
+.miles-subscriber-notifications p {
+  color: var(--text-secondary);
+}
+
+.miles-subscriber-list {
+  margin-top: 0.85rem;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.miles-subscriber-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  border: 1px solid var(--card-border);
+  background: var(--surface-elevated);
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+}
+
+.miles-subscriber-list li strong {
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.miles-subscriber-list li small {
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .miles-admin-split {
@@ -2006,25 +2074,6 @@ body.theme-light .footer {
   color: var(--text-secondary);
 }
 
-.workshop-post-embed {
-  position: relative;
-  width: min(100%, 560px);
-  height: 720px;
-  margin: 0 auto;
-  border-radius: 14px;
-  overflow: hidden;
-  background: var(--surface-elevated);
-  border: 1px solid var(--card-border);
-}
-
-.workshop-post-embed iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
 .admin-divider {
   height: 1px;
   background: var(--card-border);
@@ -2221,22 +2270,9 @@ body.theme-light .footer {
 }
 
 .learn-video-embed {
-  position: relative;
-  width: min(100%, 420px);
+  width: var(--embed-width-portrait);
   aspect-ratio: 9 / 16;
   margin: 0 auto;
-  border-radius: 14px;
-  overflow: hidden;
-  background: var(--surface-elevated);
-  border: 1px solid var(--card-border);
-}
-
-.learn-video-embed iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
 }
 
 @media (min-width: 900px) {
@@ -2246,7 +2282,7 @@ body.theme-light .footer {
   }
 
   .learn-video-embed {
-    width: min(100%, 420px);
+    width: var(--embed-width-portrait);
   }
 }
 

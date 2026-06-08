@@ -1193,6 +1193,15 @@ function AdminDashboard() {
       status: activity.status || 'Recorded',
     }));
 
+  const subscriberNotifications = (dashboard?.recentSubscribers || [])
+    .map((subscriber, index) => ({
+      id: subscriber?._id || `subscriber-${index}`,
+      email: subscriber?.email || '',
+      when: subscriber?.updatedAt || subscriber?.createdAt || '',
+    }))
+    .filter((item) => item.email)
+    .slice(0, 8);
+
   const pendingTasks = [
     {
       id: 'pending-profile-images',
@@ -1465,9 +1474,13 @@ function AdminDashboard() {
             </div>
           </div>
           <div className="miles-header-tools">
-            <button type="button" className="miles-top-icon-btn" aria-label="Notifications">
+            <button type="button" className="miles-top-icon-btn" aria-label="Notifications" onClick={() => returnToDashboard('activity')}>
               <span className="material-symbols-outlined">notifications</span>
-              <span className="miles-notification-dot" />
+              {subscriberNotifications.length > 0 ? (
+                <span className="miles-notification-count">{subscriberNotifications.length}</span>
+              ) : (
+                <span className="miles-notification-dot" />
+              )}
             </button>
             <button type="button" className="miles-top-icon-btn" aria-label="Help">
               <span className="material-symbols-outlined">help</span>
@@ -1540,6 +1553,23 @@ function AdminDashboard() {
         <article className="miles-panel miles-workspace-panel">
           <h2>Management Workspace</h2>
           <p>Choose a section below to edit content, manage records, or perform admin actions.</p>
+        </article>
+
+        <article className="miles-panel miles-subscriber-notifications" aria-live="polite">
+          <h2>Subscriber Notifications</h2>
+          <p>Latest people who subscribed to receive MILES activity updates.</p>
+          {subscriberNotifications.length > 0 ? (
+            <ul className="miles-subscriber-list">
+              {subscriberNotifications.map((subscriber) => (
+                <li key={subscriber.id}>
+                  <strong>{subscriber.email}</strong>
+                  <small>{formatDateTime(subscriber.when)}</small>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="admin-panel-hint">No subscriber notifications yet.</p>
+          )}
         </article>
 
         <div className="admin-section-picker">

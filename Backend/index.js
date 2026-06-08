@@ -12,6 +12,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const contentRoutes = require('./routes/contentRoutes');
 const workshopRoutes = require('./routes/workshopRoutes');
 const workshopPostRoutes = require('./routes/workshopPostRoutes');
+const subscriberRoutes = require('./routes/subscriberRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/workshops', workshopRoutes);
 app.use('/api/workshop-posts', workshopPostRoutes);
+app.use('/api/subscribers', subscriberRoutes);
 
 if (hasFrontendBuild()) {
 	app.use(express.static(frontendDistPath));
