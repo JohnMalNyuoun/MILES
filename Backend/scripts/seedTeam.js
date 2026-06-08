@@ -1,9 +1,9 @@
-const dotenv = require('dotenv');
+const path = require('path');
+const { randomUUID } = require('crypto');
 
-const connectDB = require('../config/db');
-const Team = require('../models/Team');
+const { loadCollection, saveCollection } = require('../utils/localDataStore');
 
-dotenv.config();
+const teamDataFilePath = path.join(__dirname, '..', 'data', 'team.json');
 
 const teamMembers = [
 	{
@@ -50,24 +50,50 @@ const teamMembers = [
 	},
 ];
 
+const normalizeTeam = (member = {}) => ({
+	_id: member._id || randomUUID(),
+	name: (member.name || '').trim(),
+	role: (member.role || '').trim(),
+	image: member.image || '',
+	bio: member.bio || '',
+	videoUrl: member.videoUrl || '',
+	isMotherProfile: member.isMotherProfile === true,
+	createdAt: member.createdAt || new Date().toISOString(),
+	updatedAt: member.updatedAt || new Date().toISOString(),
+});
+
 const seedTeam = async () => {
 	try {
-		await connectDB();
+		const existing = (await loadCollection(teamDataFilePath, [])).map(normalizeTeam);
 
-		for (const member of teamMembers) {
-			await Team.findOneAndUpdate(
-				{ name: member.name },
-				{ $set: member },
-				{ upsert: true, new: true, setDefaultsOnInsert: true }
-			);
+		for (const seed of teamMembers) {
+			const index = existing.findIndex((member) => member.name === seed.name);
+			if (index >= 0) {
+				existing[index] = normalizeTeam({
+					...existing[index],
+					...seed,
+					_id: existing[index]._id,
+					createdAt: existing[index].createdAt,
+					updatedAt: new Date().toISOString(),
+				});
+			} else {
+				existing.push(
+					normalizeTeam({
+						...seed,
+						_id: randomUUID(),
+						createdAt: new Date().toISOString(),
+						updatedAt: new Date().toISOString(),
+					})
+				);
+			}
 		}
 
-		console.log(`Team seed complete. Upserted ${teamMembers.length} members.`);
+		await saveCollection(teamDataFilePath, existing);
+
+		console.log(`Team seed complete in backend JSON. Upserted ${teamMembers.length} members.`);
 	} catch (error) {
 		console.error('Team seed failed:', error.message);
 		process.exitCode = 1;
-	} finally {
-		await Team.db.close();
 	}
 };
 

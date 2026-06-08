@@ -1,24 +1,23 @@
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
+const path = require('path');
 
-const Team = require('../models/Team');
+const { loadCollection } = require('../utils/localDataStore');
 
-dotenv.config();
+const teamDataFilePath = path.join(__dirname, '..', 'data', 'team.json');
 
 const run = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    const count = await Team.countDocuments();
-    const names = await Team.find({}, { name: 1, _id: 0 }).sort({ name: 1 });
+    const members = await loadCollection(teamDataFilePath, []);
+    const names = members
+      .map((member) => ({ name: member.name || '' }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    const count = names.length;
 
-    console.log(`Team documents: ${count}`);
+    console.log(`Team records in backend JSON: ${count}`);
     console.log('Members:');
     names.forEach((member) => console.log(`- ${member.name}`));
   } catch (error) {
     console.error('Verification failed:', error.message);
     process.exitCode = 1;
-  } finally {
-    await mongoose.connection.close();
   }
 };
 

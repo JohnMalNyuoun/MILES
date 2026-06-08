@@ -1,9 +1,9 @@
-const dotenv = require('dotenv');
+const path = require('path');
+const { randomUUID } = require('crypto');
 
-const connectDB = require('../config/db');
-const Project = require('../models/Project');
+const { loadCollection, saveCollection } = require('../utils/localDataStore');
 
-dotenv.config();
+const projectDataFilePath = path.join(__dirname, '..', 'data', 'projects.json');
 
 const projects = [
 	{
@@ -26,24 +26,51 @@ const projects = [
 	},
 ];
 
+const normalizeProject = (project = {}) => ({
+	_id: project._id || randomUUID(),
+	title: (project.title || '').trim(),
+	description: project.description || '',
+	techStack: Array.isArray(project.techStack) ? project.techStack : [],
+	featured: project.featured === true,
+	image: project.image || '',
+	liveUrl: project.liveUrl || '',
+	repoUrl: project.repoUrl || '',
+	createdAt: project.createdAt || new Date().toISOString(),
+	updatedAt: project.updatedAt || new Date().toISOString(),
+});
+
 const seedProjects = async () => {
 	try {
-		await connectDB();
+		const existing = (await loadCollection(projectDataFilePath, [])).map(normalizeProject);
 
-		for (const project of projects) {
-			await Project.findOneAndUpdate(
-				{ title: project.title },
-				{ $set: project },
-				{ upsert: true, new: true, setDefaultsOnInsert: true }
-			);
+		for (const seed of projects) {
+			const index = existing.findIndex((project) => project.title === seed.title);
+			if (index >= 0) {
+				existing[index] = normalizeProject({
+					...existing[index],
+					...seed,
+					_id: existing[index]._id,
+					createdAt: existing[index].createdAt,
+					updatedAt: new Date().toISOString(),
+				});
+			} else {
+				existing.push(
+					normalizeProject({
+						...seed,
+						_id: randomUUID(),
+						createdAt: new Date().toISOString(),
+						updatedAt: new Date().toISOString(),
+					})
+				);
+			}
 		}
 
-		console.log(`Projects seed complete. Upserted ${projects.length} projects.`);
+		await saveCollection(projectDataFilePath, existing);
+
+		console.log(`Projects seed complete in backend JSON. Upserted ${projects.length} projects.`);
 	} catch (error) {
 		console.error('Projects seed failed:', error.message);
 		process.exitCode = 1;
-	} finally {
-		await Project.db.close();
 	}
 };
 

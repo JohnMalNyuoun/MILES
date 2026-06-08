@@ -79,7 +79,6 @@ function Home({ siteContent = defaultSiteContent }) {
             to="/projects"
             className="bg-primary text-on-primary px-8 py-3 rounded-lg font-manrope text-label-sm font-semibold hover:bg-surface-tint transition-colors flex items-center gap-2 inline-flex"
           >
-            <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
             Our Projects
           </Link>
           <Link

@@ -1,0 +1,34 @@
+[
+  {
+    "_id": "a3e615f0-03c0-4a33-b1b5-9f2f9ad6f2a1",
+    "title": "Workshop Schedule Tracker",
+    "coordinator": "MILES Program Team",
+    "nextSessionDate": "",
+    "nextSessionTopic": "",
+    "nextSessionLocation": "",
+    "nextSessionFacilitator": "",
+    "notes": "",
+    "workshopSummary": "",
+    "targetAudience": "",
+    "keyOutcomes": "",
+    "followUpActions": "",
+    "activities": [
+      {
+        "title": "Peer mentorship circle",
+        "date": "",
+        "location": "Scorpion Center",
+        "status": "Recorded",
+        "details": "Create a safe sharing space for mothers returning to school."
+      },
+      {
+        "title": "School re-enrollment follow-up",
+        "date": "",
+        "location": "Kakuma schools",
+        "status": "Recorded",
+        "details": "Coordinate with schools and families to remove attendance barriers."
+      }
+    ],
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  }
+]
