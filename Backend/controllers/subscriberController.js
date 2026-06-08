@@ -115,9 +115,91 @@ const sendUpdateToSubscriber = async (req, res, next) => {
   }
 };
 
+const sendBulkUpdateToSubscribers = async (req, res, next) => {
+  try {
+    const { message, subscriberIds, emails } = req.body || {};
+
+    if (!message || String(message).trim().length === 0) {
+      return res.status(400).json({ message: 'Message cannot be empty.' });
+    }
+
+    if (
+      (!subscriberIds || subscriberIds.length === 0) &&
+      (!emails || emails.length === 0)
+    ) {
+      return res.status(400).json({ message: 'Please provide subscriber IDs or emails.' });
+    }
+
+    const subscribers = (await loadCollection(subscriberDataFilePath, [])).map(
+      normalizeSubscriberRecord
+    );
+
+    let targetSubscribers = [];
+
+    if (subscriberIds && subscriberIds.length > 0) {
+      targetSubscribers = subscribers.filter((s) => subscriberIds.includes(s._id));
+    } else if (emails && emails.length > 0) {
+      const emailsLower = emails.map((e) => String(e).trim().toLowerCase());
+      targetSubscribers = subscribers.filter((s) =>
+        emailsLower.includes(s.email)
+      );
+    }
+
+    if (targetSubscribers.length === 0) {
+      return res.status(404).json({ message: 'No matching subscribers found.' });
+    }
+
+    const updates = (await loadCollection(subscriberUpdatesFilePath, [])).map(
+      normalizeSubscriberUpdate
+    );
+
+    targetSubscribers.forEach((subscriber) => {
+      updates.push(
+        normalizeSubscriberUpdate({
+          _id: randomUUID(),
+          subscriberId: subscriber._id,
+          email: subscriber.email,
+          message: String(message).trim(),
+          sentAt: new Date().toISOString(),
+        })
+      );
+    });
+
+    await saveCollection(subscriberUpdatesFilePath, updates);
+
+    return res.status(200).json({
+      message: `Update sent successfully to ${targetSubscribers.length} subscriber(s)`,
+      recipientCount: targetSubscribers.length,
+      recipients: targetSubscribers.map((s) => s.email),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllSubscribers = async (req, res, next) => {
+  try {
+    const subscribers = (await loadCollection(subscriberDataFilePath, [])).map(
+      normalizeSubscriberRecord
+    );
+
+    const sorted = sortByLatest(subscribers);
+
+    return res.status(200).json({
+      message: 'Subscribers retrieved successfully.',
+      subscriberCount: sorted.length,
+      subscribers: sorted,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   subscribe,
   sendUpdateToSubscriber,
+  sendBulkUpdateToSubscribers,
+  getAllSubscribers,
   subscriberDataFilePath,
   normalizeSubscriberRecord,
 };

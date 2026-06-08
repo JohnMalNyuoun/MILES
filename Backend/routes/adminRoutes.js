@@ -13,6 +13,9 @@ const {
 	updateAdminSiteContent,
 } = require('../controllers/contentController');
 const {
+	getAllSubscribers,
+} = require('../controllers/subscriberController');
+const {
 	authMiddleware,
 	authorizeAdmin,
 } = require('../middleware/authMiddleware');
@@ -31,6 +34,7 @@ router.get('/', (req, res) => {
 			rejectAction: 'POST /api/admin/reject-action (auth required)',
 			contentGet: 'GET /api/admin/content (auth required)',
 			contentUpdate: 'PUT /api/admin/content (auth required)',
+			subscribersGet: 'GET /api/admin/subscribers (auth required)',
 		},
 	});
 });
@@ -43,5 +47,6 @@ router.get('/dashboard', authMiddleware, authorizeAdmin, getAdminDashboard);
 router.post('/users/admin', authMiddleware, authorizeAdmin, createAdminUser);
 router.get('/content', authMiddleware, authorizeAdmin, getAdminSiteContent);
 router.put('/content', authMiddleware, authorizeAdmin, updateAdminSiteContent);
+router.get('/subscribers', authMiddleware, authorizeAdmin, getAllSubscribers);
 
 module.exports = router;

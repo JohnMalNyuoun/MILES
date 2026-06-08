@@ -37,6 +37,12 @@ const SECTION_CARDS = [
     badge: 'TM',
   },
   {
+    key: 'manage-subscribers',
+    title: 'Manage Subscribers',
+    description: 'View all subscribers and send updates individually or in bulk.',
+    badge: 'SU',
+  },
+  {
     key: 'workshop-schedule',
     title: 'Workshop Schedule Tracker',
     description: 'Plan upcoming workshops and track all activities in one place.',
@@ -375,6 +381,10 @@ function AdminDashboard() {
   const [selectedSubscriber, setSelectedSubscriber] = useState(null);
   const [updateMessage, setUpdateMessage] = useState('');
   const [sendingUpdate, setSendingUpdate] = useState(false);
+  const [allSubscribers, setAllSubscribers] = useState([]);
+  const [selectedSubscriberIds, setSelectedSubscriberIds] = useState(new Set());
+  const [bulkUpdateMessage, setBulkUpdateMessage] = useState('');
+  const [bulkSendingUpdate, setBulkSendingUpdate] = useState(false);
 
   const isAdmin = user?.role === 'admin';
   const adminDisplayName = useMemo(
@@ -444,6 +454,28 @@ function AdminDashboard() {
 
     const data = await response.json();
     setDashboard(data);
+  };
+
+  const fetchAllSubscribers = async () => {
+    if (!token) return;
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/admin/subscribers`, {
+        headers: authHeaders,
+      });
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Not authorized to view subscribers.');
+        }
+        throw new Error('Failed to load subscribers.');
+      }
+
+      const data = await response.json();
+      setAllSubscribers(data.subscribers || []);
+    } catch (err) {
+      setError(err.message || 'Failed to fetch subscribers.');
+    }
   };
 
   const fetchAdminSiteContent = async () => {
@@ -1140,9 +1172,13 @@ function AdminDashboard() {
     }
   }, [activeSectionParam, allowedSections, setSearchParams]);
 
-  const handleSectionChange = (sectionKey) => {
+  const handleSectionChange = async (sectionKey) => {
     setSearchParams({ section: sectionKey });
     scrollToTop();
+
+    if (sectionKey === 'manage-subscribers') {
+      await fetchAllSubscribers();
+    }
   };
 
   const formatDateTime = (dateValue) => {
@@ -1207,6 +1243,73 @@ function AdminDashboard() {
       setError(err.message || 'Failed to send update to subscriber.');
     } finally {
       setSendingUpdate(false);
+    }
+  };
+
+  const toggleSubscriberSelection = (subscriberId) => {
+    const newSet = new Set(selectedSubscriberIds);
+    if (newSet.has(subscriberId)) {
+      newSet.delete(subscriberId);
+    } else {
+      newSet.add(subscriberId);
+    }
+    setSelectedSubscriberIds(newSet);
+  };
+
+  const selectAllSubscribers = () => {
+    if (selectedSubscriberIds.size === allSubscribers.length) {
+      setSelectedSubscriberIds(new Set());
+    } else {
+      setSelectedSubscriberIds(new Set(allSubscribers.map((s) => s._id)));
+    }
+  };
+
+  const handleBulkSendUpdate = async (event, targetType = 'selected') => {
+    event.preventDefault();
+
+    if (!bulkUpdateMessage.trim()) {
+      setError('Please enter a message to send.');
+      return;
+    }
+
+    const targetSubscribers =
+      targetType === 'all'
+        ? allSubscribers
+        : allSubscribers.filter((s) => selectedSubscriberIds.has(s._id));
+
+    if (targetSubscribers.length === 0) {
+      setError('Please select at least one subscriber or choose "Send to All".');
+      return;
+    }
+
+    setBulkSendingUpdate(true);
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/subscribers/bulk/message`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify({
+          message: bulkUpdateMessage,
+          subscriberIds: targetSubscribers.map((s) => s._id),
+          emails: targetSubscribers.map((s) => s.email),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to send bulk update: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setMessage(
+        data.message ||
+          `Update sent successfully to ${targetSubscribers.length} subscriber(s)!`
+      );
+      setBulkUpdateMessage('');
+      setSelectedSubscriberIds(new Set());
+      setTimeout(clearStatus, 5000);
+    } catch (err) {
+      setError(err.message || 'Failed to send bulk update.');
+    } finally {
+      setBulkSendingUpdate(false);
     }
   };
 
@@ -2031,6 +2134,164 @@ function AdminDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </article>
+        )}
+
+        {activeSection === 'manage-subscribers' && (
+          <article className="admin-card admin-panel-card">
+            <div className="exec-registry-header">
+              <h2 className="exec-registry-title">Manage Subscribers</h2>
+              <p className="exec-registry-subtitle">View all newsletter subscribers and send updates individually or in bulk.</p>
+            </div>
+
+            {allSubscribers.length === 0 ? (
+              <p className="admin-panel-hint">No subscribers yet.</p>
+            ) : (
+              <div style={{ marginBottom: '2rem' }}>
+                {/* Subscriber List */}
+                <div style={{ marginBottom: '2rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h3 style={{ margin: 0 }}>
+                      Subscribers ({allSubscribers.length})
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={selectAllSubscribers}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        backgroundColor: selectedSubscriberIds.size === allSubscribers.length ? '#4CAF50' : '#666',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {selectedSubscriberIds.size === allSubscribers.length
+                        ? `Deselect All (${allSubscribers.length})`
+                        : `Select All (${allSubscribers.length})`}
+                    </button>
+                  </div>
+
+                  <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
+                    {allSubscribers.map((subscriber) => (
+                      <div
+                        key={subscriber._id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '1rem',
+                          borderBottom: '1px solid var(--border-color)',
+                          backgroundColor: selectedSubscriberIds.has(subscriber._id)
+                            ? 'rgba(76, 175, 80, 0.1)'
+                            : 'transparent',
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedSubscriberIds.has(subscriber._id)}
+                          onChange={() => toggleSubscriberSelection(subscriber._id)}
+                          style={{ marginRight: '1rem', cursor: 'pointer' }}
+                        />
+                        <div style={{ flex: 1 }}>
+                          <strong>{subscriber.email}</strong>
+                          <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                            Subscribed: {formatDateTime(subscriber.createdAt || subscriber.updatedAt)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                    {selectedSubscriberIds.size > 0 ? `${selectedSubscriberIds.size} selected` : 'Select subscribers to send updates'}
+                  </p>
+                </div>
+
+                {/* Bulk Message Form */}
+                <div style={{ borderTop: '2px solid var(--border-color)', paddingTop: '2rem' }}>
+                  <h3 style={{ marginBottom: '1rem' }}>Send Update</h3>
+                  <form onSubmit={(e) => handleBulkSendUpdate(e, 'selected')}>
+                    <div style={{ marginBottom: '1rem' }}>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+                        Message
+                      </label>
+                      <textarea
+                        value={bulkUpdateMessage}
+                        onChange={(e) => setBulkUpdateMessage(e.target.value)}
+                        placeholder="Compose your message here..."
+                        style={{
+                          width: '100%',
+                          minHeight: '120px',
+                          padding: '0.75rem',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '8px',
+                          fontFamily: 'inherit',
+                          fontSize: '0.95rem',
+                          resize: 'vertical',
+                        }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                      {selectedSubscriberIds.size > 0 && (
+                        <button
+                          type="submit"
+                          disabled={bulkSendingUpdate || !bulkUpdateMessage.trim()}
+                          style={{
+                            padding: '0.75rem 1.5rem',
+                            backgroundColor: bulkSendingUpdate ? '#ccc' : '#2196F3',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            cursor: bulkSendingUpdate ? 'not-allowed' : 'pointer',
+                            fontSize: '0.95rem',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {bulkSendingUpdate ? 'Sending...' : `Send to Selected (${selectedSubscriberIds.size})`}
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={(e) => handleBulkSendUpdate(e, 'all')}
+                        disabled={bulkSendingUpdate || !bulkUpdateMessage.trim()}
+                        style={{
+                          padding: '0.75rem 1.5rem',
+                          backgroundColor: bulkSendingUpdate ? '#ccc' : '#FF9800',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: bulkSendingUpdate ? 'not-allowed' : 'pointer',
+                          fontSize: '0.95rem',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {bulkSendingUpdate ? 'Sending...' : `Send to All (${allSubscribers.length})`}
+                      </button>
+
+                      {bulkUpdateMessage.trim() && (
+                        <button
+                          type="button"
+                          onClick={() => setBulkUpdateMessage('')}
+                          style={{
+                            padding: '0.75rem 1.5rem',
+                            backgroundColor: 'transparent',
+                            color: 'var(--text-color)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '0.95rem',
+                          }}
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </div>
               </div>
             )}
           </article>
