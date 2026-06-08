@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const path = require('path');
 const Admin = require('../models/Admin');
 const PendingAction = require('../models/PendingAction');
@@ -10,6 +11,11 @@ const {
 	subscriberDataFilePath,
 	normalizeSubscriberRecord,
 } = require('./subscriberController');
+const {
+	sendAdminCreatedEmail,
+	sendPasswordChangedEmail,
+	sendPasswordResetCodeEmail,
+} = require('../utils/mailer');
 
 const projectDataFilePath = path.join(__dirname, '..', 'data', 'projects.json');
 const teamDataFilePath = path.join(__dirname, '..', 'data', 'team.json');
@@ -134,6 +140,15 @@ const createAdminUser = async (req, res, next) => {
 				email: adminProfile.email,
 				isVerified: adminProfile.isVerified,
 			},
+		});
+
+		// Send email notification (non-blocking)
+		sendAdminCreatedEmail({
+			adminEmail: normalizedEmail,
+			adminName: name,
+			adminUsername: normalizedUsername,
+		}).catch((emailErr) => {
+			console.error('Failed to send admin-created email:', emailErr.message);
 		});
 	} catch (error) {
 		next(error);
@@ -296,6 +311,162 @@ const processApproval = async (req, res, next) => {
 	}
 };
 
+const changeAdminPassword = async (req, res, next) => {
+	try {
+		const { currentPassword, newPassword } = req.body || {};
+
+		if (!currentPassword || !newPassword) {
+			return res.status(400).json({
+				message: 'Current password and new password are required.',
+			});
+		}
+
+		if (newPassword.length < 6) {
+			return res.status(400).json({
+				message: 'New password must be at least 6 characters.',
+			});
+		}
+
+		const adminUser = await User.findById(req.user.id);
+		if (!adminUser) {
+			return res.status(404).json({ message: 'Admin user not found.' });
+		}
+
+		const isMatch = await bcrypt.compare(currentPassword, adminUser.password);
+		if (!isMatch) {
+			return res.status(401).json({ message: 'Current password is incorrect.' });
+		}
+
+		const hashedPassword = await bcrypt.hash(newPassword, 10);
+		adminUser.password = hashedPassword;
+		await adminUser.save();
+
+		// Also update the Admin profile password if it exists
+		const adminProfile = await Admin.findOne({ username: adminUser.username });
+		if (adminProfile) {
+			adminProfile.password = hashedPassword;
+			await adminProfile.save();
+		}
+
+		res.status(200).json({ message: 'Password changed successfully.' });
+
+		// Send email notification (non-blocking)
+		sendPasswordChangedEmail({
+			adminEmail: adminUser.email,
+			adminName: adminUser.name || adminUser.username,
+		}).catch((emailErr) => {
+			console.error('Failed to send password-changed email:', emailErr.message);
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+const forgotAdminPassword = async (req, res, next) => {
+	try {
+		const { email } = req.body || {};
+
+		if (!email) {
+			return res.status(400).json({ message: 'Email is required.' });
+		}
+
+		const normalizedEmail = email.trim().toLowerCase();
+		const admin = await Admin.findOne({
+			email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') },
+		});
+
+		if (!admin) {
+			// Return success even if not found to prevent email enumeration
+			return res.status(200).json({
+				message: 'If an account with that email exists, a reset code has been sent.',
+			});
+		}
+
+		// Generate 6-digit reset code
+		const resetCode = crypto.randomInt(100000, 999999).toString();
+		const resetCodeExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+		admin.resetCode = resetCode;
+		admin.resetCodeExpires = resetCodeExpires;
+		await admin.save();
+
+		// Send reset code email
+		await sendPasswordResetCodeEmail({
+			adminEmail: admin.email,
+			adminName: admin.name || admin.username,
+			resetCode,
+		});
+
+		return res.status(200).json({
+			message: 'If an account with that email exists, a reset code has been sent.',
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+const resetAdminPassword = async (req, res, next) => {
+	try {
+		const { email, resetCode, newPassword } = req.body || {};
+
+		if (!email || !resetCode || !newPassword) {
+			return res.status(400).json({
+				message: 'Email, reset code, and new password are required.',
+			});
+		}
+
+		if (newPassword.length < 6) {
+			return res.status(400).json({
+				message: 'New password must be at least 6 characters.',
+			});
+		}
+
+		const normalizedEmail = email.trim().toLowerCase();
+		const admin = await Admin.findOne({
+			email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') },
+		});
+
+		if (!admin) {
+			return res.status(400).json({ message: 'Invalid reset code or email.' });
+		}
+
+		if (!admin.resetCode || admin.resetCode !== resetCode) {
+			return res.status(400).json({ message: 'Invalid reset code.' });
+		}
+
+		if (!admin.resetCodeExpires || admin.resetCodeExpires < new Date()) {
+			return res.status(400).json({ message: 'Reset code has expired. Please request a new one.' });
+		}
+
+		const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+		// Update Admin profile
+		admin.password = hashedPassword;
+		admin.resetCode = null;
+		admin.resetCodeExpires = null;
+		await admin.save();
+
+		// Update User model too
+		const user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
+		if (user) {
+			user.password = hashedPassword;
+			await user.save();
+		}
+
+		res.status(200).json({ message: 'Password reset successful. You can now log in with your new password.' });
+
+		// Send confirmation email (non-blocking)
+		sendPasswordChangedEmail({
+			adminEmail: admin.email,
+			adminName: admin.name || admin.username,
+		}).catch((emailErr) => {
+			console.error('Failed to send password-reset-confirmation email:', emailErr.message);
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	getAdminDashboard,
 	createAdminUser,
@@ -303,4 +474,7 @@ module.exports = {
 	getPendingActions,
 	rejectAction,
 	processApproval,
+	changeAdminPassword,
+	forgotAdminPassword,
+	resetAdminPassword,
 };

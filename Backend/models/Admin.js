@@ -26,6 +26,14 @@ const adminSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		resetCode: {
+			type: String,
+			default: null,
+		},
+		resetCodeExpires: {
+			type: Date,
+			default: null,
+		},
 	},
 	{ timestamps: true }
 );

@@ -7,6 +7,9 @@ const {
 	getPendingActions,
 	rejectAction,
 	processApproval,
+	changeAdminPassword,
+	forgotAdminPassword,
+	resetAdminPassword,
 } = require('../controllers/adminController');
 const {
 	getAdminSiteContent,
@@ -48,5 +51,8 @@ router.post('/users/admin', authMiddleware, authorizeAdmin, createAdminUser);
 router.get('/content', authMiddleware, authorizeAdmin, getAdminSiteContent);
 router.put('/content', authMiddleware, authorizeAdmin, updateAdminSiteContent);
 router.get('/subscribers', authMiddleware, authorizeAdmin, getAllSubscribers);
+router.post('/change-password', authMiddleware, authorizeAdmin, changeAdminPassword);
+router.post('/forgot-password', forgotAdminPassword);
+router.post('/reset-password', resetAdminPassword);
 
 module.exports = router;
