@@ -25,76 +25,96 @@
 }
 
 :root {
-  --miles-bg-main: #0B0F19;
-  --miles-bg-card: #161B22;
-  --miles-bg-sidebar: #090D14;
-  --miles-green-primary: #10B981;
+  --miles-bg-main: #0b0f19;
+  --miles-bg-card: #161b22;
+  --miles-bg-sidebar: #090d14;
+  --miles-green-primary: #10b981;
   --miles-green-hover: #059669;
-  --miles-text-main: #FFFFFF;
-  --miles-text-muted: #8B9BB4;
+  --miles-text-main: #ffffff;
+  --miles-text-muted: #8b9bb4;
   --main-bg: #f3f6fb;
   --card-bg: #ffffff;
-  --sidebar-bg: var(--miles-bg-sidebar);
+  --sidebar-bg: #f8fbff;
   --primary-green: var(--miles-green-primary);
   --primary-green-hover: var(--miles-green-hover);
-  --green-glow: rgba(16, 185, 129, 0.1);
+  --green-glow: rgba(16, 185, 129, 0.14);
   --text-primary: #0f172a;
-  --text-secondary: #64748b;
+  --text-secondary: #526072;
   --border-subtle: rgba(15, 23, 42, 0.08);
   --surface-elevated: #f8fafc;
   --on-dark-text: #f8fafc;
   --on-dark-muted: #cbd5e1;
   --canvas-top: #fbfdff;
-  --canvas-bottom: #e8eef7;
+  --canvas-bottom: #edf3fa;
   --bg-color: var(--main-bg);
   --text-color: var(--text-secondary);
-  --nav-bg: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.88);
   --nav-text: #0f172a;
   --accent-color: var(--primary-green);
   --accent-dark: var(--primary-green-hover);
-  --accent-soft: rgba(16, 185, 129, 0.18);
+  --accent-soft: rgba(16, 185, 129, 0.16);
   --card-border: var(--border-subtle);
-  --soft-bg: #eef3f9;
+  --soft-bg: #eef4fb;
   --soft-text: var(--text-secondary);
   --text-strong: var(--text-primary);
   --text-muted: var(--text-secondary);
+  --drawer-bg: #f7fbff;
+  --drawer-text: #0f172a;
+  --panel-bg: #ffffff;
+  --panel-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+  --panel-shadow-hover: 0 20px 44px rgba(15, 23, 42, 0.14);
+  --panel-surface: #ffffff;
+  --panel-surface-alt: #f8fafc;
+  --panel-surface-border: rgba(15, 23, 42, 0.08);
+  --hero-overlay-start: rgba(8, 20, 18, 0.22);
+  --hero-overlay-end: rgba(8, 20, 18, 0.7);
   --font-body: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif;
   --font-heading: 'Source Serif 4', Georgia, serif;
 }
 
 body.theme-dark {
   --main-bg: var(--miles-bg-main);
-  --card-bg: var(--miles-bg-card);
-  --sidebar-bg: var(--miles-bg-sidebar);
+  --card-bg: #131a25;
+  --sidebar-bg: #0d1118;
   --primary-green: var(--miles-green-primary);
-  --primary-green-hover: var(--miles-green-hover);
-  --green-glow: rgba(16, 185, 129, 0.1);
-  --text-primary: var(--miles-text-main);
-  --text-secondary: var(--miles-text-muted);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --surface-elevated: #111723;
+  --primary-green-hover: #34d399;
+  --green-glow: rgba(16, 185, 129, 0.18);
+  --text-primary: #f8fafc;
+  --text-secondary: #a7b4c7;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --surface-elevated: #111827;
   --on-dark-text: #ffffff;
   --on-dark-muted: #cbd5e1;
-  --canvas-top: #0f1420;
+  --canvas-top: #111827;
   --canvas-bottom: #0b0f19;
   --bg-color: var(--main-bg);
-  --text-color: var(--text-secondary);
-  --nav-bg: var(--sidebar-bg);
-  --nav-text: var(--text-primary);
-  --accent-color: var(--primary-green);
-  --accent-dark: var(--primary-green-hover);
+  --text-color: #d5dce6;
+  --nav-bg: rgba(9, 13, 20, 0.88);
+  --nav-text: #f8fafc;
+  --accent-color: #55e6ab;
+  --accent-dark: #34d399;
   --accent-soft: rgba(16, 185, 129, 0.18);
-  --card-border: var(--border-subtle);
-  --soft-bg: #111723;
-  --soft-text: var(--text-secondary);
-  --text-strong: var(--text-primary);
-  --text-muted: var(--text-secondary);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --soft-bg: #111827;
+  --soft-text: #a7b4c7;
+  --text-strong: #f8fafc;
+  --text-muted: #a7b4c7;
+  --drawer-bg: #0f1520;
+  --drawer-text: #f8fafc;
+  --panel-bg: #111827;
+  --panel-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --panel-shadow-hover: 0 24px 52px rgba(0, 0, 0, 0.48);
+  --panel-surface: #111827;
+  --panel-surface-alt: #0f172a;
+  --panel-surface-border: rgba(255, 255, 255, 0.08);
+  --hero-overlay-start: rgba(5, 8, 12, 0.18);
+  --hero-overlay-end: rgba(5, 8, 12, 0.82);
 }
 
 body {
   font-family: var(--font-body);
   background:
-    radial-gradient(circle at top, rgba(16, 185, 129, 0.06), transparent 28%),
+    radial-gradient(circle at top, rgba(16, 185, 129, 0.08), transparent 28%),
     linear-gradient(180deg, var(--canvas-top) 0%, var(--bg-color) 34%, var(--canvas-bottom) 100%);
   color: var(--text-color);
   line-height: 1.7;
@@ -124,15 +144,15 @@ h4 {
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.36);
+  box-shadow: var(--panel-shadow);
   border-bottom: 1px solid var(--border-subtle);
   flex-wrap: wrap;
   gap: 1rem;
 }
 
 body.theme-light .navbar {
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.07);
 }
 
 .navbar-brand a {
@@ -177,7 +197,7 @@ body.theme-light .navbar {
   width: min(320px, 84vw);
   max-width: 100%;
   flex-direction: column;
-  background: var(--miles-bg-sidebar);
+  background: var(--drawer-bg);
   border-right: 1px solid var(--card-border);
   border-radius: 0;
   padding: 1rem 0.75rem;
@@ -194,7 +214,7 @@ body.theme-light .navbar {
 }
 
 .navbar-links li a {
-  color: var(--miles-text-muted);
+  color: var(--drawer-text);
   text-decoration: none;
   font-size: 1rem;
   font-weight: 600;
@@ -217,8 +237,8 @@ body.theme-light .navbar {
 }
 
 .navbar-links li a:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--miles-text-main);
+  background: rgba(16, 185, 129, 0.08);
+  color: var(--accent-color);
 }
 
 .navbar-links li a.active {
@@ -275,17 +295,18 @@ body.theme-light .menu-toggle {
 }
 
 body.theme-light .navbar-links {
-  background: var(--miles-bg-sidebar);
-  border-color: var(--card-border);
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: 14px 0 36px rgba(15, 23, 42, 0.08);
 }
 
 body.theme-light .navbar-links li a {
-  color: var(--miles-text-muted);
+  color: #334155;
 }
 
 body.theme-light .navbar-links li a:hover {
-  color: var(--miles-text-main);
-  background: rgba(255, 255, 255, 0.04);
+  color: #0f172a;
+  background: rgba(16, 185, 129, 0.08);
 }
 
 body.theme-light .navbar-links li a.active {
@@ -305,7 +326,7 @@ body.theme-light .navbar-links li a.active {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(9, 13, 20, 0.38), rgba(9, 13, 20, 0.72));
+  background: linear-gradient(180deg, var(--hero-overlay-start), var(--hero-overlay-end));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -333,7 +354,8 @@ body.theme-light .navbar-links li a.active {
 
 .hero-content p {
   font-size: 1.1rem;
-  color: #dbe7f3;
+  color: var(--on-dark-text);
+  opacity: 0.92;
   margin-bottom: 1.5rem;
 }
 
@@ -426,7 +448,7 @@ body.theme-light .navbar-links li a.active {
 
 .feature-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--panel-shadow-hover);
 }
 
 .feature-card h3 {
@@ -474,11 +496,11 @@ body.theme-dark .public-dashboard-section > p {
 }
 
 .public-dashboard-panel {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: var(--panel-surface);
+  border: 1px solid var(--panel-surface-border);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--panel-shadow);
   transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
 }
 
@@ -490,22 +512,13 @@ body.theme-dark .public-dashboard-section > p {
 }
 
 .public-dashboard-panel p {
-  color: #1f2937;
+  color: var(--text-color);
   line-height: 1.65;
-}
-
-body.theme-dark .public-dashboard-panel {
-  background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.12);
-}
-
-body.theme-dark .public-dashboard-panel p {
-  color: #1f2937;
 }
 
 .public-dashboard-panel:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14);
+  box-shadow: var(--panel-shadow-hover);
   border-color: rgba(16, 185, 129, 0.28);
 }
 
@@ -546,18 +559,18 @@ body.theme-dark .public-dashboard-panel p {
   margin-top: 0.2rem;
   padding: 14px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(15, 23, 42, 0.1);
-  background: #ffffff;
+  border: 1px solid var(--panel-surface-border);
+  background: var(--panel-surface-alt);
 }
 
 .advocacy-inline-block h4 {
-  color: #0f172a;
+  color: var(--text-strong);
   margin-bottom: 0.35rem;
   font-size: 1rem;
 }
 
 .advocacy-inline-block p {
-  color: #334155;
+  color: var(--text-color);
   line-height: 1.62;
 }
 
@@ -628,11 +641,11 @@ body.theme-dark .public-dashboard-panel p {
 
 .donate-card {
   flex: 1 1 240px;
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  background: var(--panel-surface);
+  border: 1px solid var(--panel-surface-border);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--panel-shadow);
 }
 
 .donate-card h3 {
@@ -641,7 +654,7 @@ body.theme-dark .public-dashboard-panel p {
 }
 
 .donate-card p {
-  color: #1f2937;
+  color: var(--text-color);
 }
 
 .donate-highlight {
@@ -661,17 +674,17 @@ body.theme-dark .public-dashboard-panel p {
 }
 
 body.theme-dark .donate-section {
-  background: var(--miles-bg-card);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--card-bg);
+  border-color: var(--border-subtle);
 }
 
 body.theme-dark .donate-section p {
-  color: var(--miles-text-main);
+  color: var(--text-color);
 }
 
 body.theme-dark .donate-card {
-  background: #0f1522;
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--panel-surface-alt);
+  border-color: var(--panel-surface-border);
 }
 
 body.theme-dark .donate-card h3 {
@@ -679,11 +692,11 @@ body.theme-dark .donate-card h3 {
 }
 
 body.theme-dark .donate-card p {
-  color: var(--miles-text-main);
+  color: var(--text-color);
 }
 
 body.theme-dark .donate-highlight p {
-  color: var(--miles-text-main);
+  color: var(--text-strong);
 }
 
 /* ===== Team Section ===== */
@@ -719,7 +732,7 @@ body.theme-dark .donate-highlight p {
 
 .team-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--panel-shadow-hover);
 }
 
 .team-img {
@@ -754,6 +767,19 @@ body.theme-dark .donate-highlight p {
 .team-card p {
   color: var(--text-secondary);
   font-size: 0.8rem;
+}
+
+body.theme-dark .team-card {
+  background: var(--panel-surface);
+  border-color: var(--panel-surface-border);
+}
+
+body.theme-dark .team-card h3 {
+  color: var(--text-strong);
+}
+
+body.theme-dark .team-card p {
+  color: var(--text-color);
 }
 
 /* ===== Projects Section ===== */
@@ -800,7 +826,7 @@ body.theme-dark .donate-highlight p {
   overflow: hidden;
   background: var(--surface-elevated);
   border: 1px solid var(--card-border);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--panel-shadow);
 }
 
 .projects-video-embed iframe {
@@ -842,6 +868,24 @@ body.theme-dark .donate-highlight p {
 .project-card p {
   color: var(--text-secondary);
   font-size: 0.95rem;
+}
+
+body.theme-dark .project-card {
+  background: var(--panel-surface);
+  border-color: var(--panel-surface-border);
+}
+
+body.theme-dark .project-card h3 {
+  color: var(--text-strong);
+}
+
+body.theme-dark .project-card p {
+  color: var(--text-color);
+}
+
+body.theme-dark .project-tag {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--text-strong);
 }
 
 .project-tags {
@@ -954,7 +998,7 @@ body.theme-dark .donate-highlight p {
 }
 
 .impact-photo-card {
-  background: #1b2230;
+  background: var(--panel-surface-alt);
   border: 1px solid var(--card-border);
   border-radius: 8px;
   overflow: hidden;
@@ -997,6 +1041,15 @@ body.theme-dark .donate-highlight p {
   color: var(--text-secondary);
 }
 
+body.theme-dark .impact-photo-card {
+  background: var(--panel-surface-alt);
+}
+
+body.theme-dark .impact-breakdown span,
+body.theme-dark .impact-meta span {
+  background: rgba(255, 255, 255, 0.03);
+}
+
 /* ===== Footer ===== */
 .footer {
   background-color: var(--sidebar-bg);
@@ -1017,12 +1070,20 @@ body.theme-dark .donate-highlight p {
 }
 
 .footer-links a {
-  color: #ffffff;
+  color: var(--text-strong);
   text-decoration: none;
   font-weight: 700;
   border: 1px solid rgba(16, 185, 129, 0.24);
   border-radius: 999px;
   padding: 0.35rem 0.8rem;
+}
+
+body.theme-dark .footer {
+  background-color: rgba(9, 13, 20, 0.96);
+}
+
+body.theme-light .footer {
+  background-color: rgba(247, 251, 255, 0.92);
 }
 
 .footer-links a:hover {
@@ -1060,8 +1121,8 @@ body.theme-dark .donate-highlight p {
 .admin-auth-card,
 .admin-card,
 .admin-stat-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  background: var(--panel-surface);
+  border: 1px solid var(--panel-surface-border);
   border-radius: 12px;
 }
 

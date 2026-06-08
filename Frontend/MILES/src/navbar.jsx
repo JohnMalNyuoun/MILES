@@ -84,10 +84,15 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
           <button
             type="button"
             onClick={toggleTheme}
-            className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors text-2xl bg-transparent border-0 cursor-pointer"
-            aria-label="Toggle theme"
+            className="inline-flex items-center gap-2 rounded-full border border-outline-variant/30 bg-surface-container-low px-4 py-2 text-on-surface-variant hover:text-primary hover:border-primary/40 transition-colors"
+            aria-label={theme === 'dark' ? 'Switch to day mode' : 'Switch to dark mode'}
           >
-            {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+            <span className="flex items-center gap-2 text-sm font-semibold not-italic">
+              <span className="material-symbols-outlined text-2xl" aria-hidden="true">
+                {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+              </span>
+              <span className="hidden lg:inline">{theme === 'dark' ? 'Day Mode' : 'Dark Mode'}</span>
+            </span>
           </button>
           <button
             type="button"
