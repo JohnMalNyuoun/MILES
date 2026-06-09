@@ -20,6 +20,10 @@ const teamSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		featured: {
+			type: Boolean,
+			default: false,
+		},
 		returnToSchool: {
 			type: Boolean,
 			default: false,

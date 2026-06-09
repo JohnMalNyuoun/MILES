@@ -22,12 +22,13 @@ import defaultSiteContent from './content/defaultSiteContent'
 const  App = () => {
     const [theme, setTheme] = useState(() => {
         const savedTheme = localStorage.getItem('miles-theme')
-        return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'dark'
+        return savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light'
     })
 
     useEffect(() => {
         document.body.classList.remove('theme-light', 'theme-dark')
         document.body.classList.add(`theme-${theme}`)
+        document.documentElement.setAttribute('data-theme', theme)
         if (theme === 'dark') {
             document.documentElement.classList.add('dark')
         } else {

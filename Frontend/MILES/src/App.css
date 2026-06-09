@@ -115,6 +115,118 @@ body.theme-dark {
   --hero-overlay-end: rgba(5, 8, 12, 0.82);
 }
 
+/* ===== MILES Theme Tokens (spec — overrides legacy values above) ===== */
+:root,
+:root[data-theme="light"] {
+  /* Brand — constant in both modes */
+  --green-primary: #1D9E75;
+  --green-deep: #085041;
+  --green-mint: #E1F5EE;
+  --amber-warm: #FAEEDA;
+
+  /* RGB channel forms (consumed by Tailwind for alpha modifiers) */
+  --green-primary-rgb: 29 158 117;
+  --green-deep-rgb: 8 80 65;
+  --green-mint-rgb: 225 245 238;
+  --amber-warm-rgb: 250 238 218;
+
+  /* Surfaces / text — light mode defaults */
+  --bg-base: #FFFFFF;
+  --bg-surface: #F4FAF7;
+  --bg-card: #FFFFFF;
+  --bg-section-alt: #E1F5EE;
+
+  --text-primary: #0A1F1A;
+  --text-secondary: #3D5A52;
+  --text-muted: #6B8C83;
+  --text-on-green: #FFFFFF;
+
+  --border-color: #C8E6DA;
+  --card-shadow: 0 2px 12px rgba(8, 80, 65, 0.08);
+
+  --nav-bg: #FFFFFF;
+  --footer-bg: #085041;
+  --footer-text: #E1F5EE;
+
+  --bg-base-rgb: 255 255 255;
+  --bg-surface-rgb: 244 250 247;
+  --bg-card-rgb: 255 255 255;
+  --bg-section-alt-rgb: 225 245 238;
+  --text-primary-rgb: 10 31 26;
+  --text-secondary-rgb: 61 90 82;
+  --text-muted-rgb: 107 140 131;
+  --text-on-green-rgb: 255 255 255;
+  --border-color-rgb: 200 230 218;
+
+  /* Re-route legacy variables to the new tokens */
+  --text-color: var(--text-secondary);
+  --text-strong: var(--text-primary);
+  --accent-color: var(--green-primary);
+  --accent-dark: var(--green-deep);
+  --accent-soft: rgba(29, 158, 117, 0.16);
+  --bg-color: var(--bg-base);
+  --canvas-top: var(--bg-base);
+  --canvas-bottom: var(--bg-surface);
+  --card-bg: var(--bg-card);
+  --card-border: var(--border-color);
+  --panel-bg: var(--bg-card);
+  --panel-shadow: var(--card-shadow);
+  --soft-bg: var(--bg-section-alt);
+  --soft-text: var(--text-secondary);
+  --drawer-bg: var(--bg-card);
+  --drawer-text: var(--text-primary);
+  --hero-overlay-start: rgba(8, 20, 18, 0.22);
+  --hero-overlay-end: rgba(8, 20, 18, 0.7);
+}
+
+:root[data-theme="dark"],
+body.theme-dark {
+  --bg-base: #0A1A15;
+  --bg-surface: #0F2318;
+  --bg-card: #132B1F;
+  --bg-section-alt: #0F2318;
+
+  --text-primary: #E8F5F0;
+  --text-secondary: #A8CFC0;
+  --text-muted: #6B9E8A;
+  --text-on-green: #FFFFFF;
+
+  --border-color: #1D4A35;
+  --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+
+  --nav-bg: #0A1A15;
+  --footer-bg: #061510;
+  --footer-text: #A8CFC0;
+
+  --bg-base-rgb: 10 26 21;
+  --bg-surface-rgb: 15 35 24;
+  --bg-card-rgb: 19 43 31;
+  --bg-section-alt-rgb: 15 35 24;
+  --text-primary-rgb: 232 245 240;
+  --text-secondary-rgb: 168 207 192;
+  --text-muted-rgb: 107 158 138;
+  --border-color-rgb: 29 74 53;
+
+  --text-color: var(--text-secondary);
+  --text-strong: var(--text-primary);
+  --accent-color: var(--green-primary);
+  --accent-dark: var(--green-deep);
+  --accent-soft: rgba(29, 158, 117, 0.22);
+  --bg-color: var(--bg-base);
+  --canvas-top: var(--bg-surface);
+  --canvas-bottom: var(--bg-base);
+  --card-bg: var(--bg-card);
+  --card-border: var(--border-color);
+  --panel-bg: var(--bg-card);
+  --panel-shadow: var(--card-shadow);
+  --soft-bg: var(--bg-section-alt);
+  --soft-text: var(--text-secondary);
+  --drawer-bg: var(--bg-card);
+  --drawer-text: var(--text-primary);
+  --hero-overlay-start: rgba(5, 8, 12, 0.22);
+  --hero-overlay-end: rgba(5, 8, 12, 0.85);
+}
+
 body {
   font-family: var(--font-body);
   background:
@@ -3205,6 +3317,140 @@ body.theme-light .footer {
 
   .miles-workspace-page {
     padding-top: 4.5rem;
+  }
+}
+
+/* ===== Kakuma Reality & Our Response (always dark, exempt from theme toggle) ===== */
+.kakuma-reality {
+  background-color: var(--green-deep);
+  padding: 96px 40px;
+  width: 100%;
+}
+
+.reality-header {
+  max-width: 640px;
+  margin: 0 auto 72px auto;
+  text-align: center;
+}
+
+.reality-header h2 {
+  font-family: var(--font-body);
+  font-size: 2rem;
+  font-weight: 700;
+  color: #E8F5F0;
+  margin-bottom: 16px;
+  letter-spacing: 0;
+}
+
+.reality-header p {
+  font-size: 1rem;
+  color: #A8CFC0;
+  line-height: 1.7;
+}
+
+.reality-grid {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  gap: 0;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.reality-challenge,
+.reality-response {
+  padding: 40px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.reality-challenge:first-of-type,
+.reality-response:first-of-type {
+  border-top: none;
+}
+
+.challenge-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6B9E8A;
+  margin-bottom: 12px;
+}
+
+.response-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green-primary);
+  margin-bottom: 12px;
+}
+
+.reality-challenge h3 {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #C8E0D8;
+  margin-bottom: 10px;
+  letter-spacing: 0;
+}
+
+.reality-response h3 {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+  letter-spacing: 0;
+}
+
+.reality-challenge p {
+  font-size: 0.9rem;
+  color: #7AA898;
+  line-height: 1.7;
+}
+
+.reality-response p {
+  font-size: 0.9rem;
+  color: #B8D8CC;
+  line-height: 1.7;
+}
+
+.reality-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green-primary);
+  font-size: 1.4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding-top: 40px;
+}
+
+.reality-grid > .reality-divider:nth-of-type(1) {
+  border-top: none;
+  padding-top: 0;
+}
+
+@media (max-width: 768px) {
+  .reality-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reality-divider {
+    transform: rotate(90deg);
+    padding: 0;
+    height: 40px;
+    border-top: none;
+  }
+
+  .reality-challenge,
+  .reality-response {
+    padding: 28px 16px;
+  }
+
+  .kakuma-reality {
+    padding: 64px 20px;
   }
 }
 

@@ -17,6 +17,7 @@ const defaultTeamMembers = [
 		image: 'Nyajuok.jpeg',
 		bio: 'Nyajuok is a passionate advocate for education and empowerment. After joining Hundred Youth Ambassadors, he has been dedicated to creating social impact projects that address the needs of underserved communities.',
 		isMotherProfile: false,
+		featured: true,
 		videoUrl: '',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
@@ -28,6 +29,7 @@ const defaultTeamMembers = [
 		image: 'Bhan.jpeg',
 		bio: 'Bhan joined the GRE (Gender Responsive Education) club led by Madam Caro, who works with JRS in Kakuma. Inspired by her mentorship, Bhan was motivated to join this team and dedicate herself to empowering communities through education.',
 		isMotherProfile: false,
+		featured: true,
 		videoUrl: '',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
@@ -50,6 +52,7 @@ const defaultTeamMembers = [
 		image: 'John.jpeg',
 		bio: 'John is the Project Coordinator, inspired by the stories and incidents he witnessed in the community. His firsthand experiences drive his commitment to creating meaningful change and coordinating impactful projects for those in need.',
 		isMotherProfile: false,
+		featured: true,
 		videoUrl: '',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
@@ -61,6 +64,7 @@ const defaultTeamMembers = [
 		image: 'Nyaluit.jpeg',
 		bio: 'Nyaluit is an inspired individual driven by the stories and experiences in her community. As the Young Mothers Representative, she is dedicated to advocating for young mothers and ensuring their voices are heard in the pursuit of empowerment and education.',
 		isMotherProfile: false,
+		featured: true,
 		videoUrl: '',
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
@@ -87,6 +91,18 @@ const defaultTeamMembers = [
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
 	},
+	{
+		_id: randomUUID(),
+		name: 'Jean Claude',
+		role: 'Community Mobiliser',
+		image: '',
+		bio: 'Jean Claude serves as the Community Mobiliser, building grassroots networks across Kakuma and ensuring that MILES outreach reaches the families who need it most.',
+		isMotherProfile: false,
+		featured: false,
+		videoUrl: '',
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+	},
 ];
 
 const normalizeTeamRecord = (record) => ({
@@ -97,22 +113,27 @@ const normalizeTeamRecord = (record) => ({
 	image: record.image || '',
 	videoUrl: record.videoUrl || '',
 	isMotherProfile: record.isMotherProfile === true,
+	featured: record.featured === true,
 	createdAt: record.createdAt || new Date().toISOString(),
 	updatedAt: record.updatedAt || new Date().toISOString(),
 });
 
 const getTeams = async (req, res, next) => {
 	try {
-		const { profile } = req.query;
+		const { profile, featured } = req.query;
 		const teams = sortByLatest(
 			(await loadCollection(teamDataFilePath, defaultTeamMembers)).map(normalizeTeamRecord)
 		);
 
-		const filteredTeams = teams.filter((member) => {
+		let filteredTeams = teams.filter((member) => {
 			if (profile === 'mothers') return member.isMotherProfile === true;
 			if (profile === 'team') return member.isMotherProfile !== true;
 			return true;
 		});
+
+		if (featured === 'true') {
+			filteredTeams = filteredTeams.filter((member) => member.featured === true);
+		}
 
 		res.status(200).json(filteredTeams);
 	} catch (error) {
