@@ -16,6 +16,7 @@ const Team = () => {
         'abraham.jpeg': abrahamImg,
         'John.jpeg': johnImg,
         'Nyaluit.jpeg': nyaluitImg,
+        'Jean.jpeg': jeanImg
     }
 
     useEffect(() => {
