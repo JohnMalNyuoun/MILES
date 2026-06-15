@@ -1,12 +1,9 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const path = require('path');
 const Admin = require('../models/Admin');
-const PendingAction = require('../models/PendingAction');
 const User = require('../models/User');
-const WorkshopSchedule = require('../models/WorkshopSchedule');
-const { loadCollection, sortByLatest } = require('../utils/localDataStore');
+const { loadCollection, saveCollection, sortByLatest } = require('../utils/localDataStore');
 const {
 	subscriberDataFilePath,
 	normalizeSubscriberRecord,
@@ -19,6 +16,8 @@ const {
 
 const projectDataFilePath = path.join(__dirname, '..', 'data', 'projects.json');
 const teamDataFilePath = path.join(__dirname, '..', 'data', 'team.json');
+const workshopDataFilePath = path.join(__dirname, '..', 'data', 'workshops.json');
+const pendingActionsDataFilePath = path.join(__dirname, '..', 'data', 'pendingActions.json');
 
 const normalizeProjectRecord = (record) => ({
 	_id: record._id,
@@ -47,13 +46,15 @@ const normalizeTeamRecord = (record) => ({
 
 const getAdminDashboard = async (req, res, next) => {
 	try {
-		const [projects, teamMembers, userCount, recentWorkshops, subscribers] = await Promise.all([
+		const [projects, teamMembers, userCount, workshopRecords, subscribers] = await Promise.all([
 			loadCollection(projectDataFilePath, []),
 			loadCollection(teamDataFilePath, []),
 			User.countDocuments(),
-			WorkshopSchedule.find().sort({ createdAt: -1 }).limit(5),
+			loadCollection(workshopDataFilePath, []),
 			loadCollection(subscriberDataFilePath, []),
 		]);
+
+		const recentWorkshops = sortByLatest(workshopRecords).slice(0, 5);
 
 		const normalizedProjects = sortByLatest(projects.map(normalizeProjectRecord));
 		const normalizedTeam = sortByLatest(teamMembers.map(normalizeTeamRecord)).filter(
@@ -222,9 +223,27 @@ const registerAdmin = async (req, res, next) => {
 	}
 };
 
+const { randomUUID } = require('crypto');
+
+const normalizePendingAction = (action = {}) => ({
+	_id: action._id || randomUUID(),
+	actionType: action.actionType || '',
+	targetCollection: action.targetCollection || '',
+	proposedData: action.proposedData || {},
+	createdBy: action.createdBy || '',
+	status: action.status || 'pending',
+	createdAt: action.createdAt || new Date().toISOString(),
+	updatedAt: action.updatedAt || new Date().toISOString(),
+});
+
+const loadPendingActions = async () =>
+	(await loadCollection(pendingActionsDataFilePath, [])).map(normalizePendingAction);
+
 const getPendingActions = async (req, res, next) => {
 	try {
-		const actions = await PendingAction.find({ status: 'pending' }).sort({ createdAt: -1 });
+		const actions = (await loadPendingActions())
+			.filter((action) => action.status === 'pending')
+			.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 		return res.status(200).json(actions);
 	} catch (error) {
 		next(error);
@@ -239,24 +258,30 @@ const rejectAction = async (req, res, next) => {
 			return res.status(400).json({ error: 'actionId and currentAdminUsername are required.' });
 		}
 
-		const pendingAction = await PendingAction.findById(actionId);
-		if (!pendingAction) {
+		const actions = await loadPendingActions();
+		const idx = actions.findIndex((a) => a._id === actionId);
+
+		if (idx === -1) {
 			return res.status(404).json({ error: 'Pending action not found.' });
 		}
 
-		if (pendingAction.createdBy === currentAdminUsername) {
+		if (actions[idx].createdBy === currentAdminUsername) {
 			return res.status(403).json({
 				error: 'You cannot reject your own submission.',
 			});
 		}
 
-		pendingAction.status = 'rejected';
-		await pendingAction.save();
+		actions[idx] = {
+			...actions[idx],
+			status: 'rejected',
+			updatedAt: new Date().toISOString(),
+		};
+		await saveCollection(pendingActionsDataFilePath, actions);
 
 		return res.status(200).json({
 			message: 'Action rejected successfully.',
-			actionId: pendingAction._id,
-			status: pendingAction.status,
+			actionId: actions[idx]._id,
+			status: actions[idx].status,
 		});
 	} catch (error) {
 		next(error);
@@ -273,38 +298,30 @@ const processApproval = async (req, res, next) => {
 			});
 		}
 
-		const pendingAction = await PendingAction.findById(actionId);
-		if (!pendingAction) {
+		const actions = await loadPendingActions();
+		const idx = actions.findIndex((a) => a._id === actionId);
+
+		if (idx === -1) {
 			return res.status(404).json({ error: 'Pending action not found.' });
 		}
 
-		if (pendingAction.createdBy === currentAdminUsername) {
+		if (actions[idx].createdBy === currentAdminUsername) {
 			return res.status(403).json({
 				error: 'You cannot approve your own submission. The other administrator must verify this action.',
 			});
 		}
 
-		pendingAction.status = 'approved';
-		await pendingAction.save();
-
-		const { actionType, targetCollection, proposedData } = pendingAction;
-		if (actionType === 'CREATE_POST') {
-			let TargetModel;
-			try {
-				TargetModel = mongoose.model(targetCollection);
-			} catch (modelError) {
-				return res.status(400).json({
-					error: `Invalid target collection: ${targetCollection}`,
-				});
-			}
-
-			await TargetModel.create(proposedData);
-		}
+		actions[idx] = {
+			...actions[idx],
+			status: 'approved',
+			updatedAt: new Date().toISOString(),
+		};
+		await saveCollection(pendingActionsDataFilePath, actions);
 
 		return res.status(200).json({
 			message: 'Approval processed and deployment completed successfully.',
-			actionId: pendingAction._id,
-			status: pendingAction.status,
+			actionId: actions[idx]._id,
+			status: actions[idx].status,
 		});
 	} catch (error) {
 		next(error);

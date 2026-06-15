@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import nyajuokImg from './assets/Nyajuok.jpeg'
+import nyajuokImg from './assets/NyajuitFounder.png'
 import bhanImg from './assets/Bhan.jpeg'
 import abrahamImg from './assets/abraham.jpeg'
 import johnImg from './assets/John.jpeg'
@@ -11,6 +11,7 @@ const Team = () => {
     const [error, setError] = useState('')
 
     const imageMap = {
+        'NyajuitFounder.png': nyajuokImg,
         'Nyajuok.jpeg': nyajuokImg,
         'Bhan.jpeg': bhanImg,
         'abraham.jpeg': abrahamImg,

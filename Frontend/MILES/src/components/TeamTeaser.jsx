@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import nyajuokImg from '../assets/Nyajuok.jpeg'
+import nyajuokImg from '../assets/NyajuitFounder.png'
 import bhanImg from '../assets/Bhan.jpeg'
 import abrahamImg from '../assets/abraham.jpeg'
 import johnImg from '../assets/John.jpeg'
 import nyaluitImg from '../assets/Nyaluit.jpeg'
 
 const imageMap = {
+  'NyajuitFounder.png': nyajuokImg,
   'Nyajuok.jpeg': nyajuokImg,
   'Bhan.jpeg': bhanImg,
   'abraham.jpeg': abrahamImg,

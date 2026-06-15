@@ -13,6 +13,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
     { to: '/', label: 'Impact', end: true },
     { to: '/projects', label: 'Projects' },
     { to: '/workshops', label: 'Mentorship' },
+    { to: '/blog', label: 'Blog' },
     { to: '/about', label: 'Advocacy' },
     { to: '/admin', label: 'Admin' },
   ]
@@ -23,6 +24,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
     { to: '/team', label: 'Team' },
     { to: '/workshops', label: 'Workshops' },
     { to: '/projects', label: 'Projects' },
+    { to: '/blog', label: 'Blog' },
     { to: '/donate', label: 'Donate' },
     { to: '/contact', label: 'Contact' },
     { to: '/admin', label: 'Admin' },

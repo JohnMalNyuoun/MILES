@@ -37,6 +37,18 @@ const SECTION_CARDS = [
     badge: 'TM',
   },
   {
+    key: 'create-blog',
+    title: 'Add Blog Post',
+    description: 'Publish a new blog post for the public Blog page.',
+    badge: 'BL',
+  },
+  {
+    key: 'manage-blogs',
+    title: 'Manage Blog Posts',
+    description: 'Edit, unpublish, or delete existing blog posts.',
+    badge: 'MB',
+  },
+  {
     key: 'manage-subscribers',
     title: 'Manage Subscribers',
     description: 'View all subscribers and send updates individually or in bulk.',
@@ -358,6 +370,26 @@ function AdminDashboard() {
     liveUrl: '',
     repoUrl: '',
   });
+  const [blogs, setBlogs] = useState([]);
+  const [blogForm, setBlogForm] = useState({
+    title: '',
+    excerpt: '',
+    content: '',
+    author: '',
+    coverImage: '',
+    tags: '',
+    published: true,
+  });
+  const [editingBlogId, setEditingBlogId] = useState('');
+  const [editingBlogForm, setEditingBlogForm] = useState({
+    title: '',
+    excerpt: '',
+    content: '',
+    author: '',
+    coverImage: '',
+    tags: '',
+    published: true,
+  });
   const [siteContentObject, setSiteContentObject] = useState(defaultSiteContent);
   const [siteContentUpdatedAt, setSiteContentUpdatedAt] = useState('');
   const [workshopUpdatedAt, setWorkshopUpdatedAt] = useState('');
@@ -414,6 +446,7 @@ function AdminDashboard() {
   const returnToDashboard = (panelKey = 'activity') => {
     setEditingProjectId('');
     setEditingWorkshopPostId('');
+    setEditingBlogId('');
     setSearchParams({}, { replace: true });
     setActiveOverviewPanel(panelKey);
     scrollToTop();
@@ -436,6 +469,16 @@ function AdminDashboard() {
 
     setProjects(projectData);
     setTeam(teamData);
+
+    try {
+      const blogsResponse = await fetch(`${apiBaseUrl}/api/blogs?includeDrafts=true`);
+      if (blogsResponse.ok) {
+        const blogData = await blogsResponse.json();
+        setBlogs(Array.isArray(blogData) ? blogData : []);
+      }
+    } catch (blogError) {
+      setBlogs([]);
+    }
   };
 
   const fetchDashboard = async () => {
@@ -738,6 +781,133 @@ function AdminDashboard() {
       returnToDashboard('activity');
     } catch (err) {
       setError(err.message || 'Unable to update project.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const beginBlogEdit = (blog) => {
+    setEditingBlogId(blog._id);
+    setEditingBlogForm({
+      title: blog.title || '',
+      excerpt: blog.excerpt || '',
+      content: blog.content || '',
+      author: blog.author || '',
+      coverImage: blog.coverImage || '',
+      tags: (blog.tags || []).join(', '),
+      published: blog.published !== false,
+    });
+  };
+
+  const handleCreateBlog = async (event) => {
+    event.preventDefault();
+    clearStatus();
+
+    if (!blogForm.title || !blogForm.content) {
+      setError('Blog title and content are required.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const payload = {
+        ...blogForm,
+        tags: blogForm.tags
+          .split(',')
+          .map((item) => item.trim())
+          .filter(Boolean),
+      };
+
+      const response = await fetch(`${apiBaseUrl}/api/blogs`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to create blog post.');
+      }
+
+      setBlogForm({
+        title: '',
+        excerpt: '',
+        content: '',
+        author: '',
+        coverImage: '',
+        tags: '',
+        published: true,
+      });
+      setMessage('Blog post created successfully.');
+      await Promise.all([fetchDashboard(), fetchPublicLists()]);
+      returnToDashboard('stories');
+    } catch (err) {
+      setError(err.message || 'Unable to create blog post.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateBlog = async (event) => {
+    event.preventDefault();
+    clearStatus();
+
+    if (!editingBlogForm.title || !editingBlogForm.content) {
+      setError('Blog title and content are required.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const payload = {
+        ...editingBlogForm,
+        tags: editingBlogForm.tags
+          .split(',')
+          .map((item) => item.trim())
+          .filter(Boolean),
+      };
+
+      const response = await fetch(`${apiBaseUrl}/api/blogs/${editingBlogId}`, {
+        method: 'PUT',
+        headers: authHeaders,
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to update blog post.');
+      }
+
+      setEditingBlogId('');
+      setMessage('Blog post updated successfully.');
+      await Promise.all([fetchDashboard(), fetchPublicLists()]);
+      returnToDashboard('stories');
+    } catch (err) {
+      setError(err.message || 'Unable to update blog post.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteBlog = async (id) => {
+    clearStatus();
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiBaseUrl}/api/blogs/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders,
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to delete blog post.');
+      }
+
+      setMessage('Blog post deleted successfully.');
+      await Promise.all([fetchDashboard(), fetchPublicLists()]);
+    } catch (err) {
+      setError(err.message || 'Unable to delete blog post.');
     } finally {
       setLoading(false);
     }
@@ -1414,6 +1584,19 @@ function AdminDashboard() {
       .some((value) => value.toLowerCase().includes(normalizedDashboardSearch));
   });
 
+  const filteredBlogs = blogs.filter((blog) => {
+    if (!normalizedDashboardSearch) return true;
+
+    return [
+      blog.title,
+      blog.excerpt,
+      blog.author,
+      ...(blog.tags || []),
+    ]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalizedDashboardSearch));
+  });
+
   const filteredTeamRecords = filteredSupportTeamPreview;
 
   const sectionPanelMap = {
@@ -1422,6 +1605,8 @@ function AdminDashboard() {
     'create-team': 'team',
     'manage-projects': 'activity',
     'manage-team': 'team',
+    'create-blog': 'stories',
+    'manage-blogs': 'stories',
     'workshop-schedule': 'quick-actions',
     'edit-hero': 'activity',
     'edit-home': 'activity',
@@ -1459,6 +1644,10 @@ function AdminDashboard() {
       return { section: 'manage-projects', panel: 'activity' };
     }
 
+    if (filteredBlogs.length > 0) {
+      return { section: 'manage-blogs', panel: 'stories' };
+    }
+
     if (filteredWorkshopActivities.length > 0) {
       return { section: 'workshop-schedule', panel: 'quick-actions' };
     }
@@ -1474,6 +1663,7 @@ function AdminDashboard() {
     filteredTeamRecords.length,
     filteredSupportTeamPreview.length,
     filteredWorkshopActivities.length,
+    filteredBlogs.length,
     normalizedDashboardSearch,
   ]);
 
@@ -2094,6 +2284,214 @@ function AdminDashboard() {
                 </li>
               )) : (
                 <li>No project or case matches your search.</li>
+              )}
+            </ul>
+          </article>
+        )}
+
+        {activeSection === 'create-blog' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Add Blog Post</h2>
+            <form onSubmit={handleCreateBlog} className="admin-form">
+              <label>
+                Title
+                <input
+                  value={blogForm.title}
+                  onChange={(event) =>
+                    setBlogForm((current) => ({ ...current, title: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Author
+                <input
+                  value={blogForm.author}
+                  onChange={(event) =>
+                    setBlogForm((current) => ({ ...current, author: event.target.value }))
+                  }
+                  placeholder="MILES Team"
+                />
+              </label>
+
+              <label>
+                Short Excerpt
+                <textarea
+                  value={blogForm.excerpt}
+                  onChange={(event) =>
+                    setBlogForm((current) => ({ ...current, excerpt: event.target.value }))
+                  }
+                  placeholder="A short preview shown on the blog list."
+                />
+              </label>
+
+              <label>
+                Content
+                <textarea
+                  value={blogForm.content}
+                  onChange={(event) =>
+                    setBlogForm((current) => ({ ...current, content: event.target.value }))
+                  }
+                  rows={10}
+                  placeholder="Write the full blog post here. Separate paragraphs with a blank line."
+                />
+              </label>
+
+              <label>
+                Cover Image URL
+                <input
+                  value={blogForm.coverImage}
+                  onChange={(event) =>
+                    setBlogForm((current) => ({ ...current, coverImage: event.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                Tags (comma separated)
+                <input
+                  value={blogForm.tags}
+                  onChange={(event) =>
+                    setBlogForm((current) => ({ ...current, tags: event.target.value }))
+                  }
+                  placeholder="Mentorship, Community, Stories"
+                />
+              </label>
+
+              <label className="admin-checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={blogForm.published}
+                  onChange={(event) =>
+                    setBlogForm((current) => ({ ...current, published: event.target.checked }))
+                  }
+                />
+                Publish immediately (uncheck to save as draft)
+              </label>
+
+              <button type="submit" disabled={loading}>Create Blog Post</button>
+            </form>
+          </article>
+        )}
+
+        {activeSection === 'manage-blogs' && (
+          <article className="admin-card admin-panel-card">
+            <h2>Manage Blog Posts</h2>
+            <ul className="admin-list">
+              {filteredBlogs.length > 0 ? filteredBlogs.map((blog) => (
+                <li key={blog._id}>
+                  {editingBlogId === blog._id ? (
+                    <form onSubmit={handleUpdateBlog} className="admin-form admin-inline-form">
+                      <label>
+                        Title
+                        <input
+                          value={editingBlogForm.title}
+                          onChange={(event) =>
+                            setEditingBlogForm((current) => ({ ...current, title: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Author
+                        <input
+                          value={editingBlogForm.author}
+                          onChange={(event) =>
+                            setEditingBlogForm((current) => ({ ...current, author: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Short Excerpt
+                        <textarea
+                          value={editingBlogForm.excerpt}
+                          onChange={(event) =>
+                            setEditingBlogForm((current) => ({ ...current, excerpt: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Content
+                        <textarea
+                          value={editingBlogForm.content}
+                          rows={8}
+                          onChange={(event) =>
+                            setEditingBlogForm((current) => ({ ...current, content: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Cover Image URL
+                        <input
+                          value={editingBlogForm.coverImage}
+                          onChange={(event) =>
+                            setEditingBlogForm((current) => ({ ...current, coverImage: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label>
+                        Tags (comma separated)
+                        <input
+                          value={editingBlogForm.tags}
+                          onChange={(event) =>
+                            setEditingBlogForm((current) => ({ ...current, tags: event.target.value }))
+                          }
+                        />
+                      </label>
+                      <label className="admin-checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={editingBlogForm.published}
+                          onChange={(event) =>
+                            setEditingBlogForm((current) => ({ ...current, published: event.target.checked }))
+                          }
+                        />
+                        Published
+                      </label>
+                      <div className="admin-row-actions">
+                        <button type="submit" disabled={loading}>Save</button>
+                        <button
+                          type="button"
+                          className="admin-secondary-btn"
+                          onClick={() => setEditingBlogId('')}
+                          disabled={loading}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <>
+                      <div>
+                        <strong>{blog.title}</strong>
+                        {!blog.published ? <span className="blog-admin-draft-badge"> (draft)</span> : null}
+                        <p>{blog.excerpt || (blog.content || '').slice(0, 180)}</p>
+                        <p>
+                          {blog.author ? `By ${blog.author} · ` : ''}
+                          Updated: {formatDateTime(blog.updatedAt || blog.createdAt)}
+                        </p>
+                      </div>
+                      <div className="admin-row-actions">
+                        <button
+                          type="button"
+                          className="admin-secondary-btn"
+                          onClick={() => beginBlogEdit(blog)}
+                          disabled={loading}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteBlog(blog._id)}
+                          disabled={loading}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </li>
+              )) : (
+                <li>No blog post matches your search.</li>
               )}
             </ul>
           </article>

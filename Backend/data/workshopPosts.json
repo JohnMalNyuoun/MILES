@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "dee22352-3cb9-4364-a520-04aa5c145f38",
+    "title": "Previous Facebook Post",
+    "postUrl": "https://www.facebook.com/61585890535950/posts/122127226833196351/?app=fbl",
+    "workshopDate": "",
+    "postedDate": "",
+    "summary": "A featured workshop update that remains visible in the feed.",
+    "details": "",
+    "createdAt": "2026-06-15T13:11:18.542Z",
+    "updatedAt": "2026-06-15T13:11:18.542Z"
+  },
+  {
+    "_id": "06f1750b-68bb-4790-848e-bc286726e2c3",
+    "title": "New Facebook Post",
+    "postUrl": "https://www.facebook.com/61585890535950/posts/122109311871196351/?app=fbl",
+    "workshopDate": "",
+    "postedDate": "",
+    "summary": "Another community update shown alongside the earlier post.",
+    "details": "",
+    "createdAt": "2026-06-15T13:11:18.542Z",
+    "updatedAt": "2026-06-15T13:11:18.542Z"
+  }
+]

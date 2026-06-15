@@ -1,4 +1,7 @@
-const SiteContent = require('../models/SiteContent');
+const fs = require('fs/promises');
+const path = require('path');
+
+const siteContentFilePath = path.join(__dirname, '..', 'data', 'siteContent.json');
 
 const defaultSiteContent = {
 	hero: {
@@ -162,15 +165,37 @@ const defaultSiteContent = {
 };
 
 const getOrCreateSiteContent = async () => {
-	let record = await SiteContent.findOne({ key: 'main' });
+	await fs.mkdir(path.dirname(siteContentFilePath), { recursive: true });
 
-	if (!record) {
-		record = await SiteContent.create({
-			key: 'main',
-			content: defaultSiteContent,
-		});
+	try {
+		const raw = await fs.readFile(siteContentFilePath, 'utf-8');
+		const parsed = raw.trim() ? JSON.parse(raw) : null;
+		if (parsed && typeof parsed === 'object' && parsed.content) {
+			return parsed;
+		}
+	} catch (error) {
+		if (error.code !== 'ENOENT') {
+			throw error;
+		}
 	}
 
+	const initial = {
+		key: 'main',
+		content: defaultSiteContent,
+		updatedAt: new Date().toISOString(),
+	};
+	await fs.writeFile(siteContentFilePath, JSON.stringify(initial, null, 2), 'utf-8');
+	return initial;
+};
+
+const saveSiteContent = async (content) => {
+	const record = {
+		key: 'main',
+		content,
+		updatedAt: new Date().toISOString(),
+	};
+	await fs.mkdir(path.dirname(siteContentFilePath), { recursive: true });
+	await fs.writeFile(siteContentFilePath, JSON.stringify(record, null, 2), 'utf-8');
 	return record;
 };
 
@@ -234,11 +259,7 @@ const updateAdminSiteContent = async (req, res, next) => {
 			return res.status(400).json({ message: 'Content payload must be an object' });
 		}
 
-		const record = await SiteContent.findOneAndUpdate(
-			{ key: 'main' },
-			{ key: 'main', content: payload },
-			{ new: true, upsert: true, setDefaultsOnInsert: true }
-		);
+		const record = await saveSiteContent(payload);
 
 		res.status(200).json({
 			message: 'Website content updated successfully',
