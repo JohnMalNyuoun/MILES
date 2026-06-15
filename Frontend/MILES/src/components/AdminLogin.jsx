@@ -3,20 +3,45 @@ import { useNavigate } from 'react-router-dom';
 
 const getApiBaseUrl = () => import.meta.env.VITE_API_BASE_URL || '';
 
+const initialForgotForm = {
+  username: '',
+  code: '',
+  newPassword: '',
+  confirmPassword: '',
+};
+
 function AdminLogin() {
   const apiBaseUrl = useMemo(() => getApiBaseUrl(), []);
   const navigate = useNavigate();
   const [mode, setMode] = useState('login');
+  const [forgotStage, setForgotStage] = useState('request');
   const [authForm, setAuthForm] = useState({ username: '', password: '' });
-  const [forgotForm, setForgotForm] = useState({
-    username: '',
-    email: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
+  const [forgotForm, setForgotForm] = useState(initialForgotForm);
+  const [maskedEmail, setMaskedEmail] = useState('');
+  const [codeExpiresIn, setCodeExpiresIn] = useState(15);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const resetForgotFlow = () => {
+    setForgotForm(initialForgotForm);
+    setForgotStage('request');
+    setMaskedEmail('');
+  };
+
+  const parseResponse = async (response) => {
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (_parseError) {
+      throw new Error(
+        response.ok
+          ? 'Server returned an unexpected response. Please try again.'
+          : `Server error (${response.status}). Please check the backend is running.`
+      );
+    }
+    return data;
+  };
 
   const handleAuthSubmit = async (event) => {
     event.preventDefault();
@@ -36,20 +61,10 @@ function AdminLogin() {
         body: JSON.stringify(authForm),
       });
 
-      let data = {};
-      try {
-        data = await response.json();
-      } catch (_parseError) {
-        throw new Error(
-          response.ok
-            ? 'Server returned an unexpected response. Please try again.'
-            : `Server error (${response.status}). Please check the backend is running on port 5000.`
-        );
-      }
+      const data = await parseResponse(response);
       if (!response.ok) {
         throw new Error(data.message || 'Login failed.');
       }
-
       if (data.user?.role !== 'admin') {
         throw new Error('This account is not an admin account.');
       }
@@ -64,13 +79,51 @@ function AdminLogin() {
     }
   };
 
-  const handleForgotSubmit = async (event) => {
+  const handleRequestCode = async (event) => {
     event.preventDefault();
     setError('');
     setSuccess('');
 
-    if (!forgotForm.username || !forgotForm.email || !forgotForm.newPassword) {
-      setError('Username, email and new password are required.');
+    if (!forgotForm.username) {
+      setError('Please enter your username.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiBaseUrl}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: forgotForm.username }),
+      });
+
+      const data = await parseResponse(response);
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to send reset code.');
+      }
+
+      setMaskedEmail(data.maskedEmail || '');
+      setCodeExpiresIn(data.expiresInMinutes || 15);
+      setForgotStage('verify');
+      setSuccess(
+        data.maskedEmail
+          ? `A 6-digit code was sent to ${data.maskedEmail}. It expires in ${data.expiresInMinutes || 15} minutes.`
+          : 'If an account exists, a verification code was sent to its email.'
+      );
+    } catch (err) {
+      setError(err.message || 'Unable to send reset code.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async (event) => {
+    event.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!forgotForm.code) {
+      setError('Please enter the 6-digit code from your email.');
       return;
     }
 
@@ -86,34 +139,25 @@ function AdminLogin() {
 
     try {
       setLoading(true);
-      const response = await fetch(`${apiBaseUrl}/api/auth/forgot-password`, {
+      const response = await fetch(`${apiBaseUrl}/api/auth/forgot-password/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: forgotForm.username,
-          email: forgotForm.email,
+          code: forgotForm.code.trim(),
           newPassword: forgotForm.newPassword,
         }),
       });
 
-      let data = {};
-      try {
-        data = await response.json();
-      } catch (_parseError) {
-        throw new Error(
-          response.ok
-            ? 'Server returned an unexpected response. Please try again.'
-            : `Server error (${response.status}). Please check the backend is running on port 5000.`
-        );
-      }
+      const data = await parseResponse(response);
       if (!response.ok) {
         throw new Error(data.message || 'Unable to reset password.');
       }
 
       setSuccess(data.message || 'Password reset successful.');
-      setMode('login');
       setAuthForm((current) => ({ ...current, username: forgotForm.username, password: '' }));
-      setForgotForm({ username: '', email: '', newPassword: '', confirmPassword: '' });
+      resetForgotFlow();
+      setMode('login');
     } catch (err) {
       setError(err.message || 'Unable to reset password.');
     } finally {
@@ -121,17 +165,25 @@ function AdminLogin() {
     }
   };
 
+  const headerTitle = mode === 'login'
+    ? 'Admin Dashboard Login'
+    : forgotStage === 'request'
+      ? 'Forgot Password'
+      : 'Enter Verification Code';
+
+  const headerSubtitle = mode === 'login'
+    ? 'Sign in with an admin account to manage projects and team members.'
+    : forgotStage === 'request'
+      ? 'Enter your admin username and we will email you a 6-digit verification code.'
+      : `Enter the 6-digit code we sent${maskedEmail ? ` to ${maskedEmail}` : ' to your email'} and choose a new password.`;
+
   return (
     <section className="admin-page">
       <div className="admin-auth-card">
-        <h1>{mode === 'login' ? 'Admin Dashboard Login' : 'Forgot Password'}</h1>
-        <p>
-          {mode === 'login'
-            ? 'Sign in with an admin account to manage projects and team members.'
-            : 'Provide your username and email to reset your password.'}
-        </p>
+        <h1>{headerTitle}</h1>
+        <p>{headerSubtitle}</p>
 
-        {mode === 'login' ? (
+        {mode === 'login' && (
           <form onSubmit={handleAuthSubmit} className="admin-form">
             <label>
               Username
@@ -161,8 +213,10 @@ function AdminLogin() {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
-        ) : (
-          <form onSubmit={handleForgotSubmit} className="admin-form">
+        )}
+
+        {mode === 'forgot' && forgotStage === 'request' && (
+          <form onSubmit={handleRequestCode} className="admin-form">
             <label>
               Username
               <input
@@ -172,18 +226,33 @@ function AdminLogin() {
                   setForgotForm((current) => ({ ...current, username: event.target.value }))
                 }
                 placeholder="admin_username"
+                autoFocus
               />
             </label>
 
+            <button type="submit" disabled={loading}>
+              {loading ? 'Sending code...' : 'Send Verification Code'}
+            </button>
+          </form>
+        )}
+
+        {mode === 'forgot' && forgotStage === 'verify' && (
+          <form onSubmit={handleVerifyCode} className="admin-form">
             <label>
-              Email
+              Verification Code
               <input
-                type="email"
-                value={forgotForm.email}
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                value={forgotForm.code}
                 onChange={(event) =>
-                  setForgotForm((current) => ({ ...current, email: event.target.value }))
+                  setForgotForm((current) => ({
+                    ...current,
+                    code: event.target.value.replace(/\D/g, '').slice(0, 6),
+                  }))
                 }
-                placeholder="admin@example.com"
+                placeholder="6-digit code"
+                autoFocus
               />
             </label>
 
@@ -195,7 +264,7 @@ function AdminLogin() {
                 onChange={(event) =>
                   setForgotForm((current) => ({ ...current, newPassword: event.target.value }))
                 }
-                placeholder="New password"
+                placeholder="New password (min 6 characters)"
               />
             </label>
 
@@ -212,7 +281,20 @@ function AdminLogin() {
             </label>
 
             <button type="submit" disabled={loading}>
-              {loading ? 'Updating...' : 'Reset Password'}
+              {loading ? 'Verifying...' : 'Reset Password'}
+            </button>
+
+            <button
+              type="button"
+              className="admin-link-btn"
+              onClick={() => {
+                setForgotStage('request');
+                setError('');
+                setSuccess('');
+              }}
+              disabled={loading}
+            >
+              Use a different username / resend code
             </button>
           </form>
         )}
@@ -224,6 +306,7 @@ function AdminLogin() {
               className="admin-link-btn"
               onClick={() => {
                 setMode('forgot');
+                resetForgotFlow();
                 setError('');
                 setSuccess('');
               }}
@@ -236,6 +319,7 @@ function AdminLogin() {
               className="admin-link-btn"
               onClick={() => {
                 setMode('login');
+                resetForgotFlow();
                 setError('');
                 setSuccess('');
               }}

@@ -25,12 +25,15 @@ JWT_SECRET=your_jwt_secret
 MILES_REGISTRATION_SECRET=your_org_admin_secret
 ADMIN_REGISTRATION_SECRET=your_org_admin_secret
 OFFICIAL_MILES_EMAIL=milesproject@gmail.com
+GMAIL_USER=milesproject@gmail.com
+GMAIL_APP_PASSWORD=your_gmail_app_password
 ```
 
 Notes:
 
 - `MILES_REGISTRATION_SECRET` and `ADMIN_REGISTRATION_SECRET` are both checked in the code path for admin-related registration flows.
 - `OFFICIAL_MILES_EMAIL` is used by the locked official admin registration route.
+- `GMAIL_USER` + `GMAIL_APP_PASSWORD` enable the real outbound mailer (welcome emails to subscribers, programme invitations, and password-reset codes). `GMAIL_APP_PASSWORD` must be a [Google App Password](https://myaccount.google.com/apppasswords), not your normal Gmail password.
 
 ## Install
 

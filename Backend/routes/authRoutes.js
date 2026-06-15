@@ -1,7 +1,12 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 
-const { register, login, forgotPassword } = require('../controllers/authController');
+const {
+	register,
+	login,
+	requestPasswordReset,
+	verifyPasswordReset,
+} = require('../controllers/authController');
 const { registerAdmin } = require('../controllers/adminController');
 
 const router = express.Router();
@@ -39,19 +44,21 @@ router.post('/register', register);
 router.post('/login', login);
 router.post(
 	'/forgot-password',
+	[body('username').trim().notEmpty().withMessage('username is required.')],
+	handleValidationErrors,
+	requestPasswordReset
+);
+router.post(
+	'/forgot-password/verify',
 	[
 		body('username').trim().notEmpty().withMessage('username is required.'),
-		body('email')
-			.trim()
-			.isEmail()
-			.withMessage('email must be a valid email format.')
-			.normalizeEmail(),
+		body('code').trim().notEmpty().withMessage('code is required.'),
 		body('newPassword')
 			.isLength({ min: 6 })
 			.withMessage('newPassword must have a minimum length of 6 characters.'),
 	],
 	handleValidationErrors,
-	forgotPassword
+	verifyPasswordReset
 );
 router.post('/register-new-admin', registerNewAdminValidation, handleValidationErrors, registerAdmin);
 
