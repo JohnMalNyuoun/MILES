@@ -11,6 +11,7 @@ import Learn from './components/Learn'
 import Projects from './components/Projects'
 import Workshops from './components/Workshops'
 import Blog from './components/Blog'
+import DigitalLiteracy from './components/DigitalLiteracy'
 import FocusDetail from './components/FocusDetail'
 import Donate from './components/Donate'
 import Footer from './components/Footer'
@@ -75,6 +76,7 @@ const  App = () => {
                 <Route path="/workshops" element={<Workshops />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/blog" element={<Blog />} />
+                <Route path="/digital-literacy" element={<DigitalLiteracy />} />
                 <Route path="/learn" element={<Learn siteContent={siteContent} />} />
                 <Route path="/focus/:topic" element={<FocusDetail />} />
                 <Route path="/donate" element={<Donate siteContent={siteContent} />} />
