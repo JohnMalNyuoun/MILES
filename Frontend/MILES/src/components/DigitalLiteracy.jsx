@@ -37,6 +37,33 @@ const approachPoints = [
   },
 ];
 
+const kakumaReasons = [
+  {
+    title: 'A generation born into displacement',
+    body: 'Most youth in Kakuma have grown up inside the camp with limited exposure to computers, smartphones, or the internet. Without digital skills, they are locked out of the modern economy before they ever get a chance to compete in it.',
+  },
+  {
+    title: 'School alone is not enough',
+    body: 'Classrooms here are overcrowded and under-resourced, and the national curriculum offers very little practical ICT training. Digital literacy fills that gap so learners can research, type assignments, and prepare for exams and scholarships on their own.',
+  },
+  {
+    title: 'Online work is the new opportunity',
+    body: 'Remote jobs, online freelancing, digital trade, and refugee-friendly platforms are some of the few income paths available inside the camp. None of them are reachable without basic computer, email, and internet skills.',
+  },
+  {
+    title: 'Safety and dignity online',
+    body: 'Young people, especially young women and mothers, are increasingly targeted by online scams, misinformation, and exploitation. Teaching safe internet use protects them and gives them confidence to participate online on their own terms.',
+  },
+  {
+    title: 'A bridge to resettlement and higher education',
+    body: 'Resettlement interviews, university applications, and scholarship portals (DAFI, WUSC, online universities) are all digital. Digital literacy is often the difference between a youth accessing those doors and missing them entirely.',
+  },
+  {
+    title: 'Breaking the cycle for the next generation',
+    body: 'When a young mother learns to use a computer, her children grow up around someone who already knows. Digital skills do not stay with one person &mdash; they spread through families and the wider Kakuma community.',
+  },
+];
+
 function DigitalLiteracy() {
   return (
     <div className="page digital-literacy-page">
@@ -89,6 +116,27 @@ function DigitalLiteracy() {
               <h3>{point.title}</h3>
               <p>{point.body}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section digital-kakuma-section">
+        <span className="digital-kakuma-eyebrow">The Reality in Kakuma</span>
+        <h2>Why Digital Literacy for Youth in Kakuma?</h2>
+        <p>
+          Kakuma Refugee Camp is home to hundreds of thousands of young people whose futures are
+          being shaped under exceptional pressure &mdash; limited resources, restricted movement,
+          and a job market that has gone almost entirely online. Digital literacy is no longer a
+          bonus skill here; it is a lifeline.
+        </p>
+
+        <div className="digital-kakuma-grid">
+          {kakumaReasons.map((reason, index) => (
+            <article key={reason.title} className="digital-kakuma-card">
+              <span className="digital-kakuma-number">{String(index + 1).padStart(2, '0')}</span>
+              <h3>{reason.title}</h3>
+              <p>{reason.body}</p>
+            </article>
           ))}
         </div>
       </section>
