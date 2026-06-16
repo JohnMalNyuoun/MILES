@@ -15,7 +15,7 @@ const defaultTeamMembers = [
 		name: 'Nyajuok William',
 		role: 'Founder',
 		image: 'NyajuitFounder.png',
-		bio: 'Nyajuok is a passionate advocate for education and empowerment. After joining Hundred Youth Ambassadors, he has been dedicated to creating social impact projects that address the needs of underserved communities.',
+		bio: 'Nyajuok is a passionate advocate for education and empowerment. After joining Hundred Youth Ambassadors, she has been dedicated to creating social impact projects that address the needs of underserved communities.',
 		isMotherProfile: false,
 		featured: true,
 		videoUrl: '',

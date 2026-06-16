@@ -10,12 +10,11 @@ const teamMembers = [
 		name: 'Nyajuok William',
 		role: 'Founder',
 		image: 'Nyajuok.jpeg',
-		bio: 'Nyajuok is a passionate advocate for education and empowerment. After joining Hundred Youth Ambassadors, he has been dedicated to creating social impact projects that address the needs of underserved communities.',
+		bio: 'Nyajuok is a passionate advocate for education and empowerment. After joining Hundred Youth Ambassadors, she has been dedicated to creating social impact projects that address the needs of underserved communities.',
 	},
 	{
 		name: 'Bhan Thou',
 		role: 'Co-Founder',
-		image: 'Bhan.jpeg',
 		bio: 'Bhan joined the GRE (Gender Responsive Education) club led by Madam Caro, who works with JRS in Kakuma. Inspired by her mentorship, Bhan was motivated to join this team and dedicate herself to empowering communities through education.',
 	},
 	{
