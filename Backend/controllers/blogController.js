@@ -35,17 +35,46 @@ const staticBlogs = [
 		_id: BIRTH_OF_MILES_ID,
 		title: 'The Birth of MILES: Turning Shared Vision into Community Impact in Kakuma',
 		excerpt:
-			'MILES was co-founded with strong leadership from Nyajuok William, Bhan Thou, Abraham Leek, Nyathak Duol, and Nyaluit Mabil to support young mothers returning to school after early marriage in Kakuma.',
-		content:
-			'Every great journey begins with a single step, but the story of MILES (Mothers in Learning Empowerment Support) began with a shared conviction. Looking at our community in Kakuma, we saw an urgent, undeniable hurdle: young mothers who had dropped out of school due to early marriage, and vulnerable youth who possessed immense potential but lacked the structured guidance needed to navigate their educational and personal journeys.\n\nWe knew that talent is universal, but mentorship and opportunity are not. That is why MILES was born.\n\nFrom a Vision to a Movement\n\nMILES did not just appear overnight. It came to being through deep conversations, strategic planning, and a passionate commitment to social impact. Founded alongside Nyajuok William, the project was built on a simple yet powerful premise: if we can facilitate school re-enrollment for young mothers, mentor them to achieve long-term educational retention, and actively monitor their progress through daily living, we can rewrite the future of entire families.\n\nWhat started as a passionate idea quickly evolved into a structured reality. We formalized our mission, drafted a compliance-ready constitution, and built a dedicated governance team. With leaders like Bhan Thou, Abraham Leek, Nyathak Duol, and Nyaluit Mabil stepping into key roles, the foundation was officially laid.\n\nWhat We Stand For: Our Core Mission\n\nAt its heart, MILES is a sanctuary for mentorship and monitoring. We believe that sustainable change does not come from quick fixes; it comes from consistent, long-term guidance. We walk alongside our beneficiaries, protecting their right to education, offering personal development frameworks, and fostering a growth mindset.\n\nWhile our primary heartbeat is mentorship, we refuse to ignore the tangible barriers our youth face. As our funding and partnerships grow, our vision has expanded to provide critical material aid like uniforms and school supplies to ensure that no student is forced out of the classroom due to a lack of basic necessities.\n\nExpanding Horizons: Digital Literacy\n\nAs we listened to the needs of our community, we realized that empowerment in the modern world requires modern tools. To complement our core mission, we launched our Digital Literacy and Computer Skills Training program.\n\nOperated as a distinct, specialized initiative so it never distracts from our foundational mentorship sessions, this program equips local youth in Kakuma with essential digital communication, internet navigation, and computing skills. We are not just helping youth stay in school; we are preparing them to thrive in a digital economy.\n\nThe Journey Ahead\n\nMILES is no longer just a project on paper; it is a living, breathing movement. Every milestone we reach, from structured administrative dashboards to active student re-enrollment interventions, is a testament to what happens when a community unites for a common cause.\n\nWe are just getting started, and the miles ahead look brighter than ever.',
-		author: 'Nyajuok William, Bhan Thou, Abraham Leek, Nyathak Duol, Nyaluit Mabil',
+			'MILES was founded in Kakuma to support young mothers returning to school after early marriage and to mentor vulnerable youth through consistent monitoring and long-term guidance.',
+		content: `Every great journey begins with a single step, but the story of MILES (Mothers in Learning Empowerment Support) began with a shared conviction. Looking at our community in Kakuma, we saw an urgent, undeniable hurdle: young mothers who had dropped out of school due to early marriage, and vulnerable youth who possessed immense potential but lacked the structured guidance needed to navigate their educational and personal journeys.
+
+We knew that talent is universal, but mentorship and opportunity are not. That is why MILES was born.
+
+From a Vision to a Movement
+
+MILES did not just appear overnight. It came to being through deep conversations, strategic planning, and a passionate commitment to social impact. Founded alongside Nyajuok William, the project was built on a simple yet powerful premise: if we can facilitate school re-enrollment for young mothers, mentor them to achieve long-term educational retention, and actively monitor their progress through daily living, we can rewrite the future of entire families.
+
+What started as a passionate idea quickly evolved into a structured reality. We formalized our mission, drafted a compliance-ready constitution, and built a dedicated governance team.
+
+FOUNDING LEADERSHIP:
+NYAJUOK WILLIAM
+BHAN THOU
+ABRAHAM LEEK
+NYATHAK DUOL
+NYALUIT MABIL
+
+With this leadership stepping into key roles, the foundation was officially laid.
+
+What We Stand For: Our Core Mission
+
+At its heart, MILES is a sanctuary for mentorship and monitoring. We believe that sustainable change does not come from quick fixes; it comes from consistent, long-term guidance. We walk alongside our beneficiaries, protecting their right to education, offering personal development frameworks, and fostering a growth mindset.
+
+While our primary heartbeat is mentorship, we refuse to ignore the tangible barriers our youth face. As our funding and partnerships grow, our vision has expanded to provide critical material aid like uniforms and school supplies to ensure that no student is forced out of the classroom due to a lack of basic necessities.
+
+Expanding Horizons: Digital Literacy
+
+As we listened to the needs of our community, we realized that empowerment in the modern world requires modern tools. To complement our core mission, we launched our Digital Literacy and Computer Skills Training program.
+
+Operated as a distinct, specialized initiative so it never distracts from our foundational mentorship sessions, this program equips local youth in Kakuma with essential digital communication, internet navigation, and computing skills. We are not just helping youth stay in school; we are preparing them to thrive in a digital economy.
+
+The Journey Ahead
+
+MILES is no longer just a project on paper; it is a living, breathing movement. Every milestone we reach, from structured administrative dashboards to active student re-enrollment interventions, is a testament to what happens when a community unites for a common cause.
+
+We are just getting started, and the miles ahead look brighter than ever.`,
+		author: 'MILES Editorial Team',
 		coverImage: 'group.jpeg',
 		tags: [
-			'Nyajuok William',
-			'Bhan Thou',
-			'Abraham Leek',
-			'Nyathak Duol',
-			'Nyaluit Mabil',
 			'Kakuma',
 			'School Re-enrollment',
 			'Early Marriage',
