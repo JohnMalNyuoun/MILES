@@ -1113,10 +1113,10 @@ body.theme-dark .team-card p {
 .workshop-post-embed,
 .learn-video-embed {
   position: relative;
-  border-radius: 14px;
+  border-radius: 0;
   overflow: hidden;
-  background: var(--surface-elevated);
-  border: 1px solid var(--card-border);
+  background: transparent;
+  border: none;
 }
 
 .projects-video-embed,
@@ -2478,11 +2478,11 @@ body.theme-light .footer {
   gap: 1rem;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.08);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
 .learn-video-eyebrow {
@@ -3757,6 +3757,13 @@ body.theme-light .footer {
   display: block;
 }
 
+.blog-detail-cover-flat {
+  max-height: 520px;
+  object-position: center;
+  margin: 0 -1.6rem 1.1rem;
+  width: calc(100% + 3.2rem);
+}
+
 .blog-detail-header {
   padding: 1.5rem 1.6rem 0.4rem;
 }
@@ -3809,6 +3816,12 @@ body.theme-light .footer {
 @media (max-width: 640px) {
   .blog-card-cover {
     height: 160px;
+  }
+
+  .blog-detail-cover-flat {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    width: calc(100% + 2rem);
   }
 
   .blog-detail-header,

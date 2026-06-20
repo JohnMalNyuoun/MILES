@@ -1,4 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import groupImage from '../assets/Group.jpeg';
+
+const LOCAL_BLOG_IMAGES = {
+  'group.jpeg': groupImage,
+};
 
 const formatDisplayDate = (value) => {
   if (!value) {
@@ -27,6 +32,15 @@ const renderParagraphs = (text) => {
     .map((block, index) => (
       <p key={`blog-paragraph-${index}`}>{block.trim()}</p>
     ));
+};
+
+const resolveBlogImageSrc = (value) => {
+  if (!value) {
+    return '';
+  }
+
+  const normalized = String(value).trim().toLowerCase();
+  return LOCAL_BLOG_IMAGES[normalized] || value;
 };
 
 function Blog() {
@@ -97,6 +111,8 @@ function Blog() {
   }
 
   if (selectedBlog) {
+    const isFlatLayout = selectedBlog.displayStyle === 'flat';
+    const selectedCoverImage = resolveBlogImageSrc(selectedBlog.coverImage);
     const bodyContent = selectedBlog.authorBio
       ? (selectedBlog.content || '').split(/\n*About the Author\n*/i)[0].trimEnd()
       : selectedBlog.content;
@@ -112,11 +128,11 @@ function Blog() {
         </button>
 
         <article className="blog-detail-card">
-          {selectedBlog.coverImage ? (
+          {selectedCoverImage && !isFlatLayout ? (
             <div className="blog-detail-hero">
               <div className="blog-detail-hero-portrait">
                 <img
-                  src={selectedBlog.coverImage}
+                  src={selectedCoverImage}
                   alt={selectedBlog.author || selectedBlog.title}
                 />
               </div>
@@ -147,6 +163,13 @@ function Blog() {
             </div>
           ) : (
             <header className="blog-detail-header">
+              {selectedCoverImage ? (
+                <img
+                  className="blog-detail-cover blog-detail-cover-flat"
+                  src={selectedCoverImage}
+                  alt={selectedBlog.author || selectedBlog.title}
+                />
+              ) : null}
               <h1>{selectedBlog.title}</h1>
               <p className="blog-detail-meta">
                 {selectedBlog.author ? <span>By {selectedBlog.author}</span> : null}
@@ -177,8 +200,8 @@ function Blog() {
           {selectedBlog.authorBio ? (
             <aside className="blog-chairperson-card">
               <div className="blog-chairperson-frame">
-                {selectedBlog.coverImage ? (
-                  <img src={selectedBlog.coverImage} alt={selectedBlog.author} />
+                {selectedCoverImage ? (
+                  <img src={selectedCoverImage} alt={selectedBlog.author} />
                 ) : (
                   <span className="material-symbols-outlined">person</span>
                 )}
@@ -228,7 +251,7 @@ function Blog() {
               {blog.coverImage ? (
                 <img
                   className="blog-card-cover"
-                  src={blog.coverImage}
+                  src={resolveBlogImageSrc(blog.coverImage)}
                   alt={blog.title}
                 />
               ) : (
