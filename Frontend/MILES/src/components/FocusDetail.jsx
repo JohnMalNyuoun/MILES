@@ -13,7 +13,7 @@ const content = {
         heading: '1. Case Identification and Active Enrollment',
         points: [
           'Community-Led Scouting: Using localized networks to identify vulnerable young mothers who want to return to school but face structural or financial barriers.',
-          'Case Assessment: Evaluating each mother\'s barriers, such as unpaid school fees, childcare gaps, or family resistance.',
+          'Case Assessment: Evaluating each young mother\'s barriers, such as unpaid school fees, childcare gaps, or family resistance.',
           'Targeted Counseling: Providing mentorship that rebuilds confidence and helps young mothers see school return as realistic and achievable.',
         ],
       },

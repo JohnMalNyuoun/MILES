@@ -9,23 +9,25 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
   const handleMenuToggle = () => setIsMenuOpen((s) => !s)
   const handleLinkClick = () => setIsMenuOpen(false)
 
-  const primaryLinks = [
-    { to: '/', label: 'Impact', end: true },
+  const whatWeDoLinks = [
     { to: '/projects', label: 'Projects' },
     { to: '/workshops', label: 'Mentorship' },
     { to: '/digital-literacy', label: 'Digital Literacy' },
+  ]
+
+  const primaryLinks = [
+    { to: '/', label: 'Home', end: true },
+    { to: '/contact', label: 'Get Involved' },
     { to: '/blog', label: 'Blog' },
     { to: '/about', label: 'Advocacy' },
     { to: '/admin', label: 'Admin' },
   ]
 
   const allLinks = [
-    { to: '/', label: 'Impact', end: true },
+    { to: '/', label: 'Home', end: true },
+    { to: '/contact', label: 'Get Involved' },
     { to: '/about', label: 'About' },
     { to: '/team', label: 'Team' },
-    { to: '/workshops', label: 'Workshops' },
-    { to: '/projects', label: 'Projects' },
-    { to: '/digital-literacy', label: 'Digital Literacy' },
     { to: '/blog', label: 'Blog' },
     { to: '/donate', label: 'Donate' },
     { to: '/contact', label: 'Contact' },
@@ -56,6 +58,37 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
 
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-8">
+          <div className="relative group">
+            <button
+              type="button"
+              className="font-manrope text-body-md text-on-surface-variant hover:text-primary transition-colors bg-transparent border-0 cursor-pointer flex items-center gap-2"
+            >
+              What We Do
+              <span className="material-symbols-outlined text-lg" aria-hidden="true">expand_more</span>
+            </button>
+
+            <div className="absolute left-0 top-full pt-3 hidden group-hover:block group-focus-within:block min-w-[220px]">
+              <div className="bg-background border border-outline-variant/40 rounded-xl shadow-lg py-2">
+                {whatWeDoLinks.map((link) => (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    onClick={handleLinkClick}
+                    className={({ isActive }) =>
+                      `block px-4 py-3 font-manrope text-body-md transition-colors ${
+                        isActive
+                          ? 'text-primary bg-primary/10'
+                          : 'text-on-surface-variant hover:text-primary hover:bg-primary/5'
+                      }`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {primaryLinks.map((link) => (
             <NavLink
               key={link.to}
@@ -110,6 +143,28 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
       {isMenuOpen && (
         <div className="md:hidden bg-surface-container-lowest border-t border-outline-variant/30 py-4 px-margin-mobile">
           <ul className="flex flex-col gap-1">
+            <li>
+              <div className="px-4 pt-3 pb-2 font-manrope text-label-sm font-semibold tracking-wide text-primary uppercase">
+                What We Do
+              </div>
+            </li>
+            {whatWeDoLinks.map((link) => (
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  onClick={handleLinkClick}
+                  className={({ isActive }) =>
+                    `flex items-center px-4 py-3 rounded-lg font-manrope text-body-md transition-colors ${
+                      isActive
+                        ? 'text-primary bg-primary/10 border-l-2 border-primary'
+                        : 'text-on-surface-variant hover:text-primary hover:bg-primary/5'
+                    }`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
             {allLinks.map((link) => (
               <li key={link.to}>
                 <NavLink

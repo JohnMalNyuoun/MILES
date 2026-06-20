@@ -12,6 +12,7 @@ import Projects from './components/Projects'
 import Workshops from './components/Workshops'
 import Blog from './components/Blog'
 import DigitalLiteracy from './components/DigitalLiteracy'
+import WhatWeDo from './components/WhatWeDo'
 import FocusDetail from './components/FocusDetail'
 import Donate from './components/Donate'
 import Footer from './components/Footer'
@@ -75,6 +76,7 @@ const  App = () => {
                 <Route path="/team" element={<Team />} />
                 <Route path="/workshops" element={<Workshops />} />
                 <Route path="/projects" element={<Projects />} />
+                <Route path="/what-we-do" element={<WhatWeDo />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/digital-literacy" element={<DigitalLiteracy />} />
                 <Route path="/learn" element={<Learn siteContent={siteContent} />} />
