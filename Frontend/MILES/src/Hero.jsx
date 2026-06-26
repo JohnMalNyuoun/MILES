@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import fullpicImg from './assets/fullpic.jpeg'
+import teamImg from './assets/Team.jpeg'
 import defaultSiteContent from './content/defaultSiteContent'
 
 const Hero = ({ siteContent = defaultSiteContent }) => {
@@ -12,7 +12,7 @@ const Hero = ({ siteContent = defaultSiteContent }) => {
         <img
           alt="MILES Community"
           className="w-full h-full object-cover"
-          src={fullpicImg}
+          src={teamImg}
         />
         <div className="absolute inset-0 hero-gradient" />
       </div>
