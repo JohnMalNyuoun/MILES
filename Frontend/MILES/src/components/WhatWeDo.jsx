@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 const programCards = [
   {
     number: 'Program 1',
-    title: 'MILES Ambassador Program - Peer-led mentorship',
+    title: 'Ambassadors Program - Peer-led mentorship',
     body: 'Girls and young mothers are trained as community advocates by women from within Kakuma who have navigated the same walls, not outside experts. Through mentorship, life skills, leadership, and reproductive health education, participants graduate as MILES Ambassadors and return to their communities to advocate for girls still facing the same struggles. Ambassadors who have dropped out of school have a direct pathway into the Scholarship Program.',
     metric: '20 participants per pilot cohort - 4 sessions',
   },
@@ -27,7 +28,50 @@ const programCards = [
   },
 ];
 
+const toProgramId = (programNumber) => `program-${programNumber.replace('Program ', '').trim()}`;
+
+const viewToProgramNumber = {
+  'program-1': 'Program 1',
+  'program-2': 'Program 2',
+  'program-3': 'Program 3',
+  'program-4': 'Program 4',
+  daretech: 'Program 3',
+};
+
+const normalizeProgramView = (view) => (view && viewToProgramNumber[view] ? view : 'program-1');
+
+function NMStoryBlock() {
+  return (
+    <section className="what-we-do-program-story" id="nm-story" aria-label="A story from Kakuma">
+      <h4>A story from Kakuma</h4>
+      <h5>N.M story</h5>
+      <p>
+        N.M is 17. When she became pregnant, a community belief - that a pregnant girl should not
+        continue her studies - became, in practice, the end of her education. Not because a law
+        required it. Not because she lacked the will. Because there was no framework in place to
+        say otherwise.
+      </p>
+      <p>
+        What stood between N.M and her return to school was small: a uniform, school supplies, and
+        a $30 registration fee. In April 2026, she came to a MILES Ambassador session, found the
+        confidence to share what she had been through, and got exactly that support. Today, she is
+        back in class. Her story is shared here with her informed consent.
+      </p>
+    </section>
+  );
+}
+
 function WhatWeDo() {
+  const [searchParams] = useSearchParams();
+  const requestedView = normalizeProgramView(searchParams.get('view'));
+  const [programView, setProgramView] = useState(requestedView);
+  const selectedProgramNumber = viewToProgramNumber[programView];
+  const selectedProgram = programCards.find((program) => program.number === selectedProgramNumber) || null;
+
+  useEffect(() => {
+    setProgramView(requestedView);
+  }, [requestedView]);
+
   return (
     <div className="what-we-do-shell">
       <div className="page what-we-do-page what-we-do-full-page">
@@ -57,60 +101,22 @@ function WhatWeDo() {
           </article>
         </section>
 
-        <section className="what-we-do-story">
-          <h2>A story from Kakuma</h2>
-          <h3>Nyethak&apos;s story</h3>
-          <p>
-            Nyethak Manyang is 17. When she became pregnant, a community belief - that a pregnant
-            girl should not continue her studies - became, in practice, the end of her education.
-            Not because a law required it. Not because she lacked the will. Because there was no
-            framework in place to say otherwise.
-          </p>
-          <p>
-            What stood between Nyethak and her return to school was small: a uniform, school
-            supplies, and a $30 registration fee. In April 2026, she came to a MILES Ambassador
-            session, found the confidence to share what she had been through, and got exactly that
-            support. Today, she is back in class. Her story is shared here with her informed
-            consent.
-          </p>
-        </section>
-
         <section className="what-we-do-programs">
           <h2>Our programs</h2>
-          <p>
-            These four programs form one strategy. The Ambassador Program prevents new cases of
-            early pregnancy. The Scholarship Program recovers girls who have dropped out. DareTECH
-            builds independent income. Community Involvement shifts the attitudes that make any of
-            this necessary in the first place.
-          </p>
-
-          <div className="what-we-do-program-grid">
-            {programCards.map((program) => (
-              <article key={program.number} className="what-we-do-program-card">
-                <span className="what-we-do-program-number">{program.number}</span>
-                <h3>{program.title}</h3>
-                <p>{program.body}</p>
-                <p className="what-we-do-program-metric">{program.metric}</p>
-              </article>
-            ))}
-          </div>
+          {selectedProgram ? (
+            <article
+              id={toProgramId(selectedProgram.number)}
+              className="what-we-do-program-card"
+            >
+              <span className="what-we-do-program-number">{selectedProgram.number}</span>
+              <h3>{selectedProgram.title}</h3>
+              <p>{selectedProgram.body}</p>
+              <p className="what-we-do-program-metric">{selectedProgram.metric}</p>
+              {selectedProgram.number === 'Program 1' ? <NMStoryBlock /> : null}
+            </article>
+          ) : null}
         </section>
 
-        <section className="what-we-do-partner">
-          <h2>Partner with MILES</h2>
-          <p>
-            Contact Nyajuok Deng, Founder -
-            {' '}
-            <a href="mailto:dengnyajok7@gmail.com">dengnyajok7@gmail.com</a>
-            {' '}
-            -
-            {' '}
-            <a href="tel:+254746646602">+254 746 646 602</a>
-          </p>
-          <p>
-            <a href="/" className="what-we-do-visit-link">Visit our website</a>
-          </p>
-        </section>
       </div>
     </div>
   );

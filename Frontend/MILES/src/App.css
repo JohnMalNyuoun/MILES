@@ -569,22 +569,20 @@ body.theme-light .navbar-links li a.active {
 
 .what-we-do-stat-card {
   border-radius: 14px;
-  border: 1px solid rgba(212, 166, 74, 0.3);
-  background:
-    radial-gradient(circle at top right, rgba(212, 166, 74, 0.15), transparent 55%),
-    linear-gradient(150deg, #0a1f3e 0%, #13365f 100%);
-  box-shadow: 0 10px 24px rgba(9, 26, 51, 0.22);
+  border: 1px solid rgba(13, 47, 87, 0.15);
+  background: #ffffff;
+  box-shadow: none;
   padding: 1rem;
 }
 
 .what-we-do-stat-card h3 {
-  color: #f8dfae;
+  color: #0d2f57;
   font-size: 1.85rem;
   margin-bottom: 0.15rem;
 }
 
 .what-we-do-stat-card p {
-  color: rgba(241, 247, 255, 0.92);
+  color: var(--text-color);
   margin: 0;
   font-size: 0.95rem;
 }
@@ -616,11 +614,66 @@ body.theme-light .navbar-links li a.active {
   gap: 0.85rem;
 }
 
+.what-we-do-program-toggle {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.what-we-do-toggle-button {
+  appearance: none;
+  border: 1px solid rgba(13, 47, 87, 0.2);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0d2f57;
+  padding: 0.48rem 0.95rem;
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.what-we-do-toggle-button:hover {
+  border-color: #b6892b;
+  color: #b6892b;
+}
+
+.what-we-do-toggle-button.active {
+  border-color: rgba(212, 166, 74, 0.65);
+  background: linear-gradient(150deg, #0a1f3e 0%, #13365f 100%);
+  color: #f8dfae;
+}
+
+.what-we-do-program-featured {
+  margin-top: 0.95rem;
+  border-radius: 12px;
+  border: 1px solid rgba(13, 47, 87, 0.15);
+  background: #ffffff;
+  box-shadow: none;
+  padding: 1rem 1.05rem;
+}
+
+.what-we-do-program-featured h3 {
+  color: #0d2f57;
+  font-size: 1.03rem;
+}
+
+.what-we-do-program-featured p {
+  color: var(--text-color);
+}
+
+.what-we-do-program-featured .what-we-do-program-metric {
+  border-top: 1px dashed rgba(13, 47, 87, 0.2);
+  color: #275486;
+}
+
 .what-we-do-program-card {
   border: 1px solid rgba(13, 47, 87, 0.15);
   border-radius: 12px;
   padding: 0.95rem;
-  background: linear-gradient(180deg, #fdfefe 0%, #f6fbff 100%);
+  background: #ffffff;
+  box-shadow: none;
 }
 
 .what-we-do-program-number {
@@ -645,6 +698,28 @@ body.theme-light .navbar-links li a.active {
   color: #275486;
   font-weight: 700;
   font-size: 0.92rem;
+}
+
+.what-we-do-program-story {
+  margin-top: 0.75rem;
+  border-top: 1px solid rgba(13, 47, 87, 0.16);
+  padding-top: 0.7rem;
+}
+
+.what-we-do-program-story h4 {
+  color: #0d2f57;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.what-we-do-program-story h5 {
+  color: #b6892b;
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+
+.what-we-do-program-story p {
+  margin-bottom: 0.45rem;
 }
 
 .what-we-do-partner a {
@@ -672,6 +747,19 @@ body.theme-light .navbar-links li a.active {
   .what-we-do-programs,
   .what-we-do-partner,
   .what-we-do-stat-card {
+    padding: 0.9rem;
+  }
+
+  .what-we-do-program-toggle {
+    gap: 0.45rem;
+  }
+
+  .what-we-do-toggle-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .what-we-do-program-featured {
     padding: 0.9rem;
   }
 }

@@ -10,9 +10,11 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
   const handleLinkClick = () => setIsMenuOpen(false)
 
   const whatWeDoLinks = [
-    { to: '/projects', label: 'Projects' },
-    { to: '/workshops', label: 'Mentorship' },
-    { to: '/digital-literacy', label: 'Digital Literacy' },
+    { to: '/what-we-do?view=program-1', label: 'Ambassadors Program' },
+    { to: '/what-we-do?view=program-2', label: 'Scholarship Program' },
+    { to: '/what-we-do?view=program-3#program-3', label: 'DareTECH' },
+    { to: '/what-we-do?view=program-4', label: 'Community Involvement' },
+    { to: '/what-we-do?view=program-1#nm-story', label: 'N.M Story' },
   ]
 
   const primaryLinks = [
@@ -25,6 +27,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
 
   const allLinks = [
     { to: '/', label: 'Home', end: true },
+    { to: '/what-we-do?view=program-1', label: 'What We Do' },
     { to: '/contact', label: 'Get Involved' },
     { to: '/about', label: 'About' },
     { to: '/team', label: 'Team' },
@@ -59,13 +62,14 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-8">
           <div className="relative group">
-            <button
-              type="button"
+            <NavLink
+              to="/what-we-do?view=program-1"
+              onClick={handleLinkClick}
               className="font-manrope text-body-md text-on-surface-variant hover:text-primary transition-colors bg-transparent border-0 cursor-pointer flex items-center gap-2"
             >
               What We Do
               <span className="material-symbols-outlined text-lg" aria-hidden="true">expand_more</span>
-            </button>
+            </NavLink>
 
             <div className="absolute left-0 top-full pt-3 hidden group-hover:block group-focus-within:block min-w-[220px]">
               <div className="bg-background border border-outline-variant/40 rounded-xl shadow-lg py-2">
