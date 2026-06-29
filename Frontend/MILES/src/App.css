@@ -228,7 +228,7 @@ body.theme-dark {
   --hero-overlay-start: rgba(5, 8, 12, 0.22);
   --hero-overlay-end: rgba(5, 8, 12, 0.85);
   --kakuma-overlay-rgb: 10, 10, 10;
-  --hero-foreground: #ffffff;
+  --hero-foreground: #10b981;
 }
 
 body {
@@ -270,6 +270,13 @@ body.theme-dark .miles-brand-title,
 :root[data-theme="light"] .miles-brand-title,
 :root[data-theme="dark"] .miles-brand-title {
   color: #10b981 !important;
+}
+
+body.theme-light .hero-section :is(h1, h2, h3, h4, h5, h6, p, a, span),
+body.theme-dark .hero-section :is(h1, h2, h3, h4, h5, h6, p, a, span),
+:root[data-theme="light"] .hero-section :is(h1, h2, h3, h4, h5, h6, p, a, span),
+:root[data-theme="dark"] .hero-section :is(h1, h2, h3, h4, h5, h6, p, a, span) {
+  color: var(--hero-foreground) !important;
 }
 
 /* ===== Navbar ===== */

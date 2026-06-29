@@ -1,18 +1,47 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import teamImg from './assets/Team.jpeg'
 import defaultSiteContent from './content/defaultSiteContent'
+
+const heroImageModules = import.meta.glob('./assets/*.{jpg,jpeg,png,JPG,JPEG,PNG}', {
+  eager: true,
+  import: 'default',
+})
+
+const heroImages = Object.entries(heroImageModules)
+  .sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
+  .map(([, imageUrl]) => imageUrl)
 
 const Hero = ({ siteContent = defaultSiteContent }) => {
   const heroContent = siteContent.hero || defaultSiteContent.hero
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  const currentHeroImage = useMemo(() => {
+    if (!heroImages.length) {
+      return ''
+    }
+
+    return heroImages[currentImageIndex % heroImages.length]
+  }, [currentImageIndex])
+
+  useEffect(() => {
+    if (heroImages.length <= 1) {
+      return undefined
+    }
+
+    const intervalId = window.setInterval(() => {
+      setCurrentImageIndex((previousIndex) => (previousIndex + 1) % heroImages.length)
+    }, 3000)
+
+    return () => window.clearInterval(intervalId)
+  }, [])
 
   return (
-    <section className="relative min-h-[819px] flex items-center justify-center overflow-hidden">
+    <section className="hero-section relative min-h-[819px] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img
           alt="MILES Community"
           className="w-full h-full object-cover"
-          src={teamImg}
+          src={currentHeroImage}
         />
         <div className="absolute inset-0 hero-gradient" />
       </div>
