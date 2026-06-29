@@ -56,7 +56,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
         {/* Brand */}
         <div className="flex items-center gap-2">
           <Link to="/" onClick={handleLinkClick}>
-            <span className="font-manrope text-headline-lg font-black tracking-tighter text-primary">MILES</span>
+            <span className="miles-brand-title font-manrope text-headline-lg font-black tracking-tighter text-primary">MILES</span>
           </Link>
         </div>
 
@@ -123,7 +123,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
           <Link
             to="/donate"
             onClick={handleLinkClick}
-            className="hidden md:flex items-center px-6 py-2 rounded-full font-manrope text-label-sm font-semibold text-on-primary bg-primary hover:bg-surface-tint active:scale-95 transition-all"
+            className="navbar-donate-btn hidden md:flex items-center px-6 py-2 rounded-full font-manrope text-label-sm font-semibold text-on-primary bg-primary hover:bg-surface-tint active:scale-95 transition-all"
           >
             Donate
           </Link>

@@ -79,7 +79,7 @@ function Home({ siteContent = defaultSiteContent }) {
       <section
         className="kakuma-reality"
         style={{
-          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url(${aprilSessionsImage})`,
+          backgroundImage: `linear-gradient(rgba(var(--kakuma-overlay-rgb), 0.86), rgba(var(--kakuma-overlay-rgb), 0.86)), url(${aprilSessionsImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -221,7 +221,7 @@ function Home({ siteContent = defaultSiteContent }) {
                 required
               />
               <button
-                className="bg-primary text-on-primary px-8 py-3 rounded-lg font-manrope text-label-sm font-semibold hover:bg-surface-tint transition-all whitespace-nowrap"
+                className="subscribe-now-btn bg-primary text-on-primary px-8 py-3 rounded-lg font-manrope text-label-sm font-semibold hover:bg-surface-tint transition-all whitespace-nowrap"
                 type="submit"
                 disabled={subscribeLoading}
               >
