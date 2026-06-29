@@ -254,15 +254,15 @@ h4 {
   color: var(--accent-color);
 }
 
-/* Force all readable text to pure black in light mode and pure white in dark mode. */
+/* Force all readable text to green in both light and dark modes. */
 body.theme-light :is(h1, h2, h3, h4, h5, h6, p, span, li, a, label, small, strong, em, button, input, textarea, select),
 :root[data-theme="light"] body :is(h1, h2, h3, h4, h5, h6, p, span, li, a, label, small, strong, em, button, input, textarea, select) {
-  color: #000000 !important;
+  color: #10b981 !important;
 }
 
 body.theme-dark :is(h1, h2, h3, h4, h5, h6, p, span, li, a, label, small, strong, em, button, input, textarea, select),
 :root[data-theme="dark"] body :is(h1, h2, h3, h4, h5, h6, p, span, li, a, label, small, strong, em, button, input, textarea, select) {
-  color: #ffffff !important;
+  color: #10b981 !important;
 }
 
 body.theme-light .miles-brand-title,
@@ -1105,7 +1105,7 @@ body.theme-dark .home-advocacy-item {
   top: 30%;
   transform: translateY(-50%);
   margin: 0;
-  color: #ffffff;
+  color: #2563eb !important;
   text-shadow: 0 3px 14px rgba(0, 0, 0, 0.45);
   border-bottom: none;
   padding-bottom: 0;
@@ -1118,7 +1118,7 @@ body.theme-dark .home-advocacy-item {
   bottom: 1.25rem;
   margin: 0;
   padding: 0;
-  color: #ffffff;
+  color: #2563eb !important;
   background: transparent;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
   line-height: 1.5;
