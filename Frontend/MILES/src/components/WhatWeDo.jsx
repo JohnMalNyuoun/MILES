@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 const programCards = [
   {
@@ -39,6 +39,13 @@ const viewToProgramNumber = {
 };
 
 const normalizeProgramView = (view) => (view && viewToProgramNumber[view] ? view : 'program-1');
+
+const programViewLinks = [
+  { view: 'program-1', label: 'Ambassadors Program' },
+  { view: 'program-2', label: 'Scholarship Program' },
+  { view: 'program-3', label: 'DareTECH' },
+  { view: 'program-4', label: 'Community Involvement' },
+];
 
 function NMStoryBlock() {
   return (
@@ -103,6 +110,17 @@ function WhatWeDo() {
 
         <section className="what-we-do-programs">
           <h2>Our programs</h2>
+          <div className="what-we-do-inline-nav" aria-label="Choose a program">
+            {programViewLinks.map((item) => (
+              <Link
+                key={item.view}
+                to={`/what-we-do?view=${item.view}`}
+                className={`what-we-do-inline-link${programView === item.view ? ' active' : ''}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
           {selectedProgram ? (
             <article
               id={toProgramId(selectedProgram.number)}
