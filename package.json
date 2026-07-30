@@ -1,5 +1,6 @@
 {
   "name": "miles-monorepo",
+  "build": "vite build",
   "private": true,
   "version": "1.0.0",
   "description": "Monorepo root for MILES frontend and backend",
