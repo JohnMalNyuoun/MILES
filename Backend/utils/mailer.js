@@ -4,37 +4,56 @@ const MILES_BRAND_COLOR = '#1d9e75';
 const MILES_BRAND_DARK = '#0f6f51';
 
 const getFromAddress = () =>
-  process.env.GMAIL_USER || process.env.OFFICIAL_MILES_EMAIL || '';
+  process.env.OFFICIAL_MILES_EMAIL || process.env.GMAIL_USER || '';
+
+const getSiteUrl = () => process.env.FRONTEND_URL || 'https://milesproject.onrender.com/';
+
 
 const isMailerConfigured = () =>
-  Boolean(
-    (process.env.GMAIL_USER || process.env.OFFICIAL_MILES_EMAIL) &&
-      process.env.GMAIL_APP_PASSWORD
-  );
+  Boolean(getFromAddress() && process.env.GMAIL_APP_PASSWORD);
 
 let cachedTransporter = null;
+
 const getTransporter = () => {
   if (!isMailerConfigured()) return null;
   if (cachedTransporter) return cachedTransporter;
-  cachedTransporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: getFromAddress(),
-      pass: process.env.GMAIL_APP_PASSWORD,
-    },
-  });
+
+ 
+  const smtpHost = process.env.SMTP_HOST;
+  
+  if (smtpHost) {
+    cachedTransporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: Number(process.env.SMTP_PORT) || 465,
+      secure: process.env.SMTP_PORT ? process.env.SMTP_PORT === '465' : true,
+      auth: {
+        user: getFromAddress(),
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+  } else {
+    cachedTransporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: getFromAddress(),
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+  }
+
   return cachedTransporter;
 };
 
 const sendMail = async ({ to, subject, html, text, replyTo }) => {
   const transporter = getTransporter();
   if (!transporter) {
-    const error = new Error('Mailer is not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD.');
+    const error = new Error('Mailer is not configured. Set OFFICIAL_MILES_EMAIL and GMAIL_APP_PASSWORD.');
     error.code = 'MAILER_NOT_CONFIGURED';
     throw error;
   }
 
   const fromAddress = getFromAddress();
+  
   return transporter.sendMail({
     from: `"MILES Project" <${fromAddress}>`,
     to,
@@ -44,6 +63,7 @@ const sendMail = async ({ to, subject, html, text, replyTo }) => {
     replyTo: replyTo || fromAddress,
   });
 };
+
 
 const wrapEmail = ({ heading, intro, bodyHtml, ctaLabel, ctaUrl, footerNote }) => `
   <div style="font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f5; padding: 32px 16px;">
@@ -69,12 +89,13 @@ const wrapEmail = ({ heading, intro, bodyHtml, ctaLabel, ctaUrl, footerNote }) =
         <td style="background: #f4f7f5; padding: 18px 32px; color: #5b6b76; font-size: 12px; line-height: 1.55;">
           ${footerNote || ''}
           <p style="margin: 8px 0 0;">Mothers in Learning Empowerment Support (MILES) &middot; Kakuma, Kenya</p>
-          <p style="margin: 4px 0 0;">You are receiving this email because you subscribed at the MILES website.</p>
+          <p style="margin: 4px 0 0;">You are receiving this email because you interact with the MILES platform.</p>
         </td>
       </tr>
     </table>
   </div>
 `;
+
 
 const sendAdminCreatedEmail = async ({ adminEmail, adminName, adminUsername }) => {
   const html = wrapEmail({
@@ -89,6 +110,8 @@ const sendAdminCreatedEmail = async ({ adminEmail, adminName, adminUsername }) =
       </div>
       <p style="margin: 18px 0 0;">If you did not authorize this action, please secure your account immediately.</p>
     `,
+    ctaLabel: 'Go to Admin Dashboard',
+    ctaUrl: `${getSiteUrl()}/admin`,
     footerNote: '<p style="margin: 0;">This is an automated security notification.</p>',
   });
 
@@ -123,13 +146,18 @@ const sendPasswordResetCodeEmail = async ({ adminEmail, adminName, resetCode, ex
       </div>
       <p style="margin: 18px 0 0;">This code expires in <strong>${expiresInMinutes} minutes</strong>. If you did not request a reset, you can safely ignore this email.</p>
     `,
+    ctaLabel: 'Reset Password Now',
+    ctaUrl: `${getSiteUrl()}/reset-password`,
     footerNote: '<p style="margin: 0;">For your security, never share this code with anyone.</p>',
   });
 
   return sendMail({ to: adminEmail, subject: 'MILES: Password Reset Code', html });
 };
 
+
 const sendSubscriberWelcomeEmail = async ({ to }) => {
+  const fromEmail = getFromAddress();
+  
   const html = wrapEmail({
     heading: 'Welcome to the MILES community!',
     intro:
@@ -143,7 +171,7 @@ const sendSubscriberWelcomeEmail = async ({ to }) => {
       </p>
       <p style="margin: 0 0 12px;"><strong>How to reach us</strong></p>
       <ul style="margin: 0 0 16px; padding-left: 20px;">
-        <li>Email: <a href="mailto:${getFromAddress()}" style="color: ${MILES_BRAND_DARK};">${getFromAddress()}</a></li>
+        <li>Email: <a href="mailto:${fromEmail}" style="color: ${MILES_BRAND_DARK};">${fromEmail}</a></li>
         <li>Reply to this email and a real human from our team will respond.</li>
         <li>Visit our website to read stories, browse projects, and see upcoming workshops.</li>
       </ul>
@@ -153,6 +181,8 @@ const sendSubscriberWelcomeEmail = async ({ to }) => {
         only what we genuinely think will be useful or inspiring to you.
       </p>
     `,
+    ctaLabel: 'Explore Our Website',
+    ctaUrl: getSiteUrl(),
     footerNote:
       '<p style="margin: 0;">If you did not subscribe, just reply with "remove me" and we will take you off the list.</p>',
   });
@@ -163,6 +193,7 @@ const sendSubscriberWelcomeEmail = async ({ to }) => {
     html,
   });
 };
+
 
 const sendSubscriberInvitationEmail = async ({
   to,
@@ -190,6 +221,8 @@ const sendSubscriberInvitationEmail = async ({
     heading: subject || 'A MILES update for you',
     intro: 'You are invited to an upcoming MILES activity. Here are the details:',
     bodyHtml: `${detailBlock}${messageHtml}`,
+    ctaLabel: 'View Event Details',
+    ctaUrl: `${getSiteUrl()}/what-we-do`,
     footerNote:
       '<p style="margin: 0;">Reply to this email if you would like to RSVP or have questions for our team.</p>',
   });

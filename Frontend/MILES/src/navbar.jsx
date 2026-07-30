@@ -12,32 +12,35 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
   const handleLinkClick = () => setIsMenuOpen(false)
 
   const whatWeDoLinks = [
-    { to: '/what-we-do?view=program-1', label: 'Ambassadors Program' },
-    { to: '/what-we-do?view=program-2', label: 'Scholarship Program' },
-    { to: '/what-we-do?view=program-3#program-3', label: 'DareTECH' },
-    { to: '/what-we-do?view=program-4', label: 'Community Involvement' },
+    { id: 'wwd-1', to: '/what-we-do?view=program-1', label: 'Ambassadors Program' },
+    { id: 'wwd-2', to: '/what-we-do?view=program-2', label: 'Scholarship Program' },
+    { id: 'wwd-3', to: '/what-we-do?view=program-3#program-3', label: 'DareTECH' },
+    { id: 'wwd-4', to: '/what-we-do?view=program-4', label: 'Community Involvement' },
   ]
 
-  const primaryLinks = [
-    { to: '/', label: 'Home', end: true },
-    { to: '/contact', label: 'Get Involved' },
-    { to: '/blog', label: 'Blog' },
-    { to: '/about', label: 'Advocacy' },
-    { to: '/admin', label: 'Admin' },
-  ]
 
-  const allLinks = [
-    { to: '/', label: 'Home', end: true },
-    { to: '/what-we-do?view=program-1', label: 'What We Do' },
-    { to: '/contact', label: 'Get Involved' },
-    { to: '/about', label: 'About' },
-    { to: '/team', label: 'Team' },
-    { to: '/blog', label: 'Blog' },
-    { to: '/donate', label: 'Donate' },
-    { to: '/contact', label: 'Contact' },
-    { to: '/admin', label: 'Admin' },
-  ]
 
+
+const primaryLinks = [
+  { id: 'nav-who-we-are', to: '/who-we-are', label: 'Who We Are' },
+  { id: 'nav-home', to: '/', label: 'Home', end: true },
+  { id: 'nav-get-involved', to: '/contact', label: 'Get Involved' },
+  { id: 'nav-blog', to: '/blog', label: 'Blog' },
+  { id: 'nav-about', to: '/about', label: 'About Us' },
+  { id: 'nav-contact', to: '/contact', label: 'Contact' },
+]
+
+const allLinks = [
+  { id: 'mob-home', to: '/', label: 'Home', end: true },
+  { id: 'mob-who-we-are', to: '/who-we-are', label: 'Who We Are' }, // Added for mobile drawer
+  { id: 'mob-wwd', to: '/what-we-do?view=program-1', label: 'What We Do' },
+  { id: 'mob-get-involved', to: '/contact', label: 'Get Involved' },
+  { id: 'mob-about', to: '/about', label: 'About' },
+  { id: 'mob-team', to: '/team', label: 'Team' },
+  { id: 'mob-blog', to: '/blog', label: 'Blog' },
+  { id: 'mob-donate', to: '/donate', label: 'Donate' },
+  { id: 'mob-contact', to: '/contact', label: 'Contact' },
+]
   useEffect(() => {
     if (!isMenuOpen) return
     const handleOutside = (e) => {
@@ -79,7 +82,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
                 <div className="bg-background border border-outline-variant/40 rounded-xl shadow-lg py-2">
                   {whatWeDoLinks.map((link) => (
                     <NavLink
-                      key={link.to}
+                      key={link.id} // ✅ Used link.id
                       to={link.to}
                       onClick={handleLinkClick}
                       className={({ isActive }) =>
@@ -100,7 +103,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
 
           {primaryLinks.map((link) => (
             <NavLink
-              key={link.to}
+              key={link.id} // ✅ Used link.id
               to={link.to}
               end={Boolean(link.end)}
               className={({ isActive }) =>
@@ -118,7 +121,6 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
           ))}
         </div>
 
-        {/* Right actions */}
         <div className="flex items-center gap-4">
           <Link
             to="/donate"
@@ -160,7 +162,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
                   </div>
                 </li>
                 {whatWeDoLinks.map((link) => (
-                  <li key={link.to}>
+                  <li key={link.id}> {/* ✅ Used link.id */}
                     <NavLink
                       to={link.to}
                       onClick={handleLinkClick}
@@ -179,7 +181,7 @@ const Navbar = ({ theme, toggleTheme, siteContent = defaultSiteContent }) => {
               </>
             ) : null}
             {allLinks.map((link) => (
-              <li key={link.to}>
+              <li key={link.id}> {/* ✅ Used link.id */}
                 <NavLink
                   to={link.to}
                   end={Boolean(link.end)}

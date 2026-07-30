@@ -3,31 +3,58 @@ import { Link } from 'react-router-dom'
 import defaultSiteContent from '../content/defaultSiteContent'
 import TeamTeaser from './TeamTeaser'
 import aprilSessionsImage from '../assets/April sessions pre.jpg'
+import Project1Image from '../assets/Project1.jpg'
 
-const kakumaReasons = [
+const challengesList = [
   {
-    title: 'A generation born into displacement',
-    body: 'Most youth in Kakuma have grown up inside the camp with limited exposure to computers, smartphones, or the internet. Without digital skills, they are locked out of the modern economy before they ever get a chance to compete in it.',
+    title: 'School Dropout & Lost Education',
+    body: 'Girls in Kakuma are forced out of school due to early pregnancy, with no pathway back. Education becomes a closed door.',
   },
   {
-    title: 'School alone is not enough',
-    body: 'Classrooms here are overcrowded and under-resourced, and the national curriculum offers very little practical ICT training. Digital literacy fills that gap so learners can research, type assignments, and prepare for exams and scholarships on their own.',
+    title: 'Child & Forced Marriage',
+    body: 'Cultural pressure and poverty push girls into early marriage, stripping them of choice, agency, and their future.',
   },
   {
-    title: 'Online work is the new opportunity',
-    body: 'Remote jobs, online freelancing, digital trade, and refugee-friendly platforms are some of the few income paths available inside the camp. None of them are reachable without basic computer, email, and internet skills.',
+    title: 'Gender-Based Violence & Peer Pressure',
+    body: 'GBV is widespread and underreported. Girls face physical, psychological, and economic violence with little protection.',
   },
   {
-    title: 'Safety and dignity online',
-    body: 'Young people, especially young women and mothers, are increasingly targeted by online scams, misinformation, and exploitation. Teaching safe internet use protects them and gives them confidence to participate online on their own terms.',
+    title: 'Isolation & Limited Opportunity',
+    body: "Young mothers in Kakuma are often invisible — no networks, no mentors, no one to show them what's possible.",
+  },
+]
+
+const milesValues = [
+  {
+    title: 'Accountability',
+    body: 'We take full ownership of our commitments, maintaining open, transparent reporting to our community, partners, and the youth we serve.',
   },
   {
-    title: 'A bridge to resettlement and higher education',
-    body: 'Resettlement interviews, university applications, and scholarship portals (DAFI, WUSC, online universities) are all digital. Digital literacy is often the difference between a youth accessing those doors and missing them entirely.',
+    title: 'Commitment',
+    body: 'We are dedicated to walking alongside girls and young mothers in Kakuma for the long haul, driving sustainable and lasting transformation.',
   },
   {
-    title: 'Breaking the cycle for the next generation',
-    body: 'When a young mother learns to use a computer, her children grow up around someone who already knows. Digital skills do not stay with one person and spread through families and the wider Kakuma community.',
+    title: 'Responsibility',
+    body: 'We uphold the highest safeguarding standards to ensure every program creates a secure, dignified, and supportive space for everyone.',
+  },
+  {
+    title: 'Integrity',
+    body: 'We act with uncompromised ethics, honesty, and fairness, ensuring our lived refugee experience authentically guides every decision.',
+  },
+]
+
+const whoWeServe = [
+  {
+    title: 'Young Mothers & Adolescent Girls',
+    body: 'Girls and young mothers facing early pregnancy, school dropout, and structural barriers who need tailored support to reclaim their educational and economic potential.',
+  },
+  {
+    title: 'Displaced Youth & Job Seekers',
+    body: 'Young refugees living in Kakuma looking for practical skills, mentorship, and digital pathways to access remote work, scholarships, and higher education opportunities.',
+  },
+  {
+    title: 'Local Community & Families',
+    body: 'Elders, family members, and community leaders engaged through dialogue to build safe environments, fight GBV, and shift cultural mindsets around youth empowerment.',
   },
 ]
 
@@ -75,121 +102,156 @@ function Home({ siteContent = defaultSiteContent }) {
 
   return (
     <main>
-      {/* The Kakuma Reality & Our Response — always dark, exempt from theme toggle */}
-      <section
-        className="kakuma-reality"
-        style={{
-          backgroundImage: `linear-gradient(rgba(var(--kakuma-overlay-rgb), 0.86), rgba(var(--kakuma-overlay-rgb), 0.86)), url(${aprilSessionsImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
-        <div className="reality-header">
-          <h2>The Reality in Kakuma</h2>
-          <p>
-            These are not statistics. These are the daily lived experiences of girls and young
-            mothers in Kakuma Refugee Camp &mdash; and the reason MILES exists.
-          </p>
-        </div>
-
-        <div className="reality-grid">
-          {/* Row 1 */}
-          <div className="reality-challenge">
-            <span className="challenge-label">The Challenge</span>
-            <h3>School Dropout &amp; Lost Education</h3>
-            <p>
-              Girls in Kakuma are forced out of school due to early pregnancy, with no pathway
-              back. Education becomes a closed door.
-            </p>
-          </div>
-          <div className="reality-divider" aria-hidden="true">&rarr;</div>
-          <div className="reality-response">
-            <span className="response-label">How MILES Responds</span>
-            <h3>Academic Re-enrollment &amp; Mentorship</h3>
-            <p>
-              We actively mentor young mothers and advocate directly with schools to reopen their
-              doors and support continued education.
-            </p>
+      {/* OUR MISSION SECTION WITH IMAGE BACKGROUND */}
+      <section className="section py-10 bg-white border-b border-slate-100">
+        <div className="max-w-6xl mx-auto px-4 space-y-8">
+          {/* Mission Image Banner with Text Inside */}
+          <div 
+            className="relative rounded-2xl overflow-hidden min-h-[360px] md:min-h-[420px] flex items-end p-6 md:p-10 shadow-sm"
+            style={{
+              backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 60%, rgba(0, 0, 0, 0.2) 100%), url(${Project1Image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <div className="max-w-3xl text-left space-y-3 text-white">
+              <span className="digital-kakuma-eyebrow block font-bold text-primary tracking-wider uppercase">
+                OUR MISSION
+              </span>
+              <h2 className="font-manrope text-2xl md:text-4xl font-bold leading-tight drop-shadow-sm">
+                Empowering Girls &amp; Young Mothers to Reclaim Their Future
+              </h2>
+              <p className="font-manrope text-sm md:text-base text-slate-200 leading-relaxed max-w-2xl">
+                MILES exists to dismantle systemic barriers facing adolescent girls and young mothers in Kakuma Refugee Camp. Through community-led advocacy, mentorship, and educational re-enrollment, we foster an environment where every young woman has the agency, safety, and skills to succeed.
+              </p>
+            </div>
           </div>
 
-          {/* Row 2 */}
-          <div className="reality-challenge">
-            <span className="challenge-label">The Challenge</span>
-            <h3>Child &amp; Forced Marriage</h3>
-            <p>
-              Cultural pressure and poverty push girls into early marriage, stripping them of
-              choice, agency, and their future.
-            </p>
-          </div>
-          <div className="reality-divider" aria-hidden="true">&rarr;</div>
-          <div className="reality-response">
-            <span className="response-label">How MILES Responds</span>
-            <h3>Community Involvement Sessions</h3>
-            <p>
-              We engage elders, families, and community leaders in structured dialogue to shift
-              mindsets and protect girls from harmful practices.
-            </p>
-          </div>
-
-          {/* Row 3 */}
-          <div className="reality-challenge">
-            <span className="challenge-label">The Challenge</span>
-            <h3>Gender-Based Violence &amp; Peer Pressure</h3>
-            <p>
-              GBV is widespread and underreported. Girls face physical, psychological, and
-              economic violence with little protection.
-            </p>
-          </div>
-          <div className="reality-divider" aria-hidden="true">&rarr;</div>
-          <div className="reality-response">
-            <span className="response-label">How MILES Responds</span>
-            <h3>Peer-Led Resilience Structures</h3>
-            <p>
-              We build strong peer support networks that give girls safe spaces, confidence, and
-              tools to counter violence and pressure.
-            </p>
-          </div>
-
-          {/* Row 4 */}
-          <div className="reality-challenge">
-            <span className="challenge-label">The Challenge</span>
-            <h3>Isolation &amp; Limited Opportunity</h3>
-            <p>
-              Young mothers in Kakuma are often invisible &mdash; no networks, no mentors, no one
-              to show them what&apos;s possible.
-            </p>
-          </div>
-          <div className="reality-divider" aria-hidden="true">&rarr;</div>
-          <div className="reality-response">
-            <span className="response-label">How MILES Responds</span>
-            <h3>Mentorship &amp; Community Networks</h3>
-            <p>
-              We connect young mothers with mentors and community figures who open doors, share
-              resources, and walk the journey with them.
-            </p>
+          {/* Pillar Cards Below the Image */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 bg-slate-50 rounded-xl border border-slate-200 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Advocacy &amp; Safety</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Fighting GBV and early marriage by building community support networks and safe spaces.
+              </p>
+            </div>
+            <div className="p-6 bg-slate-50 rounded-xl border border-slate-200 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Educational Access</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Re-opening school doors for young mothers forced out due to early pregnancy.
+              </p>
+            </div>
+            <div className="p-6 bg-slate-50 rounded-xl border border-slate-200 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Youth Leadership</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Mentoring displaced youth to access digital pathways, mentorship, and economic opportunities.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="section digital-kakuma-section">
-        <span className="digital-kakuma-eyebrow">The Reality in Kakuma</span>
-        <h2>Why Digital Literacy for Youth in Kakuma?</h2>
-        <p>
-          Kakuma Refugee Camp is home to hundreds of thousands of young people whose futures are
-          being shaped under exceptional pressure &mdash; limited resources, restricted movement,
-          and a job market that has gone almost entirely online. Digital literacy is no longer a
-          bonus skill here; it is a lifeline.
-        </p>
+      {/* REALITY & CHALLENGES SECTION */}
+      <section className="section py-8 md:py-10 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-left mb-6 space-y-1">
+            <h2 className="font-manrope text-headline-md font-bold text-slate-900">
+              The Reality in Kakuma
+            </h2>
+            <span className="digital-kakuma-eyebrow block font-bold">
+              CHALLENGES MILES ADDRESSES
+            </span>
+            <p className="font-manrope text-body-md text-slate-600 max-w-2xl pt-1">
+              These are not statistics. These are the daily lived experiences of girls and young mothers in Kakuma Refugee Camp &mdash; and the reason MILES exists.
+            </p>
+          </div>
 
-        <div className="digital-kakuma-grid">
-          {kakumaReasons.map((reason, index) => (
-            <article key={reason.title} className="digital-kakuma-card">
-              <span className="digital-kakuma-number">{String(index + 1).padStart(2, '0')}</span>
-              <h3>{reason.title}</h3>
-              <p>{reason.body}</p>
-            </article>
-          ))}
+          {/* Two Column Layout: Square Challenge Cards on Left, Flat Image on Right */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+            {/* Left Column: 2x2 Square Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {challengesList.map((item, index) => (
+                <article
+                  key={item.title}
+                  className="bg-white p-5 rounded-lg shadow-sm border border-slate-200 aspect-square flex flex-col justify-center transition-all hover:shadow-md"
+                >
+                  <span className="digital-kakuma-number font-bold block mb-1 text-xs text-primary">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="text-base font-bold text-slate-900 mb-2 leading-snug">{item.title}</h3>
+                  <p className="text-slate-600 text-xs leading-relaxed">{item.body}</p>
+                </article>
+              ))}
+            </div>
+
+            {/* Right Column: Flat Image */}
+            <div className="w-full h-full min-h-[320px]">
+              <img
+                src={aprilSessionsImage}
+                alt="Sessions in Kakuma Refugee Camp"
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TARGETED IMPACT / WHO WE SERVE SECTION */}
+      <section className="section impact-section bg-surface-container-low py-section-padding">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-left mb-12 space-y-2">
+            <h2 className="font-manrope text-headline-lg font-bold text-on-background">
+              Targeted Impact
+            </h2>
+            <span className="digital-kakuma-eyebrow block font-bold">
+              WHO WE SERVE
+            </span>
+            <p className="font-manrope text-body-lg text-on-surface-variant max-w-2xl pt-2">
+              Our initiatives focus directly on those who need community support, advocacy, and educational access the most inside Kakuma Refugee Camp.
+            </p>
+          </div>
+
+          <div className="digital-kakuma-grid">
+            {whoWeServe.map((item, index) => (
+              <article 
+                key={item.title} 
+                className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 transition-all hover:shadow-md"
+              >
+                <span className="digital-kakuma-number font-bold block mb-2">{String(index + 1).padStart(2, '0')}</span>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{item.title}</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* OUR CORE VALUES SECTION */}
+      <section className="section values-section py-section-padding bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-left mb-12 space-y-2">
+            <h2 className="font-manrope text-headline-lg font-bold text-on-background">
+              Our Core Values
+            </h2>
+            <span className="digital-kakuma-eyebrow block font-bold">
+              GUIDED BY PRINCIPLE
+            </span>
+            <p className="font-manrope text-body-lg text-on-surface-variant max-w-2xl pt-2">
+              These four foundational pillars guide every program we run, every partnership we build, and how we serve our community daily in Kakuma.
+            </p>
+          </div>
+
+          <div className="digital-kakuma-grid">
+            {milesValues.map((val) => (
+              <article 
+                key={val.title} 
+                className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 transition-all hover:shadow-md"
+              >
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{val.title}</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">{val.body}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -239,4 +301,3 @@ function Home({ siteContent = defaultSiteContent }) {
 }
 
 export default Home
-

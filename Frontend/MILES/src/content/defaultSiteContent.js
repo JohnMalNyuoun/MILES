@@ -31,9 +31,6 @@ const defaultSiteContent = {
     ],
     quickButtons: [
       { label: 'Learn More', path: '/learn' },
-      { label: 'Meet Our Team', path: '/team' },
-      { label: 'Our Projects', path: '/projects' },
-      { label: 'Donate', path: '/donate' },
     ],
   },
   navbar: {
@@ -45,7 +42,6 @@ const defaultSiteContent = {
     projectsLabel: 'Projects',
     donateLabel: 'Donate',
     contactLabel: 'Contact',
-    adminLabel: 'Admin',
   },
   about: {
     title: 'About MILES',
@@ -66,7 +62,7 @@ const defaultSiteContent = {
     title: 'Contact Us',
     intro:
       "We'd love to hear from you. Reach out to learn more about our programs or to get involved.",
-    email: 'wmal44884@gmail.com',
+    email: 'milesproject@gmail.com',
     phone: '+254112419468',
     address: 'Kakuma Refugee Camp, Scorpion Center',
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=Kakuma+Refugee+Camp+Scorpion+Center',

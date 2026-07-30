@@ -16,11 +16,8 @@ import WhatWeDo from './components/WhatWeDo'
 import FocusDetail from './components/FocusDetail'
 import Donate from './components/Donate'
 import Footer from './components/Footer'
-import AdminDashboard from './components/AdminDashboard'
-import AdminLogin from './components/AdminLogin'
-import AdminRoute from './components/AdminRoute'
 import defaultSiteContent from './content/defaultSiteContent'
-
+import WhoWeAre from './components/WhoWeAre'
 
 const  App = () => {
     const [theme, setTheme] = useState(() => {
@@ -77,13 +74,12 @@ const  App = () => {
                 <Route path="/workshops" element={<Workshops />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/what-we-do" element={<WhatWeDo />} />
+                <Route path="/who-we-are" element={<WhoWeAre />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/digital-literacy" element={<DigitalLiteracy />} />
                 <Route path="/learn" element={<Learn siteContent={siteContent} />} />
                 <Route path="/focus/:topic" element={<FocusDetail />} />
                 <Route path="/donate" element={<Donate siteContent={siteContent} />} />
-                <Route path="/admin-login" element={<AdminLogin />} />
-                <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             </Routes>
             <Footer />
         </Router>
@@ -92,3 +88,4 @@ const  App = () => {
 }
 
 export default App;
+ 
