@@ -24,7 +24,8 @@
     "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.1",
-    "nodemailer": "^8.0.10"
+    "nodemailer": "^8.0.10",
+    "react-scripts": "^5.0.1"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
