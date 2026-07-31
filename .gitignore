@@ -13,8 +13,6 @@ node_modules/
 *.pfx
 
 # build output
-dist/
-build/
 coverage/
 
 # logs and temp
