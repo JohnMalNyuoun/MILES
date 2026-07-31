@@ -27,7 +27,7 @@ const primaryLinks = [
   { id: 'nav-get-involved', to: '/contact', label: 'Get Involved' },
   { id: 'nav-blog', to: '/blog', label: 'Blog' },
   { id: 'nav-about', to: '/about', label: 'About Us' },
-  { id: 'nav-contact', to: '/contact', label: 'Contact' },
+ 
 ]
 
 const allLinks = [
@@ -39,7 +39,6 @@ const allLinks = [
   { id: 'mob-team', to: '/team', label: 'Team' },
   { id: 'mob-blog', to: '/blog', label: 'Blog' },
   { id: 'mob-donate', to: '/donate', label: 'Donate' },
-  { id: 'mob-contact', to: '/contact', label: 'Contact' },
 ]
   useEffect(() => {
     if (!isMenuOpen) return
